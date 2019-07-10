@@ -10,6 +10,12 @@ find_package(Qt5Concurrent REQUIRED)
 
 find_package(Qt5 CONFIG REQUIRED COMPONENTS Gui Widgets Core)
 
+find_program(CCACHE_FOUND cache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
+
 include_directories(src src/gui src/database)
 
 set(SOURCES 

@@ -18,8 +18,7 @@ $(NAME): $(OBJS)
 
 # '@' Runs it in silent mode, and '-' will supress errors.
 clean:
-	@- $(RM) $(NAME)
-
-distclean: clean
 	@- $(RM) $(OBJS)
 
+distclean: clean
+	@- $(RM) $(NAME)

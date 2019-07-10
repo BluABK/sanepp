@@ -1,6 +1,9 @@
 import threading
 
-#from handlers.log_handler import create_logger
+from database.models import Channel
+from database.orm import db_session
+from handlers.config_handler import read_config
+from handlers.log_handler import create_logger
 from youtube.youtube_requests import list_uploaded_videos_search, list_uploaded_videos, \
     list_uploaded_videos_videos
 

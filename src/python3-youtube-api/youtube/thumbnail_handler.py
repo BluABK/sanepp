@@ -12,10 +12,10 @@ from PIL import ImageChops
 from absolute_paths import THUMBNAILS_PATH, THUMBNAIL_404_PATH, THUMBNAIL_NA_PATH, \
     THUMBNAILS_RESIZED_PATH
 from handlers.config_handler import read_config
-#from handlers.log_handler import create_logger
+from handlers.log_handler import create_logger
 
 
-#logger = create_logger(__name__)
+logger = create_logger(__name__)
 
 
 class DownloadThumbnail(threading.Thread):

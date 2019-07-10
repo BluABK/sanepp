@@ -7,10 +7,10 @@ from oauthlib.oauth2 import MissingCodeError
 
 from absolute_paths import KEYS_FILE, CLIENT_SECRET_FILE
 from handlers.config_handler import read_config
-#from handlers.log_handler import create_logger
+from handlers.log_handler import create_logger
 from settings import mutable_settings
 
-#logger = create_logger(__name__)
+logger = create_logger(__name__)
 
 SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
 

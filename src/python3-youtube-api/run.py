@@ -1,18 +1,48 @@
-import sys
+import os
 
 import click
 import datetime
 
-#from handlers.config_handler import read_config
-#from handlers.log_handler import create_logger
+from sqlalchemy import or_, and_
+
+from absolute_paths import LOG_DIR
+from database.orm import db_session, init_db
+from database.video import Video
+from handlers.config_handler import read_config
+from handlers.log_handler import create_logger
 from main import run_with_cli, cli_refresh_and_print_subfeed
 from youtube.update_videos import load_keys
 from youtube.youtube_requests import get_subscriptions
 from cli import print_functions
 import youtube as youtube
 
+logger = create_logger(__name__)
+logger.info("Initializing...")
+
+OS_PATH = os.path.dirname(__file__)
+
+PICKLE_PATH = os.path.join(OS_PATH, 'resources', 'pickles')
+THUMBNAIL_PATH = os.path.join(OS_PATH, 'resources', 'thumbnails')
+
+# Initialize database
+init_db()
+
+# Make sure dirs exists on startup
+if not os.path.isdir(PICKLE_PATH):
+    os.makedirs(PICKLE_PATH)
+
+if not os.path.isdir(THUMBNAIL_PATH):
+    os.makedirs(THUMBNAIL_PATH)
+
+if not os.path.isdir(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+# Make sure files exists on startup
+# if not os.path.isfile(HISTORY_FILE_PATH):
+#     open(HISTORY_FILE_PATH, 'a').close()
+
+
 @click.option(u'--no_gui', is_flag=True)
-@click.option(u'--test-channels', is_flag=True)
 @click.option(u'--update-watch-prio', is_flag=True)
 @click.option(u'--set-watched-day')
 @click.option(u'--refresh_and_print_subfeed', is_flag=True)
@@ -23,7 +53,7 @@ import youtube as youtube
 @click.option(u'--print_playlist_items', is_flag=False)
 @click.option(u'--print_playlist_items_url_only', is_flag=True)
 @click.command()
-def cli(no_gui, test_channels, update_watch_prio, set_watched_day, refresh_and_print_subfeed, print_subscriptions,
+def cli(no_gui, update_watch_prio, set_watched_day, refresh_and_print_subfeed, print_subscriptions,
         print_watched_videos, print_discarded_videos, print_downloaded_videos, print_playlist_items,
         print_playlist_items_url_only):
     logger = create_logger(__name__)
@@ -45,8 +75,6 @@ def cli(no_gui, test_channels, update_watch_prio, set_watched_day, refresh_and_p
                 video.watched = True
         db_session.commit()
         return
-    if test_channels:
-        run_channels_test()
     if refresh_and_print_subfeed:
         cli_refresh_and_print_subfeed()
     if print_subscriptions:

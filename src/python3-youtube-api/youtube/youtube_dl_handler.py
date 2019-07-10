@@ -4,15 +4,15 @@ import datetime
 import os
 import threading
 
-from sane_yt_subfeed.handlers.config_handler import read_config, get_options, get_valid_options
-from sane_yt_subfeed import create_logger
-# FIXME: module level logger not suggested: https://fangpenlin.com/posts/2012/08/26/good-logging-practice-in-python/
+from handlers.config_handler import read_config, get_options, get_valid_options
+from handlers.log_handler import create_logger
+
 logger = create_logger(__name__)
 try:
     YOUTUBE_DL_AVAILABLE = True
     from youtube_dl import YoutubeDL
     from youtube_dl.utils import DownloadError
-    from sane_yt_subfeed.postprocessor.ffmpeg import \
+    from postprocessor.ffmpeg import \
         SaneFFmpegPostProcessor, SaneFFmpegMetadataPP, SaneFFmpegMergerPP, SaneFFmpegPostProcessorError
 
 except ModuleNotFoundError as module_exc:

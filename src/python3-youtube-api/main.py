@@ -1,12 +1,7 @@
-import datetime
-import threading
+from handlers.log_handler import create_logger
+from youtube.update_videos import refresh_uploads
 
-#from sane_yt_subfeed.handlers.log_handler import create_logger
-from youtube.update_videos import refresh_uploads, load_keys
-from youtube.youtube_requests import get_subscriptions, list_uploaded_videos_search, \
-    list_uploaded_videos_page
-
-#logger = create_logger(__name__)
+logger = create_logger(__name__)
 
 cached_subs = True
 global_debug = False

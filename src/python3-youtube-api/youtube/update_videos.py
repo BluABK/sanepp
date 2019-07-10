@@ -3,23 +3,19 @@ import time
 from datetime import timedelta
 from googleapiclient.errors import HttpError
 
-from sane_yt_subfeed.handlers.config_handler import read_config
-from sane_yt_subfeed.controller.static_controller_vars import LISTENER_SIGNAL_NORMAL_REFRESH, \
-    LISTENER_SIGNAL_DEEP_REFRESH
-from sane_yt_subfeed.exceptions.sane_aborted_operation import SaneAbortedOperation
-from sane_yt_subfeed.youtube.generate_keys import GenerateKeys
-from sane_yt_subfeed.handlers.log_handler import create_logger
-from sane_yt_subfeed.handlers.pickle_handler import load_youtube_resource_keys, save_youtube_resource_keys
-from sane_yt_subfeed.youtube.uploads_thread import GetUploadsThread
-from sane_yt_subfeed.youtube.youtube_requests import get_subscriptions, get_videos_result
+from handlers.config_handler import read_config
+from youtube.generate_keys import GenerateKeys
+#from handlers.log_handler import create_logger
+from handlers.pickle_handler import load_youtube_resource_keys, save_youtube_resource_keys
+from youtube.uploads_thread import GetUploadsThread
+from youtube.youtube_requests import get_subscriptions, get_videos_result
 
 YOUTUBE_URL = "https://www.youtube.com/"
 YOUTUBE_PARM_VIDEO = "watch?v="
 YOUTUBE_PARM_PLIST = "playlist?list ="
 YT_VIDEO_URL = YOUTUBE_URL + YOUTUBE_PARM_VIDEO
 
-# FIXME: module level logger not suggested: https://fangpenlin.com/posts/2012/08/26/good-logging-practice-in-python/
-logger = create_logger(__name__)
+#logger = create_logger(__name__)
 
 
 def reinstantiate_thread(t):

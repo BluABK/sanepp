@@ -2,22 +2,14 @@ import sys
 
 import click
 import datetime
-from sqlalchemy import or_, and_
 
-from sane_yt_subfeed.handlers.config_handler import read_config
-from sane_yt_subfeed.database.orm import db_session
-from sane_yt_subfeed.database.video import Video
-from sane_yt_subfeed.handlers.log_handler import create_logger
-from sane_yt_subfeed.main import run_with_gui, run_channels_test, run_with_cli, cli_refresh_and_print_subfeed
-from sane_yt_subfeed.youtube.update_videos import load_keys
-from sane_yt_subfeed.youtube.youtube_requests import get_subscriptions
-from sane_yt_subfeed.cli import print_functions
-import sane_yt_subfeed.youtube as youtube
-
-exceptions = []
-exc_id = 0
-LEGACY_EXCEPTION_HANDLER = False
-
+#from handlers.config_handler import read_config
+#from handlers.log_handler import create_logger
+from main import run_with_cli, cli_refresh_and_print_subfeed
+from youtube.update_videos import load_keys
+from youtube.youtube_requests import get_subscriptions
+from cli import print_functions
+import youtube as youtube
 
 @click.option(u'--no_gui', is_flag=True)
 @click.option(u'--test-channels', is_flag=True)

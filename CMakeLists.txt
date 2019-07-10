@@ -23,7 +23,7 @@ set(SOURCES_GUI
 )
 
 set(SOURCES_CLI
-  src/main.cpp
+  src/cli/main.cpp
 )
 
 add_executable(sane_gui ${SOURCES_GUI} ${qml_QRC})

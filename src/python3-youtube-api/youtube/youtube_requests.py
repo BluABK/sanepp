@@ -334,11 +334,19 @@ def get_subscriptions(cached_subs):
 
 
 def get_stored_subscriptions():
+    """
+    Returns subscriptions as a list of Channel objects.
+    :return:
+    """
     logger.info("Getting subscriptions from DB.")
     channels = db_session.query(Channel).filter(or_(Channel.subscribed, Channel.subscribed_override)).all()
-    if len(channels) < 1:
-        return get_remote_subscriptions_cached_oauth()
-    return channels
+    # Turn Channel objects into dicts
+    dictified_channels = []
+    for channel in channels:
+        dictified_channels.append(channel.as_dict())
+    # if len(channels) < 1:
+    #     return get_remote_subscriptions_cached_oauth()
+    return dictified_channels
 
 
 def get_remote_subscriptions_cached_oauth():

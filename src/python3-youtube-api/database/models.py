@@ -59,6 +59,24 @@ class Channel(PermanentBase):
         self.subscribed = True
         self.subscribed_override = False
 
+    def as_dict(self):
+        """
+        Returns all properties as a dict.
+        :return:
+        """
+        return {'kind': 'YouTubeChannel',
+                '__tablename__': self.__tablename__,
+                'id': self.id,
+                'title': self.title,
+                'description': self.description,
+                'playlist_id': self.playlist_id,
+                'downloaded_thumbnail': self.downloaded_thumbnail,
+                'thumbnails': self.thumbnails,
+                'subscribed': self.subscribed,
+                'subscribed_override': self.subscribed_override,
+                'tests': self.tests,
+                'costs': self.costs}
+
 
 class Test(PermanentBase):
     __tablename__ = 'test'

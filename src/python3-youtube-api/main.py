@@ -9,6 +9,7 @@ from database.orm import db_session, init_db
 from database.video import Video
 from handlers.config_handler import read_config
 from handlers.log_handler import create_logger
+from sane_api.sane_api import SaneAPI
 from youtube.update_videos import load_keys, refresh_uploads
 from youtube.youtube_requests import get_subscriptions
 from cli import print_functions
@@ -34,12 +35,6 @@ print_statistics = True
 # Auth OAuth2 with YouTube API
 
 # Create controller object
-
-def run_with_cli():
-    logger.info('Running with CLI')
-    logger.error("CLI UI Not yet implemented")
-    exit(0)
-
 
 def cli_refresh_and_print_subfeed():
     logger.info('Running with print/console')
@@ -69,14 +64,13 @@ if not os.path.isdir(LOG_DIR):
 @click.option(u'--update-watch-prio', is_flag=True)
 @click.option(u'--set-watched-day')
 @click.option(u'--refresh_and_print_subfeed', is_flag=True)
-@click.option(u'--print_subscriptions', is_flag=True)
 @click.option(u'--print_downloaded_videos', is_flag=True)
 @click.option(u'--print_watched_videos', is_flag=True)
 @click.option(u'--print_discarded_videos', is_flag=True)
 @click.option(u'--print_playlist_items', is_flag=False)
 @click.option(u'--print_playlist_items_url_only', is_flag=True)
 @click.command()
-def cli(update_watch_prio, set_watched_day, refresh_and_print_subfeed, print_subscriptions,
+def cli(update_watch_prio, set_watched_day, refresh_and_print_subfeed,
         print_watched_videos, print_discarded_videos, print_downloaded_videos, print_playlist_items,
         print_playlist_items_url_only):
     if update_watch_prio:
@@ -99,14 +93,6 @@ def cli(update_watch_prio, set_watched_day, refresh_and_print_subfeed, print_sub
         return
     if refresh_and_print_subfeed:
         cli_refresh_and_print_subfeed()
-    if print_subscriptions:
-        cached_subs = True
-        subs = get_subscriptions(cached_subs)
-        for channel in subs:
-            if channel.subscribed_override:
-                print(("[{}]    {} [Subscription override]".format(channel.id, channel.title)))
-            else:
-                print(("[{}]    {}".format(channel.id, channel.title)))
     if print_watched_videos:
         videos = db_session.query(Video).filter(and_(Video.watched is True, (Video.vid_path.isnot(None)))).all()
         print_functions.print_videos(videos, path_only=True)
@@ -127,8 +113,9 @@ def cli(update_watch_prio, set_watched_day, refresh_and_print_subfeed, print_sub
             else:
                 print(vid)
 
-    run_with_cli()
+    SaneAPI()
 
 
 if __name__ == '__main__':
     cli()
+

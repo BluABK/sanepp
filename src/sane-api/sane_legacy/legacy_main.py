@@ -9,9 +9,9 @@ from database.orm import db_session, init_db
 from database.video import Video
 from handlers.config_handler import read_config
 from handlers.log_handler import create_logger
-from sane_api.sane_api import SaneAPI
 from sane_legacy.youtube.update_videos import load_keys, refresh_uploads
 from cli import print_functions
+from youtube import youtube_requests
 
 logger = create_logger(__name__)
 logger.info("Initializing...")
@@ -30,27 +30,11 @@ debug = True
 print_statistics = True
 
 
-# Auth OAuth2 with YouTube API
-
-# Create controller object
-
 def cli_refresh_and_print_subfeed():
     logger.info('Running with print/console')
     new_videos = refresh_uploads()
     for vid in new_videos:
         print(vid)
-
-
-# Initialize database
-init_db()
-
-# Make sure dirs exists on startup
-if not os.path.isdir(LOG_DIR):
-    os.makedirs(LOG_DIR)
-
-# Make sure files exists on startup
-# if not os.path.isfile(HISTORY_FILE_PATH):
-#     open(HISTORY_FILE_PATH, 'a').close()
 
 
 @click.option(u'--update-watch-prio', is_flag=True)
@@ -97,15 +81,13 @@ def cli(update_watch_prio, set_watched_day, refresh_and_print_subfeed,
     if print_playlist_items:
         youtube_auth_resource = load_keys(1)[0]
         playlist_video_items = []
-        sane_legacy.youtube.youtube_requests.list_uploaded_videos(youtube_auth_resource, playlist_video_items,
-                                                                  print_playlist_items, 50)
+        youtube_requests.list_uploaded_videos(youtube_auth_resource, playlist_video_items,
+                                              print_playlist_items, 50)
         for vid in playlist_video_items:
             if print_playlist_items_url_only:
                 print(vid.url_video)
             else:
                 print(vid)
-
-    SaneAPI()
 
 
 if __name__ == '__main__':

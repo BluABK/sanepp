@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from json import dumps
 from flask import jsonify
 
+from database.orm import init_db
 from resources import YouTubeSubFeed, YouTubeChannel, YouTubeDownload, YouTubeVideo, YouTubeSubscriptions
 
 
@@ -18,6 +19,9 @@ class SaneAPI:
 
     def __init__(self):
         self.routes = None
+
+        # Initialize database
+        init_db()
 
         self.app = Flask(__name__)
         self.api = Api(self.app)

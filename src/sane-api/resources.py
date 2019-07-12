@@ -1,10 +1,7 @@
-from flask import Flask, request
-from flask_restful import Resource, Api
-from sqlalchemy import create_engine
-from json import dumps
+from flask_restful import Resource
 from flask import jsonify
 
-from youtube.youtube_requests import get_stored_subscriptions
+from sane_legacy.youtube.youtube_requests import get_stored_subscriptions
 
 
 class YouTubeSubFeed(Resource):

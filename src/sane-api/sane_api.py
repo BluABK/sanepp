@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from json import dumps
 from flask import jsonify
 
-from sane_api.resources import YouTubeSubFeed, YouTubeChannel, YouTubeDownload, YouTubeVideo, YouTubeSubscriptions
+from resources import YouTubeSubFeed, YouTubeChannel, YouTubeDownload, YouTubeVideo, YouTubeSubscriptions
 
 
 class SaneAPI:

@@ -10,10 +10,13 @@ from json import dumps
 from database.orm import init_db
 from database.write_operations import DBUpdateVideo
 #   YouTube
+from handlers.log_handler import create_logger
 from resources.youtube_api import youtube_api_channels_list
-from resources.youtube_requests import get_stored_subscriptions
 from resources.youtube_auth import load_key
 from youtube.youtube_dl_handler import YoutubeDownload
+
+# Create logger instance
+logger = create_logger(__name__)
 
 # Create the application instance
 app = Flask(__name__, template_folder="templates")
@@ -37,25 +40,33 @@ def home():
     return render_template('home.html')
 
 
+# FIXME: Is the legacy DB even necessary at this point?
 """
 Local: Database lookups and other internal
 """
 
 
-@app.route('/api/v1/local/video')
-def youtube_video(id):
-    pass  # FIXME: Implement
+# @app.route('/api/v1/local/video')
+# def youtube_video(id):
+#     pass  # FIXME: Implement
 
-
-@app.route('/api/v1/local/subscriptions')
-def youtube_subscriptions():
-    """
-    Returns stored (DB) subscriptions.
-    :return: A list of dictified Channel objects
-    """
-    result = get_stored_subscriptions()
-
-    return jsonify(result)
+# @app.route('/api/v1/local/subscriptions')
+# def youtube_subscriptions():
+#     """
+#     Returns stored (DB) subscriptions.
+#     :return: A list of dictified Channel objects
+#     """
+#     logger.info("Getting subscriptions from DB.")
+#     channels = db_session.query(Channel).filter(or_(Channel.subscribed, Channel.subscribed_override)).all()
+#     # Turn Channel objects into dicts
+#     dictified_channels = []
+#     for channel in channels:
+#         dictified_channels.append(channel.as_dict())
+#     # FIXME: Why was this - now commented - part in the *local* version?
+#     # if len(channels) < 1:
+#     #     return facilitate_getting_remote_subscriptions()
+#
+#     return jsonify(dictified_channels)
 
 
 """
@@ -99,7 +110,7 @@ def youtube_channel_remote():
 
     # Get ID of uploads playlist # FIXME: Why though?
     # TODO: store channel_id in channel, making one less extra request
-    return jsonify(channel['items'][0])  # Send full response since id is outside of snippet
+    return jsonify(channel['items'][0])  # Send full relevant response since id is outside of snippet
 
 
 """

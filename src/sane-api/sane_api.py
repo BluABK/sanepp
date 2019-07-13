@@ -11,7 +11,7 @@ from database.orm import init_db
 from database.write_operations import DBUpdateVideo
 #   YouTube
 from handlers.log_handler import create_logger
-from resources.youtube_api import youtube_api_channels_list
+from resources.youtube_api import youtube_api_channels_list, youtube_api_search
 from resources.youtube_auth import load_key
 from youtube.youtube_dl_handler import YoutubeDownload
 
@@ -96,20 +96,22 @@ def youtube_video_remote(id):
 @app.route('/api/v1/remote/channel')
 def youtube_channel_remote():
     """
-    Takes either a channel id or username and passes it as kwargs to YouTube API pass-through.
-    :return: A youtube#channel json
+    Takes either a channel <id> or <username> and passes it as kwargs to YouTube API pass-through.
+
+    :return: A youtube#channel JSON
     """
     youtube_auth = load_key()
+
     if 'id' in request.args:
         channel = youtube_api_channels_list(youtube_auth, part='contentDetails,snippet', id=request.args['id'])
+
     elif 'username' in request.args:
         channel = youtube_api_channels_list(youtube_auth, part='contentDetails,snippet',
                                             forUsername=request.args['username'])
+
     else:
         return jsonify("Error: no id or username field provided. Please specify one.")
 
-    # Get ID of uploads playlist # FIXME: Why though?
-    # TODO: store channel_id in channel, making one less extra request
     return jsonify(channel['items'][0])  # Send full relevant response since id is outside of snippet
 
 
@@ -162,7 +164,9 @@ YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleap
 @app.route('/api/v1/youtube/channels/list')
 def youtube_api_channels_list_passthrough():
     """
-    Passes on any kwargs directly to the YouTube API pass-through.
+    Passes on any kwargs directly to the YouTube API: Channels.list().
+
+    https://developers.google.com/youtube/v3/docs/channels/list
     :return:
     """
     # Get an authenticated API key object
@@ -170,6 +174,21 @@ def youtube_api_channels_list_passthrough():
 
     # Pass on kwargs and return (JSONified) result
     return jsonify(youtube_api_channels_list(youtube_auth, **request.args))
+
+
+@app.route('/api/v1/youtube/search')
+def youtube_api_channels_search_passthrough():
+    """
+    Passes on any kwargs directly to the YouTube API: Search().
+
+    https://developers.google.com/youtube/v3/docs/search/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(youtube_api_search(youtube_auth, **request.args))
 
 
 # If we're running in stand alone mode, run the application

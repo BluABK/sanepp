@@ -18,34 +18,6 @@ YT_VIDEO_URL = YOUTUBE_URL + YOUTUBE_PARM_VIDEO
 logger = create_logger(__name__)
 
 
-def get_channel_uploads_playlist_id(channel_id):
-    """
-    Get a channel's "Uploaded videos" playlist ID, given channel ID.
-    :param channel_id:
-    :return: list_uploaded_videos(channel_uploads_playlist_id, debug=debug, limit=limit)
-    """
-    # Get channel
-    channel = youtube_api_channels_list(part='contentDetails',
-                                        id=channel_id)  # FIXME: stats unnecessary?
-
-    # Get ID of uploads playlist
-    # TODO: store channel_id in channel, making one less extra request
-    return channel['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-
-
-def search_for_channel(youtube_key, query):
-    """
-    Get a channel by searching for it
-    :param youtube_key:
-    :param query:
-    :return: searchList response items
-    """
-    search_response = youtube_key.search().list(part='snippet', maxResults=50, q=query, type='channel')
-    search_response.execute()
-
-    return search_response['items']
-
-
 def get_channel_uploads(youtube_key, channel_id, videos, req_limit):
     """
     Get a channel's "Uploaded videos" playlist, given channel ID.
@@ -228,9 +200,6 @@ def list_uploaded_videos_search(youtube_key, channel_id, videos, req_limit):
 
         playlistitems_list_request = youtube_key.playlistItems().list_next(
             playlistitems_list_request, playlistitems_list_response)
-
-
-
 
 
 # FIXME: Redundant?

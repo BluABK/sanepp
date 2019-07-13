@@ -32,3 +32,18 @@ def youtube_api_channels_list(youtube_auth, **kwargs):
     response = youtube_auth.channels().list(**kwargs).execute()
 
     return response
+
+
+def youtube_api_search(youtube_auth, **kwargs):
+    """
+    Get a channel by searching for it
+    :param youtube_key:
+    :param query:
+    :return: searchList response items
+    """
+    youtube_auth = load_key()
+    response = youtube_auth.search().list(**kwargs).execute()
+    # response.execute()
+
+    # return search_response['items']
+    return response

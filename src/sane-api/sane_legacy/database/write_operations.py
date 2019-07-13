@@ -179,8 +179,8 @@ class UpdateVideosExtraInfoThreaded(threading.Thread):
         return attrs
 
 
-class UpdateVideo(threading.Thread):
-    logger = create_logger(__name__ + ".UpdateVideo")
+class DBUpdateVideo(threading.Thread):
+    logger = create_logger(__name__ + ".DBUpdateVideo")
 
     def __init__(self, video_d, update_existing=False, finished_listeners=None):
         """

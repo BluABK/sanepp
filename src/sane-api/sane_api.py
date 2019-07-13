@@ -12,7 +12,7 @@ from database.write_operations import DBUpdateVideo
 #   YouTube
 from resources.youtube_api import youtube_api_channels_list
 from resources.youtube_requests import get_stored_subscriptions, get_channel_by_id, get_channel_by_username
-from resources.update_videos import load_key
+from resources.youtube_auth import load_key
 from youtube.youtube_dl_handler import YoutubeDownload
 
 # Create the application instance

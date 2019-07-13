@@ -7,11 +7,10 @@ from exceptions.sane_aborted_operation import SaneAbortedOperation
 from static_controller_vars import LISTENER_SIGNAL_NORMAL_REFRESH, \
     LISTENER_SIGNAL_DEEP_REFRESH
 from handlers.config_handler import read_config
-from resources.youtube_auth import GenerateKeys
 from handlers.log_handler import create_logger
-from handlers.pickle_handler import load_youtube_resource_keys, save_youtube_resource_keys
 from resources.uploads_thread import GetUploadsThread
 from resources.youtube_requests import get_subscriptions, get_videos_result
+from youtube_auth import load_keys
 
 YOUTUBE_URL = "https://www.youtube.com/"
 YOUTUBE_PARM_VIDEO = "watch?v="
@@ -219,58 +218,6 @@ def refresh_uploads(progress_bar_listener=None, add_to_max=0,
                                    exceptions=exceptions)
     else:
         return sorted(videos, key=lambda video: video.date_published, reverse=True)
-
-
-def load_keys(number_of_keys):
-    youtube_keys = []
-    try:
-        youtube_keys = load_youtube_resource_keys()
-    except FileNotFoundError as file404_exc:
-        logger.info("load_youtube_resource_keys() gave 404 error. Generating new youtube key builds.",
-                    exc_info=file404_exc)
-        youtube_keys.extend(generate_keys(number_of_keys))
-        save_youtube_resource_keys(youtube_keys)
-    except ModuleNotFoundError as mod404_exc:
-        logger.info("load_youtube_resource_keys() gave ModuleNotFoundError error. Generating new youtube key builds.",
-                    exc_info=mod404_exc)
-        youtube_keys.extend(generate_keys(number_of_keys))
-        save_youtube_resource_keys(youtube_keys)
-    except Exception as exc:
-        logger.info("load_youtube_resource_keys() gave Unexpected exception error. Generating new youtube key builds.",
-                    exc_info=exc)
-        youtube_keys.extend(generate_keys(number_of_keys))
-        save_youtube_resource_keys(youtube_keys)
-
-    diff = number_of_keys - len(youtube_keys)
-    if diff > 0:
-        logger.info("Generating diff youtube key builds.")
-        youtube_keys.extend(generate_keys(diff))
-        save_youtube_resource_keys(youtube_keys)
-    return youtube_keys
-
-
-def load_key():
-    """
-    Simplified function to load a single YouTube auth key.
-    :return:
-    """
-    return load_keys(1)[0]
-
-
-def generate_keys(key_number):
-    keys = []
-    threads = []
-
-    logger.info("Starting key generation threads.")
-    for _ in range(key_number):
-        t = GenerateKeys(keys)
-        t.start()
-        threads.append(t)
-
-    logger.info("Waiting for key generation threads.")
-    for t in threads:
-        t.join()
-    return keys
 
 
 def yt_duration_to_timedeltat(time_str):

@@ -12,8 +12,7 @@ from handlers.pickle_handler import load_youtube_resource_oauth, save_youtube_re
 from cli.print_functions import remove_empty_kwargs
 from database.detached_models.video_d import VIDEO_KIND_VOD, VIDEO_KIND_LIVE, \
     VIDEO_KIND_LIVE_SCHEDULED
-from resources.update_videos import load_key
-from resources.youtube_auth import youtube_auth_oauth
+from resources.youtube_auth import youtube_auth_oauth, load_key
 
 YOUTUBE_URL = "https://www.youtube.com/"
 YOUTUBE_PARM_VIDEO = "watch?v="

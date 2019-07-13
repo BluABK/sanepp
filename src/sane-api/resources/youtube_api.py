@@ -2,7 +2,7 @@
 Passthrough kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
 """
 
-from resources.update_videos import load_key
+from resources.youtube_auth import load_key
 
 
 def remove_empty_kwargs(**kwargs):

@@ -4,8 +4,7 @@ from database.models import Channel
 from database.orm import db_session
 from handlers.config_handler import read_config
 from handlers.log_handler import create_logger
-from resources.youtube_requests import list_uploaded_videos_search, list_uploaded_videos, \
-    list_uploaded_videos_videos
+from resources.remote import search_uploaded_videos, playlistitems_list_uploaded_videos, videos_list
 
 
 class GetUploadsThread(threading.Thread):
@@ -39,18 +38,15 @@ class GetUploadsThread(threading.Thread):
         :return:
         """
         try:
-
-            # youtube = youtube_auth_keys()
-
             # self.videos = get_channel_uploads(self.youtube, channel_id)
             use_tests = read_config('Requests', 'use_tests')
 
+            # Deep search first runs Search.list(), then Videos.list() and then de-dupes and combines the results.
             if self.deep_search:
-                temp_videos = []
-                list_uploaded_videos_search(self.youtube, self.channel_id, temp_videos, self.search_pages)
-                list_uploaded_videos(self.youtube, temp_videos, self.playlist_id, self.list_pages)
-                self.merge_same_videos_in_list(temp_videos)
-                self.videos.extend(temp_videos)
+                videos = [search_uploaded_videos(self.youtube, self.channel_id, self.search_pages),
+                          playlistitems_list_uploaded_videos(self.youtube, self.playlist_id, self.list_pages)]
+                self.merge_same_videos_in_list(videos)
+                self.videos.extend(videos)
 
             elif use_tests:
                 channel = db_session.query(Channel).get(self.channel_id)
@@ -65,11 +61,12 @@ class GetUploadsThread(threading.Thread):
                         list_pages = test.test_pages
                     if test.test_miss < miss or test.test_pages > pages:
                         db_session.remove()
-                        list_uploaded_videos_search(self.youtube, self.channel_id, search_videos, self.search_pages)
+                        search_videos.append(search_uploaded_videos(self.youtube, self.channel_id, self.search_pages))
                         break
                 db_session.remove()
-                list_uploaded_videos(self.youtube, list_videos, self.playlist_id,
-                                     min(pages + extra_pages, list_pages + extra_pages))
+                list_videos.append(playlistitems_list_uploaded_videos(self.youtube, self.playlist_id,
+                                                                      min(pages + extra_pages,
+                                                                          list_pages + extra_pages)))
 
                 if len(search_videos) > 0:
                     return_videos = self.merge_two_videos_list_grab_info(list_videos, search_videos)
@@ -80,9 +77,10 @@ class GetUploadsThread(threading.Thread):
             else:
                 use_playlist_items = read_config('Debug', 'use_playlistitems')
                 if use_playlist_items:
-                    list_uploaded_videos(self.youtube, self.videos, self.playlist_id, self.list_pages)
+                    self.videos.append(playlistitems_list_uploaded_videos(self.youtube, self.playlist_id,
+                                                                          self.list_pages))
                 else:
-                    list_uploaded_videos_search(self.youtube, self.channel_id, self.videos, self.search_pages)
+                    self.videos.append(search_uploaded_videos(self.youtube, self.channel_id, self.search_pages))
 
         except Exception as e:
             # Save the exception details, but don't rethrow.
@@ -131,7 +129,7 @@ class GetUploadsThread(threading.Thread):
                 low_prio_unique_ids.append(video.video_id)
         if len(low_prio_unique_ids) > 0:
             self.logger.info("Requesting additional information for search items: {}".format(low_prio_unique_ids))
-            output_list.extend(list_uploaded_videos_videos(self.youtube, low_prio_unique_ids, 50))
+            output_list.extend(videos_list(self.youtube, low_prio_unique_ids, 50))
         return output_list
 
     @staticmethod

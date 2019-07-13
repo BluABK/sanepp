@@ -1,5 +1,10 @@
 from handlers.log_handler import create_logger
 
+YOUTUBE_URL = "https://www.youtube.com/"
+YOUTUBE_PARM_VIDEO = "watch?v="
+YOUTUBE_PARM_PLIST = "playlist?list ="
+YT_VIDEO_URL = YOUTUBE_URL + YOUTUBE_PARM_VIDEO
+
 # Create logger instance
 logger = create_logger(__name__)
 
@@ -48,7 +53,7 @@ def get_subscriptions(youtube_oauth):
     return subs
 
 
-def remote_search_uploaded_videos(youtube_key, channel_id, req_limit):
+def search_uploaded_videos(youtube_key, channel_id, req_limit):  # FIXME: Not used
     """
     Get a list of videos through the API search()
     Quota cost: 100 units / response
@@ -77,7 +82,106 @@ def remote_search_uploaded_videos(youtube_key, channel_id, req_limit):
         if search_pages >= req_limit:
             break
 
+        # Iterate through the response pages
         playlistitems_list_request = youtube_key.playlistItems().list_next(
             playlistitems_list_request, playlistitems_list_response)
+
+    return videos
+
+
+def videos_list(youtube_key, video_ids, req_limit, part='snippet', edgecase=False):  # FIXME: Not used
+    """
+    Get a list of videos by calling YouTube API Videos.list().
+    Quota cost: 2-3 units / part / request
+
+    :param part:
+    :param video_ids: a list of ids to request video from
+    :param req_limit:
+    :param youtube_key:
+    :return: [list(dict): videos]
+    """
+    # Retrieve the list of videos uploaded to the authenticated user's channel.
+    videos = []
+    search_pages = 0
+    string_video_ids = ','.join(map(str, video_ids))
+
+    playlistitems_list_request = youtube_key.videos().list(
+        maxResults=50, part=part, id=string_video_ids)
+
+    # Iterate through the result pages
+    while playlistitems_list_request:
+        search_pages += 1
+        playlistitems_list_response = playlistitems_list_request.execute()
+
+        if edgecase:
+            videos.extend(playlistitems_list_response['items'])
+        else:
+            # Grab information about each video.
+            for search_result in playlistitems_list_response['items']:
+                videos.append(search_result)
+
+        if search_pages >= req_limit:
+            break
+
+        # Iterate through the response pages
+        playlistitems_list_request = youtube_key.playlistItems().list_next(playlistitems_list_request,
+                                                                           playlistitems_list_response)
+    return videos
+
+
+def playlistitems_list_uploaded_videos(youtube_key, uploads_playlist_id, req_limit):  # FIXME: Not used
+    """
+    Get a list of videos in a playlist by calling YouTube API: PlaylistItems.list().
+
+    :param req_limit:
+    :param youtube_key:
+    :param uploads_playlist_id:
+    :return: [list(dict): videos]
+    """
+    searched_pages = 0
+    videos = []
+
+    # Retrieve the list of videos uploaded to the authenticated user's channel.
+    playlistitems_list_request = youtube_key.playlistItems().list(maxResults=50, part='snippet',
+                                                                  playlistId=uploads_playlist_id)
+    # Iterate through the result pages
+    while playlistitems_list_request:
+        searched_pages += 1
+
+        playlistitems_list_response = playlistitems_list_request.execute()
+
+        # Grab information about each video.
+        for search_result in playlistitems_list_response['items']:
+            videos.append(search_result)
+
+        if searched_pages >= req_limit:
+            break
+
+        # Iterate through the response pages
+        playlistitems_list_request = youtube_key.playlistItems().list_next(
+            playlistitems_list_request, playlistitems_list_response)
+
+    return videos
+
+
+def get_channel_uploads(youtube_key, channel_id, req_limit):  # FIXME: Not used
+    """
+    Get a channel's "Uploaded videos" playlist, given channel ID.
+
+    Calls YouTube API: Channels.list(), then passes the response onto PlaylistItems.list().
+
+    :param req_limit:   Request limit.
+    :param youtube_key:
+    :param channel_id:
+    :return: [list(dict): videos]
+    """
+    # Get channel
+    channel = youtube_key.channels().list(part='contentDetails', id=channel_id).execute()
+
+    # Get ID of uploads playlist
+    channel_uploads_playlist_id = channel['items'][0]['contentDetails']['relatedPlaylists']['uploads']
+
+    # Get playlistListResponse item of uploads playlist
+    videos = playlistitems_list_uploaded_videos(youtube_key, req_limit, channel_uploads_playlist_id)
 
     return videos

@@ -6,9 +6,6 @@ PROJECT_ROOT_PATH = os.path.join(ROOT_PATH)
 RESOURCES_PATH = os.path.join(ROOT_PATH, 'resources')
 IMG_PATH = os.path.join(ROOT_PATH, 'images')
 
-# Database
-DATABASE_PATH = os.path.join(RESOURCES_PATH, 'permanents.db')
-
 # Pickler
 PICKLE_PATH = os.path.join(RESOURCES_PATH, 'pickles')
 YOUTUBE_RESOURCE_OAUTH_PICKLE = os.path.join(PICKLE_PATH, 'youtube_oauth.pkl')

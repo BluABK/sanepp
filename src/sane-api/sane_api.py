@@ -1,14 +1,9 @@
 import datetime
 import threading
-from flask import Flask, jsonify, render_template, request, redirect
-from flask_restful import Resource, Api
-from json import dumps
+from flask import Flask, jsonify, render_template, request
+from flask_restful import Api
 
 # Sane legacy
-#   Database
-from database.orm import init_db
-from database.write_operations import DBUpdateVideo
-#   YouTube
 from handlers.log_handler import create_logger
 import remote
 from resources.youtube_auth import load_key, load_youtube_resource_oauth
@@ -242,8 +237,5 @@ def youtube_api_search():
 
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
-    # Initialize database
-    init_db()
-
     # Run API
     app.run(port="5002", debug=True)

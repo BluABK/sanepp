@@ -2,8 +2,7 @@ import ast
 import copy
 import os
 from configparser import ConfigParser, NoSectionError, NoOptionError
-from absolute_paths import CONFIG_PATH, SAMPLE_PATH, CONFIG_HOTKEYS_PATH, \
-    SAMPLE_HOTKEYS_PATH, DATABASE_PATH
+from absolute_paths import CONFIG_PATH, SAMPLE_PATH, CONFIG_HOTKEYS_PATH, SAMPLE_HOTKEYS_PATH
 
 default_parser = ConfigParser()
 default_parser.read(CONFIG_PATH)
@@ -170,9 +169,6 @@ DEFAULTS = {
         'use_socket_log': 'False',
         'log_level': '1',
         'logging_port': '19996'
-    },
-    'Database': {
-        'url': 'sqlite:///{}'.format(DATABASE_PATH)
     },
     'Authentication': {
         'oauth2_local_server_port': '8080'

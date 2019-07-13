@@ -11,7 +11,7 @@ from database.orm import init_db
 from database.write_operations import DBUpdateVideo
 #   YouTube
 from resources.youtube_api import youtube_api_channels_list
-from resources.youtube_requests import get_stored_subscriptions, get_channel_by_id, get_channel_by_username
+from resources.youtube_requests import get_stored_subscriptions
 from resources.youtube_auth import load_key
 from youtube.youtube_dl_handler import YoutubeDownload
 
@@ -29,8 +29,8 @@ API Internal
 @app.route('/')
 def home():
     """
-    This function just responds to the browser ULR
-    localhost:5000/
+    This function just responds to the browser URL
+    localhost:<port>/
 
     :return:        the rendered template 'home.html'
     """
@@ -44,7 +44,7 @@ Local: Database lookups and other internal
 
 @app.route('/api/v1/local/video')
 def youtube_video(id):
-    pass
+    pass  # FIXME: Implement
 
 
 @app.route('/api/v1/local/subscriptions')
@@ -62,26 +62,44 @@ def youtube_subscriptions():
 Remote: Requests to the YouTube API with some extra functionality added on.
 """
 
-@app.route('/subfeed')
+
+@app.route('/api/v1/remote/subfeed')
 def youtube_subfeed():
-    pass
+    """
+    !! NB: This is *NOT* the regular YouTube subscription feed !!
+
+    This function gets a list of every channel the user is subscribed to
+    and combines the "Uploaded videos" playlists of all the channel into
+    a single one.
+
+    :return: JSONified list of subscribed channels' uploaded videos.
+    """
+    pass  # FIXME: Implement
 
 
 @app.route('/video')
 def youtube_video_remote(id):
-    pass
+    pass  # FIXME: Implement
 
 
 @app.route('/api/v1/remote/channel')
 def youtube_channel_remote():
+    """
+    Takes either a channel id or username and passes it as kwargs to YouTube API pass-through.
+    :return: A youtube#channel json
+    """
+    youtube_auth = load_key()
     if 'id' in request.args:
-        result = get_channel_by_id(load_key(), request.args['id'])
+        channel = youtube_api_channels_list(youtube_auth, part='contentDetails,snippet', id=request.args['id'])
     elif 'username' in request.args:
-        result = get_channel_by_username(load_key(), request.args['username'])
+        channel = youtube_api_channels_list(youtube_auth, part='contentDetails,snippet',
+                                            forUsername=request.args['username'])
     else:
-        result = "Error: no id or username field provided. Please specify one."
+        return jsonify("Error: no id or username field provided. Please specify one.")
 
-    return jsonify(result)
+    # Get ID of uploads playlist # FIXME: Why though?
+    # TODO: store channel_id in channel, making one less extra request
+    return jsonify(channel['items'][0])  # Send full response since id is outside of snippet
 
 
 """
@@ -126,23 +144,27 @@ def youtube_download(video_id, db_update_listeners=None, youtube_dl_finished_lis
 
 
 """
-YouTube: Passthrough kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
 """
 
 
-@app.route('/api/v1/youtube/channels_list')
+@app.route('/api/v1/youtube/channels/list')
 def youtube_api_channels_list_passthrough():
-    result = youtube_api_channels_list(**request.args)
+    """
+    Passes on any kwargs directly to the YouTube API pass-through.
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
 
-    return jsonify(result)
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(youtube_api_channels_list(youtube_auth, **request.args))
 
 
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
-    debug = True
-    port = "5002"
-
     # Initialize database
     init_db()
 
-    app.run(port=port, debug=debug)
+    # Run API
+    app.run(port="5002", debug=True)

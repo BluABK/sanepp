@@ -1,7 +1,6 @@
 from googleapiclient.errors import HttpError
 from sqlalchemy import or_
 
-from youtube.authentication import youtube_auth_oauth
 from database.detached_models.video_d import VideoD, GRAB_METHOD_SEARCH, GRAB_METHOD_LIST, \
     GRAB_METHOD_VIDEOS
 from database.engine_statements import update_channel_from_remote, get_channel_by_id_stmt
@@ -13,6 +12,7 @@ from handlers.pickle_handler import load_youtube_resource_oauth, save_youtube_re
 from cli.print_functions import remove_empty_kwargs
 from database.detached_models.video_d import VIDEO_KIND_VOD, VIDEO_KIND_LIVE, \
     VIDEO_KIND_LIVE_SCHEDULED
+from resources.youtube_auth import youtube_auth_oauth
 
 YOUTUBE_URL = "https://www.youtube.com/"
 YOUTUBE_PARM_VIDEO = "watch?v="
@@ -48,7 +48,7 @@ def get_channel_by_id(youtube_key, channel_id):
     """
     # Get channel
     channel = channels_list(youtube_key, part='contentDetails,snippet',
-                            id=channel_id)  # FIXME: stats unnecessary?
+                            id=channel_id)
 
     # Get ID of uploads playlist
     # TODO: store channel_id in channel, making one less extra request
@@ -64,7 +64,7 @@ def get_channel_by_username(youtube_key, username):
     """
     # Get channel
     channel = channels_list(youtube_key, part='contentDetails,snippet',
-                            forUsername=username)  # FIXME: stats unnecessary?
+                            forUsername=username)
 
     # Get ID of uploads playlist
     # TODO: store channel_id in channel, making one less extra request

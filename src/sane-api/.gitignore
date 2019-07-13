@@ -5,5 +5,5 @@ hotkeys.ini
 hotkeys.ini.sample
 config.ini
 
-resources/
+sane_legacy/resources/
 logs/

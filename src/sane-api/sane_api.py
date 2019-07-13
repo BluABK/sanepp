@@ -1,6 +1,6 @@
 import datetime
 import threading
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request, redirect
 from flask_restful import Resource, Api
 from sqlalchemy import create_engine
 from json import dumps
@@ -10,12 +10,19 @@ from json import dumps
 from database.orm import init_db
 from database.write_operations import DBUpdateVideo
 #   YouTube
-from sane_legacy.youtube.youtube_requests import get_stored_subscriptions
+from resources.youtube_requests import get_stored_subscriptions, get_channel_by_id, get_channel_by_username
+from youtube.update_videos import load_key
 from youtube.youtube_dl_handler import YoutubeDownload
 
 # Create the application instance
 app = Flask(__name__, template_folder="templates")
 api = Api(app)
+
+API_VERSION = 'v1'
+
+"""
+API Internal
+"""
 
 
 @app.route('/')
@@ -29,22 +36,17 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/subfeed')
-def youtube_subfeed(channel_id):
+"""
+Local (database lookups and other)
+"""
+
+
+@app.route('/api/v1/local/video')
+def youtube_video(id):
     pass
 
 
-@app.route('/video')
-def youtube_video(video_id):
-    pass
-
-
-@app.route('/channel')
-def youtube_channel(channel_id):
-    pass
-
-
-@app.route('/subscriptions')
+@app.route('/api/v1/local/subscriptions')
 def youtube_subscriptions():
     """
     Returns stored (DB) subscriptions.
@@ -55,7 +57,33 @@ def youtube_subscriptions():
     return jsonify(result)
 
 
-@app.route('/download', methods=['GET', 'PUT', 'CREATE'])
+"""
+Remote (google api and other www requests)
+"""
+
+@app.route('/subfeed')
+def youtube_subfeed():
+    pass
+
+
+@app.route('/video')
+def youtube_video_remote(id):
+    pass
+
+
+@app.route('/api/v1/remote/channel')
+def youtube_channel_remote():
+    if 'id' in request.args:
+        result = get_channel_by_id(load_key(), request.args['id'])
+    elif 'username' in request.args:
+        result = get_channel_by_username(load_key(), request.args['username'])
+    else:
+        result = "Error: no id or username field provided. Please specify one."
+
+    return jsonify(result)
+
+
+@app.route('/api/v1/download', methods=['GET', 'PUT', 'CREATE'])
 def youtube_download(video_id, db_update_listeners=None, youtube_dl_finished_listener=None, wait=False):
     # Vital parts unimplemented, return error for now.
 

@@ -39,33 +39,36 @@ def home():
     return render_template('home.html')
 
 
-# FIXME: Is the legacy DB even necessary at this point?
 """
-Local: Database lookups and other internal
+Local: Internal or local operations.
 """
 
 
-# @app.route('/api/v1/local/video')
-# def youtube_video(id):
-#     pass  # FIXME: Implement
+@app.route('/api/v1/local/add_subscription')
+def add_subscription():
+    """
+    Add a YouTube subscription (Local).
+    Takes a channel ID or username as argument.
 
-# @app.route('/api/v1/local/subscriptions')
-# def youtube_subscriptions():
-#     """
-#     Returns stored (DB) subscriptions.
-#     :return: A list of dictified Channel objects
-#     """
-#     logger.info("Getting subscriptions from DB.")
-#     channels = db_session.query(Channel).filter(or_(Channel.subscribed, Channel.subscribed_override)).all()
-#     # Turn Channel objects into dicts
-#     dictified_channels = []
-#     for channel in channels:
-#         dictified_channels.append(channel.as_dict())
-#     # FIXME: Why was this - now commented - part in the *local* version?
-#     # if len(channels) < 1:
-#     #     return facilitate_getting_remote_subscriptions()
-#
-#     return jsonify(dictified_channels)
+    :return: Returns the youtube#channel resource response.
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    if 'id' in request.args:
+        channel = youtube_auth.channels().list(part='contentDetails,snippet', id=request.args['id']).execute()
+    elif 'username' in request.args:
+        channel = youtube_auth.channels().list(part='contentDetails,snippet',
+                                               forUsername=request.args['username']).execute()
+    else:
+        return jsonify("Error: no id or username field provided. Please specify one.")
+
+    channel_title = channel['items'][0]['snippet']['localized']['title']
+    channel_id = channel['items'][0]['id']
+
+    logger.info("Adding subscription (Local): {} / {}".format(channel_id, channel_title))
+
+    return jsonify(channel)
 
 
 """
@@ -119,14 +122,15 @@ def youtube_channel_remote():
 
     :return: A youtube#channel JSON
     """
+    # Get an authenticated API key object
     youtube_auth = load_key()
 
     if 'id' in request.args:
-        channel = youtube_api_channels_list(youtube_auth, part='contentDetails,snippet', id=request.args['id'])
+        channel = youtube_auth.channels().list(part='contentDetails,snippet', id=request.args['id']).execute()
 
     elif 'username' in request.args:
-        channel = youtube_api_channels_list(youtube_auth, part='contentDetails,snippet',
-                                            forUsername=request.args['username'])
+        channel = youtube_auth.channels().list(part='contentDetails,snippet',
+                                               forUsername=request.args['username']).execute()
 
     else:
         return jsonify("Error: no id or username field provided. Please specify one.")

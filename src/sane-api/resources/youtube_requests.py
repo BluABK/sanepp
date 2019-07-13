@@ -40,32 +40,6 @@ def get_channel_uploads(youtube_key, channel_id, videos, req_limit):
     return list_uploaded_videos(youtube_key, videos, req_limit, channel_uploads_playlist_id)
 
 
-def check_if_livestream(search_result):
-    """
-    Checks if a search_result is of type liveBroadcastContent.
-    :param search_result:
-    :return:
-    """
-    try:
-        if 'liveBroadcastContent' in search_result['snippet']:
-            live_str = search_result['snippet']['liveBroadcastContent']
-            if live_str == 'live':
-                logger.info("Livestream video: {}".format(search_result))
-                return VIDEO_KIND_LIVE
-            elif live_str == 'upcoming':
-                logger.info("Livestream video (scheduled): {}".format(search_result))
-                return VIDEO_KIND_LIVE_SCHEDULED
-            elif live_str != 'none':
-                # Catch future anomalies in value type
-                logger.error("liveBroadcastContent in snippet, but val is '{}' NOT 'live' or 'none'!".format(live_str))
-                logger.info(search_result)
-                return VIDEO_KIND_VOD
-    except Exception as anomaly:
-        logger.critical("Anomaly detected while checking if search_result was liveBroadcastContent", exc_info=anomaly)
-        logger.info(search_result)
-        return None
-
-
 def list_uploaded_videos(youtube_key, videos, uploads_playlist_id, req_limit):
     """
     Get a list of videos in a playlist
@@ -168,40 +142,6 @@ def get_videos_result(youtube_key, video_ids, req_limit, part='snippet'):
                                                                            playlistitems_list_response)
     return results
 
-
-def list_uploaded_videos_search(youtube_key, channel_id, videos, req_limit):
-    """
-    Get a list of videos through the API search()
-    Quota cost: 100 units / response
-    :param videos:
-    :param req_limit:
-    :param channel_id:
-    :param youtube_key:
-    :return: [list(dict): videos, dict: statistics]
-    """
-    # Retrieve the list of videos uploaded to the authenticated user's channel.
-    playlistitems_list_request = youtube_key.search().list(
-        maxResults=50, part='snippet', channelId=channel_id, order='date')
-    search_pages = 0
-    while playlistitems_list_request:
-        search_pages += 1
-        playlistitems_list_response = playlistitems_list_request.execute()
-
-        # Grab information about each video.
-        for search_result in playlistitems_list_response['items']:
-            if search_result['id']['kind'] == 'youtube#video':
-                video_kind = check_if_livestream(search_result)
-                if video_kind is not None:
-                    videos.append(VideoD(search_result, grab_methods=[GRAB_METHOD_SEARCH], kind=video_kind))
-                else:
-                    videos.append(VideoD(search_result, grab_methods=[GRAB_METHOD_SEARCH]))
-        if search_pages >= req_limit:
-            break
-
-        playlistitems_list_request = youtube_key.playlistItems().list_next(
-            playlistitems_list_request, playlistitems_list_response)
-
-
 # FIXME: Redundant?
 # def get_subscriptions(cached_subs):
 #     if cached_subs:
@@ -218,7 +158,7 @@ def add_subscription_local(youtube_auth, channel_id, by_username=False):
     :param channel_id:
     :return:
     """
-    # FIXME: Somewhat duplicate code of get_remote_subscriptions, move to own function -- START
+    # FIXME: Somewhat duplicate code of get_subscriptions, move to own function -- START
     # Get ID of uploads playlist
     # channel_uploads_playlist_id = get_channel_uploads_playlist_id(youtube_auth, channel_id)
     if by_username:
@@ -238,7 +178,7 @@ def add_subscription_local(youtube_auth, channel_id, by_username=False):
         db_session.add(channel)
 
     db_session.commit()
-    # FIXME: Somewhat duplicate code of get_remote_subscriptions, move to own function -- END
+    # FIXME: Somewhat duplicate code of get_subscriptions, move to own function -- END
 
     logger.info("Added subscription (Local/DB): {} / {}".format(channel_id, channel.title))
 

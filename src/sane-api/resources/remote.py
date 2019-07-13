@@ -1,54 +1,83 @@
-from database.engine_statements import get_channel_by_id_stmt, update_channel_from_remote
-from database.models import Channel
-from database.orm import db_session
-from database.write_operations import engine_execute_first, engine_execute, delete_sub_not_in_list
 from handlers.log_handler import create_logger
-from youtube_api import youtube_api_channels_list
 
 # Create logger instance
 logger = create_logger(__name__)
 
 
-def get_remote_subscriptions(youtube_oauth):
+def get_subscriptions(youtube_oauth):
     """
     Get a list of the authenticated user's subscriptions.
+
+    Also do a YouTube API Channels.list() for each subscription and attach the
+    <contentDetails> resource which holds the uploaded videos playlist ID.
+
     :param youtube_oauth:
     :return: [subs]
     """
+    subs = []
+
     logger.info("Getting subscriptions from remote (cached OAuth).")
+
     if youtube_oauth is None:
         logger.critical("YouTube API OAuth object was NoneType, aborting!")
-        return None
-    subscription_list_request = youtube_oauth.subscriptions().list(part='snippet', mine=True,
-                                                                   maxResults=50)
-    subs = []
+        raise ValueError("Operation Aborted: YouTube API OAuth object was NoneType!")
+    subscription_list_request = youtube_oauth.subscriptions().list(part='snippet', mine=True, maxResults=50)
+
     # Retrieve the list of subscribed channels for authenticated user's channel.
-    channel_ids = []
     while subscription_list_request:
         subscription_list_response = subscription_list_request.execute()
 
-        # Grab information about each subscription page
+        # Grab information about each subscription/page.
         for page in subscription_list_response['items']:
-            # Get channel
-            channel_response = youtube_api_channels_list(youtube_oauth, part='contentDetails',
-                                                         id=page['snippet']['resourceId']['channelId'])
+            channel_id = page['snippet']['resourceId']['channelId']
 
-            # Get ID of uploads playlist
-            channel_uploads_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-            channel = Channel(page['snippet'], channel_uploads_playlist_id)
-            db_channel = engine_execute_first(get_channel_by_id_stmt(channel))
-            if db_channel:
-                engine_execute(update_channel_from_remote(channel))
-                subs.append(channel)
-            else:
-                # TODO: change to sqlalchemy core stmt
-                create_logger(__name__ + ".subscriptions").info(
-                    "Added channel {} - {}".format(channel.title, channel.id))
-                db_session.add(channel)
-                subs.append(channel)
-            channel_ids.append(channel.id)
+            # Get channel from YouTube API: Channels.list()
+            channel_response = youtube_oauth.channels().list(part='contentDetails',
+                                                             id=channel_id).execute()
+
+            # Attach ID of uploads playlist and more for more convenient access.
+            page['contentDetails'] = channel_response['items'][0]['contentDetails']
+
+            # Append the subscription.
+            subs.append(page)
+
+        # Iterate through the response pages
         subscription_list_request = youtube_oauth.playlistItems().list_next(
             subscription_list_request, subscription_list_response)
-    delete_sub_not_in_list(channel_ids)
-    db_session.commit()
+
     return subs
+
+
+def remote_search_uploaded_videos(youtube_key, channel_id, req_limit):
+    """
+    Get a list of videos through the API search()
+    Quota cost: 100 units / response
+    :param req_limit:
+    :param channel_id:
+    :param youtube_key:
+
+    :return: [list(dict): videos]
+    """
+    search_pages = 0
+    videos = []
+
+    # Retrieve the list of videos uploaded to the user's channel.
+    playlistitems_list_request = youtube_key.search().list(
+        maxResults=50, part='snippet', channelId=channel_id, order='date')
+
+    # Iterate through the result pages
+    while playlistitems_list_request:
+        search_pages += 1
+        playlistitems_list_response = playlistitems_list_request.execute()
+
+        # Grab information about each video.
+        for search_result in playlistitems_list_response['items']:
+            if search_result['id']['kind'] == 'youtube#video':
+                    videos.append(search_result)
+        if search_pages >= req_limit:
+            break
+
+        playlistitems_list_request = youtube_key.playlistItems().list_next(
+            playlistitems_list_request, playlistitems_list_response)
+
+    return videos

@@ -2,7 +2,6 @@ import datetime
 import threading
 from flask import Flask, jsonify, render_template, request, redirect
 from flask_restful import Resource, Api
-from sqlalchemy import create_engine
 from json import dumps
 
 # Sane legacy
@@ -11,7 +10,8 @@ from database.orm import init_db
 from database.write_operations import DBUpdateVideo
 #   YouTube
 from handlers.log_handler import create_logger
-from resources.youtube_auth import load_key
+import remote
+from resources.youtube_auth import load_key, load_youtube_resource_oauth
 from youtube.youtube_dl_handler import YoutubeDownload
 
 # Create logger instance
@@ -71,6 +71,26 @@ Local: Database lookups and other internal
 """
 Remote: Requests to the YouTube API with some extra functionality added on.
 """
+
+
+@app.route('/api/v1/remote/subscriptions')
+def youtube_subscriptions():
+    """
+    Returns subscriptions from YouTube API.
+
+    :return: A list of youtube#subscription resources with <contentDetails> added on.
+    """
+    logger.info("Getting subscriptions from DB.")
+
+    # Get an authenticated OAuth2 resource (since this is authenticated user scope)
+    youtube_oauth = load_youtube_resource_oauth()
+
+    try:
+        subscriptions = remote.get_subscriptions(youtube_oauth)
+    except ValueError as exc_ve:
+        return jsonify(str(exc_ve))
+
+    return jsonify(subscriptions)
 
 
 @app.route('/api/v1/remote/subfeed')

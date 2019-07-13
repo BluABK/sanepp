@@ -1,7 +1,5 @@
 import threading
 
-from database.models import Channel
-from database.orm import db_session
 from handlers.config_handler import read_config
 from handlers.log_handler import create_logger
 from resources.remote import search_uploaded_videos, playlistitems_list_uploaded_videos, videos_list
@@ -48,31 +46,32 @@ class GetUploadsThread(threading.Thread):
                 self.merge_same_videos_in_list(videos)
                 self.videos.extend(videos)
 
-            elif use_tests:
-                channel = db_session.query(Channel).get(self.channel_id)
-                miss = read_config('Requests', 'miss_limit')
-                pages = read_config('Requests', 'test_pages')
-                extra_pages = read_config('Requests', 'extra_list_pages')
-                list_pages = 0
-                list_videos = []
-                search_videos = []
-                for test in channel.tests:
-                    if test.test_pages > list_pages:
-                        list_pages = test.test_pages
-                    if test.test_miss < miss or test.test_pages > pages:
-                        db_session.remove()
-                        search_videos.append(search_uploaded_videos(self.youtube, self.channel_id, self.search_pages))
-                        break
-                db_session.remove()
-                list_videos.append(playlistitems_list_uploaded_videos(self.youtube, self.playlist_id,
-                                                                      min(pages + extra_pages,
-                                                                          list_pages + extra_pages)))
-
-                if len(search_videos) > 0:
-                    return_videos = self.merge_two_videos_list_grab_info(list_videos, search_videos)
-                else:
-                    return_videos = list_videos
-                self.videos.extend(return_videos)
+            # FIXME: Temporarily disabled: Requires available DB to function.
+            # elif use_tests:
+            #     channel = db_session.query(Channel).get(self.channel_id)
+            #     miss = read_config('Requests', 'miss_limit')
+            #     pages = read_config('Requests', 'test_pages')
+            #     extra_pages = read_config('Requests', 'extra_list_pages')
+            #     list_pages = 0
+            #     list_videos = []
+            #     search_videos = []
+            #     for test in channel.tests:
+            #         if test.test_pages > list_pages:
+            #             list_pages = test.test_pages
+            #         if test.test_miss < miss or test.test_pages > pages:
+            #             db_session.remove()
+            #             search_videos.append(search_uploaded_videos(self.youtube, self.channel_id, self.search_pages))
+            #             break
+            #     db_session.remove()
+            #     list_videos.append(playlistitems_list_uploaded_videos(self.youtube, self.playlist_id,
+            #                                                           min(pages + extra_pages,
+            #                                                               list_pages + extra_pages)))
+            #
+            #     if len(search_videos) > 0:
+            #         return_videos = self.merge_two_videos_list_grab_info(list_videos, search_videos)
+            #     else:
+            #         return_videos = list_videos
+            #     self.videos.extend(return_videos)
 
             else:
                 use_playlist_items = read_config('Debug', 'use_playlistitems')

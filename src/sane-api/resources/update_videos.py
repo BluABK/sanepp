@@ -9,7 +9,7 @@ from static_controller_vars import LISTENER_SIGNAL_NORMAL_REFRESH, \
 from handlers.config_handler import read_config
 from handlers.log_handler import create_logger
 from resources.uploads_thread import GetUploadsThread
-from resources.youtube_requests import get_subscriptions, get_videos_result
+from resources.remote import get_subscriptions, videos_list
 from youtube_auth import load_keys
 
 YOUTUBE_URL = "https://www.youtube.com/"
@@ -264,18 +264,18 @@ def get_extra_videos_information(videos):
     chunk_size = 50
     for i in range(0, len(videos), max(chunk_size, 1)):
         response_videos.extend(
-            get_videos_result(youtube_keys[0], video_ids[i:i + chunk_size], 30, part="contentDetails"))
+            videos_list(youtube_keys[0], video_ids[i:i + chunk_size],
+                        30, part="contentDetails", extra_videos_info=True))
     for response in response_videos:
         for video in videos:
             if str(response['id']) == video.video_id:
-                # logger.info("video (response): {} - {}".format(video.channel_title, video.title))
-                # logger.info(response)
                 duration = yt_duration_to_timedeltat(response['contentDetails']['duration'])
                 video.duration = duration
                 video.has_caption = boolify_string(response['contentDetails']['caption'])
                 video.dimension = response['contentDetails']['dimension']
                 video.definition = response['contentDetails']['definition']
                 video.projection = response['contentDetails']['projection']
+
                 # regionRestriction and its sub-items seems to only exist if explicitly set
                 if 'regionRestriction' in response['contentDetails']:
                     if 'allowed' in response['contentDetails']['regionRestriction']:

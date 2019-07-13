@@ -89,16 +89,17 @@ def search_uploaded_videos(youtube_key, channel_id, req_limit):  # FIXME: Not us
     return videos
 
 
-def videos_list(youtube_key, video_ids, req_limit, part='snippet', edgecase=False):  # FIXME: Not used
+def videos_list(youtube_key, video_ids, req_limit, part='snippet', extra_videos_info=False):  # FIXME: Not used
     """
     Get a list of videos by calling YouTube API Videos.list().
     Quota cost: 2-3 units / part / request
 
+    :param extra_videos_info: Edge-case: Only True if called by get_extra_videos_information (see its docstring)
     :param part:
-    :param video_ids: a list of ids to request video from
+    :param video_ids:         A list of ids to request video from
     :param req_limit:
     :param youtube_key:
-    :return: [list(dict): videos]
+    :return:                  [list(dict): videos]
     """
     # Retrieve the list of videos uploaded to the authenticated user's channel.
     videos = []
@@ -113,7 +114,7 @@ def videos_list(youtube_key, video_ids, req_limit, part='snippet', edgecase=Fals
         search_pages += 1
         playlistitems_list_response = playlistitems_list_request.execute()
 
-        if edgecase:
+        if extra_videos_info:
             videos.extend(playlistitems_list_response['items'])
         else:
             # Grab information about each video.

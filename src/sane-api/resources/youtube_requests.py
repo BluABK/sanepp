@@ -7,7 +7,7 @@ from database.write_operations import engine_execute_first, engine_execute
 from handlers.log_handler import create_logger
 from database.detached_models.video_d import VIDEO_KIND_VOD, VIDEO_KIND_LIVE, \
     VIDEO_KIND_LIVE_SCHEDULED
-from youtube_api import youtube_api_channels_list
+from sane_api import youtube_api_channels_list
 
 YOUTUBE_URL = "https://www.youtube.com/"
 YOUTUBE_PARM_VIDEO = "watch?v="

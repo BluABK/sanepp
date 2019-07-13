@@ -11,7 +11,6 @@ from database.orm import init_db
 from database.write_operations import DBUpdateVideo
 #   YouTube
 from handlers.log_handler import create_logger
-from resources.youtube_api import youtube_api_channels_list, youtube_api_search
 from resources.youtube_auth import load_key
 from youtube.youtube_dl_handler import YoutubeDownload
 
@@ -161,10 +160,27 @@ YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleap
 """
 
 
+def remove_empty_kwargs(**kwargs):
+    """
+    Remove keyword arguments that are not set.
+    :param kwargs:
+    :return:
+    """
+    good_kwargs = {}
+    if kwargs is not None:
+        for key, value in kwargs.items():
+            if value:
+                good_kwargs[key] = value
+
+    return good_kwargs
+
+
 @app.route('/api/v1/youtube/channels/list')
-def youtube_api_channels_list_passthrough():
+def youtube_api_channels_list():
     """
     Passes on any kwargs directly to the YouTube API: Channels.list().
+
+    :return: youtube#channelListResponse JSON
 
     https://developers.google.com/youtube/v3/docs/channels/list
     :return:
@@ -172,12 +188,17 @@ def youtube_api_channels_list_passthrough():
     # Get an authenticated API key object
     youtube_auth = load_key()
 
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.channels().list(**kwargs).execute()
+
     # Pass on kwargs and return (JSONified) result
-    return jsonify(youtube_api_channels_list(youtube_auth, **request.args))
+    return jsonify(response)
 
 
 @app.route('/api/v1/youtube/search')
-def youtube_api_channels_search_passthrough():
+def youtube_api_search():
     """
     Passes on any kwargs directly to the YouTube API: Search().
 
@@ -187,8 +208,12 @@ def youtube_api_channels_search_passthrough():
     # Get an authenticated API key object
     youtube_auth = load_key()
 
-    # Pass on kwargs and return (JSONified) result
-    return jsonify(youtube_api_search(youtube_auth, **request.args))
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.search().list(**kwargs).execute()
+
+    return jsonify(response)
 
 
 # If we're running in stand alone mode, run the application

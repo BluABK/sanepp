@@ -2,18 +2,18 @@ import datetime
 import threading
 from sqlalchemy import desc, asc
 
-from sane_yt_subfeed.handlers.config_handler import read_config
-from sane_yt_subfeed.controller.listeners.database.database_listener import DatabaseListener
-from sane_yt_subfeed.controller.static_controller_vars import LISTENER_SIGNAL_NORMAL_REFRESH, \
+from handlers.config_handler import read_config
+from listeners.database.database_listener import DatabaseListener
+from static_controller_vars import LISTENER_SIGNAL_NORMAL_REFRESH, \
     LISTENER_SIGNAL_DEEP_REFRESH
-from sane_yt_subfeed.database.engine_statements import get_video_by_vidd_stmt, get_video_by_id_stmt
-from sane_yt_subfeed.database.orm import db_session, engine
-from sane_yt_subfeed.database.video import Video
-from sane_yt_subfeed.database.write_operations import UpdateVideosThread, UpdateVideosExtraInfoThreaded
-from sane_yt_subfeed.exceptions.sane_aborted_operation import SaneAbortedOperation
-from sane_yt_subfeed.handlers.log_handler import create_logger
-from sane_yt_subfeed.youtube.thumbnail_handler import download_thumbnails_threaded
-from sane_yt_subfeed.youtube.update_videos import refresh_uploads, get_extra_videos_information
+from database.engine_statements import get_video_by_vidd_stmt, get_video_by_id_stmt
+from database.orm import db_session, engine
+from database.video import Video
+from database.write_operations import UpdateVideosThread, UpdateVideosExtraInfoThreaded
+from exceptions.sane_aborted_operation import SaneAbortedOperation
+from handlers.log_handler import create_logger
+from youtube.thumbnail_handler import download_thumbnails_threaded
+from youtube.update_videos import refresh_uploads, get_extra_videos_information
 
 logger = create_logger(__name__)
 

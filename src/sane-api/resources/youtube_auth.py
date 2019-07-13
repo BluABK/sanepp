@@ -1,6 +1,8 @@
-import apiclient
 import httplib2
 import json
+import threading
+
+import apiclient
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from oauthlib.oauth2 import MissingCodeError
@@ -16,6 +18,16 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
 
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
+
+
+class GenerateKeys(threading.Thread):
+
+    def __init__(self, keys):
+        threading.Thread.__init__(self)
+        self.keys = keys
+
+    def run(self):
+        self.keys.append(youtube_auth_keys())
 
 
 def get_api_key():

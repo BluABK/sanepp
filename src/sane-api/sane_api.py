@@ -10,8 +10,9 @@ from json import dumps
 from database.orm import init_db
 from database.write_operations import DBUpdateVideo
 #   YouTube
+from resources.youtube_api import youtube_api_channels_list
 from resources.youtube_requests import get_stored_subscriptions, get_channel_by_id, get_channel_by_username
-from youtube.update_videos import load_key
+from resources.update_videos import load_key
 from youtube.youtube_dl_handler import YoutubeDownload
 
 # Create the application instance
@@ -37,7 +38,7 @@ def home():
 
 
 """
-Local (database lookups and other)
+Local: Database lookups and other internal
 """
 
 
@@ -58,7 +59,7 @@ def youtube_subscriptions():
 
 
 """
-Remote (google api and other www requests)
+Remote: Requests to the YouTube API with some extra functionality added on.
 """
 
 @app.route('/subfeed')
@@ -81,6 +82,11 @@ def youtube_channel_remote():
         result = "Error: no id or username field provided. Please specify one."
 
     return jsonify(result)
+
+
+"""
+# FIXME: find a name/category for youtube-dl. 
+"""
 
 
 @app.route('/api/v1/download', methods=['GET', 'PUT', 'CREATE'])
@@ -117,6 +123,18 @@ def youtube_download(video_id, db_update_listeners=None, youtube_dl_finished_lis
 
     # return the signal
     return download_progress_signal
+
+
+"""
+YouTube: Passthrough kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+"""
+
+
+@app.route('/api/v1/youtube/channels_list')
+def youtube_api_channels_list_passthrough():
+    result = youtube_api_channels_list(**request.args)
+
+    return jsonify(result)
 
 
 # If we're running in stand alone mode, run the application

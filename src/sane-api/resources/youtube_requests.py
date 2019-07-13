@@ -12,6 +12,7 @@ from handlers.pickle_handler import load_youtube_resource_oauth, save_youtube_re
 from cli.print_functions import remove_empty_kwargs
 from database.detached_models.video_d import VIDEO_KIND_VOD, VIDEO_KIND_LIVE, \
     VIDEO_KIND_LIVE_SCHEDULED
+from resources.update_videos import load_key
 from resources.youtube_auth import youtube_auth_oauth
 
 YOUTUBE_URL = "https://www.youtube.com/"
@@ -39,13 +40,14 @@ def get_channel_uploads_playlist_id(youtube_key, channel_id):
     return channel['items'][0]['contentDetails']['relatedPlaylists']['uploads']
 
 
-def get_channel_by_id(youtube_key, channel_id):
+def get_channel_by_id(channel_id):
     """
     Get a channel response, given its ID.
-    :param youtube_key:
     :param channel_id:
     :return: A channelList response
     """
+    youtube_key = load_key()
+
     # Get channel
     channel = channels_list(youtube_key, part='contentDetails,snippet',
                             id=channel_id)

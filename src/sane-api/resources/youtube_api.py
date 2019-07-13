@@ -1,5 +1,5 @@
 """
-Passthrough kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
 """
 
 from resources.youtube_auth import load_key
@@ -20,15 +20,15 @@ def remove_empty_kwargs(**kwargs):
     return good_kwargs
 
 
-def youtube_api_channels_list(**kwargs):
+def youtube_api_channels_list(youtube_auth, **kwargs):
     """
     Get a youtube#channelListResponse,
+    :param youtube_auth: Authenticated API key or OAuth2 token
     :param kwargs:
     :return: youtube#channelListResponse
     """
-    youtube_key = load_key()
     kwargs = remove_empty_kwargs(**kwargs)
 
-    response = youtube_key.channels().list(**kwargs).execute()
+    response = youtube_auth.channels().list(**kwargs).execute()
 
     return response

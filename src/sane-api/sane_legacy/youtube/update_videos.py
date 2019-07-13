@@ -249,6 +249,14 @@ def load_keys(number_of_keys):
     return youtube_keys
 
 
+def load_key():
+    """
+    Simplified function to load a single YouTube auth key.
+    :return:
+    """
+    return load_keys(1)[0]
+
+
 def generate_keys(key_number):
     keys = []
     threads = []

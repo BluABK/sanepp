@@ -5,5 +5,19 @@ hotkeys.ini
 hotkeys.ini.sample
 config.ini
 
-sane_legacy/resources/
-logs/
+# Pickles
+sane_legacy/resources/pickles/youtube_auth_keys.pkl
+sane_legacy/resources/pickles/youtube_oauth.pkl
+
+# Thumbs
+sane_legacy/resources/thumbnails/*.png
+sane_legacy/resources/thumbnails/*.jpg
+
+# Auth
+sane_legacy/resources/client_secret.json
+sane_legacy/resources/keys.json
+
+# DB
+sane_legacy/resources/permanents.db
+
+sane_legacy/logs/.txt

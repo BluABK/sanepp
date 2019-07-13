@@ -1,17 +1,12 @@
-from googleapiclient.errors import HttpError
-from sqlalchemy import or_
-
 from database.detached_models.video_d import VideoD, GRAB_METHOD_SEARCH, GRAB_METHOD_LIST, \
     GRAB_METHOD_VIDEOS
 from database.engine_statements import update_channel_from_remote, get_channel_by_id_stmt
 from database.models import Channel
 from database.orm import db_session
-from database.write_operations import engine_execute_first, engine_execute, delete_sub_not_in_list
+from database.write_operations import engine_execute_first, engine_execute
 from handlers.log_handler import create_logger
-from handlers.pickle_handler import load_youtube_resource_oauth, save_youtube_resource_oauth
 from database.detached_models.video_d import VIDEO_KIND_VOD, VIDEO_KIND_LIVE, \
     VIDEO_KIND_LIVE_SCHEDULED
-from resources.youtube_auth import youtube_auth_oauth
 from youtube_api import youtube_api_channels_list
 
 YOUTUBE_URL = "https://www.youtube.com/"
@@ -26,7 +21,6 @@ logger = create_logger(__name__)
 def get_channel_uploads_playlist_id(channel_id):
     """
     Get a channel's "Uploaded videos" playlist ID, given channel ID.
-    :param youtube_key:
     :param channel_id:
     :return: list_uploaded_videos(channel_uploads_playlist_id, debug=debug, limit=limit)
     """
@@ -236,157 +230,15 @@ def list_uploaded_videos_search(youtube_key, channel_id, videos, req_limit):
             playlistitems_list_request, playlistitems_list_response)
 
 
-def get_remote_subscriptions(youtube_oauth):
-    """
-    Get a list of the authenticated user's subscriptions.
-    :param youtube_oauth:
-    :return: [subs]
-    """
-    if youtube_oauth is None:
-        logger.critical("YouTube API OAuth object was NoneType, aborting!")
-        return None
-    subscription_list_request = youtube_oauth.subscriptions().list(part='snippet', mine=True,
-                                                                   maxResults=50)
-    subs = []
-    # Retrieve the list of subscribed channels for authenticated user's channel.
-    channel_ids = []
-    while subscription_list_request:
-        subscription_list_response = subscription_list_request.execute()
-
-        # Grab information about each subscription page
-        for page in subscription_list_response['items']:
-            # Get channel
-            channel_response = youtube_api_channels_list(youtube_oauth, part='contentDetails',
-                                             id=page['snippet']['resourceId']['channelId'])
-
-            # Get ID of uploads playlist
-            channel_uploads_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-            channel = Channel(page['snippet'], channel_uploads_playlist_id)
-            db_channel = engine_execute_first(get_channel_by_id_stmt(channel))
-            if db_channel:
-                engine_execute(update_channel_from_remote(channel))
-                subs.append(channel)
-            else:
-                # TODO: change to sqlalchemy core stmt
-                create_logger(__name__ + ".subscriptions").info(
-                    "Added channel {} - {}".format(channel.title, channel.id))
-                db_session.add(channel)
-                subs.append(channel)
-            channel_ids.append(channel.id)
-        subscription_list_request = youtube_oauth.playlistItems().list_next(
-            subscription_list_request, subscription_list_response)
-    delete_sub_not_in_list(channel_ids)
-    db_session.commit()
-    return subs
 
 
-def get_subscriptions(cached_subs):
-    if cached_subs:
-        return get_stored_subscriptions()
-    else:
-        return get_remote_subscriptions_cached_oauth()
 
-
-def get_stored_subscriptions():
-    """
-    Returns subscriptions as a list of Channel objects.
-    :return:
-    """
-    logger.info("Getting subscriptions from DB.")
-    channels = db_session.query(Channel).filter(or_(Channel.subscribed, Channel.subscribed_override)).all()
-    # Turn Channel objects into dicts
-    dictified_channels = []
-    for channel in channels:
-        dictified_channels.append(channel.as_dict())
-    # if len(channels) < 1:
-    #     return get_remote_subscriptions_cached_oauth()
-    return dictified_channels
-
-
-def get_remote_subscriptions_cached_oauth():
-    logger.info("Getting subscriptions from remote (cached OAuth).")
-    try:
-        youtube_oauth = load_youtube_resource_oauth()
-        temp_subscriptions = get_remote_subscriptions(youtube_oauth)
-    except FileNotFoundError as file404_exc:
-        logger.warning("Loading of cached OAuth: File not found. Requesting new OAuth from user.", exc_info=file404_exc)
-        youtube_oauth = youtube_auth_oauth()
-        if youtube_oauth is None:
-            logger.critical("Failed to authenticate YouTube API OAuth2!")
-            return None
-        save_youtube_resource_oauth(youtube_oauth)
-        temp_subscriptions = get_remote_subscriptions(youtube_oauth)
-    except ModuleNotFoundError as mod404_exc:
-        logger.warning("Loading of cached OAuth: Module not found. Requesting new OAuth from user.",
-                       exc_info=mod404_exc)
-        youtube_oauth = youtube_auth_oauth()
-        if youtube_oauth is None:
-            logger.critical("Failed to authenticate YouTube API OAuth2!")
-            return None
-        save_youtube_resource_oauth(youtube_oauth)
-        temp_subscriptions = get_remote_subscriptions(youtube_oauth)
-    except Exception as exc:
-        logger.warning("Loading of cached OAuth: Unexpected exception. Requesting new OAuth from user.", exc_info=exc)
-        youtube_oauth = youtube_auth_oauth()
-        if youtube_oauth is None:
-            logger.critical("Failed to authenticate YouTube API OAuth2!")
-            return None
-        save_youtube_resource_oauth(youtube_oauth)
-        temp_subscriptions = get_remote_subscriptions(youtube_oauth)
-    return temp_subscriptions
-
-
-def add_subscription_remote(channel_id):
-    """
-    Add a YouTube subscription (On YouTube).
-
-    DEPRECATED: Google doesn't let you, see supported op table https://developers.google.com/youtube/v3/getting-started
-    :param channel_id:
-    :return: returns response or raises exception
-    """
-    youtube_oauth = load_youtube_resource_oauth()
-    response = youtube_oauth.subscriptions().insert(
-        part='snippet',
-        body=dict(
-            snippet=dict(
-                resourceId=dict(
-                    channelId=channel_id
-                )
-            )
-        )
-    )
-    try:
-        response.execute()
-    except HttpError as exc_http:
-        _msg = "Failed adding subscription to '{}', HTTP Error {}".format(channel_id, exc_http.resp.status)
-        logger.error("{}: {}".format(_msg, exc_http.content), exc_info=exc_http)
-        raise exc_http
-
-    except Exception as exc:
-        _msg = "Unhandled exception occurred when adding subscription to '{}'".format(channel_id)
-        logger.critical("{} | response={}".format(_msg, response.__dict__), exc_info=exc)
-        raise exc
-
-    # FIXME: Somewhat duplicate code of get_remote_subscriptions, move to own function -- START
-    # Get ID of uploads playlist
-    channel_uploads_playlist_id = response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-    channel = Channel(channel_id, channel_uploads_playlist_id)
-    db_channel = engine_execute_first(get_channel_by_id_stmt(channel))
-    if db_channel:
-        engine_execute(update_channel_from_remote(channel))
-        # subs.append(channel)
-    else:
-        # TODO: change to sqlalchemy core stmt
-        create_logger(__name__ + ".subscriptions").info(
-            "Added channel {} - {}".format(channel.title, channel.id))
-        db_session.add(channel)
-        # subs.append(channel)
-
-    db_session.commit()
-    # FIXME: Somewhat duplicate code of get_remote_subscriptions, move to own function -- END
-
-    logger.info("Added subscription: {} / {}".format(channel_id, response['snippet']['title']))
-    return response
+# FIXME: Redundant?
+# def get_subscriptions(cached_subs):
+#     if cached_subs:
+#         return get_stored_subscriptions()
+#     else:
+#         return facilitate_getting_remote_subscriptions()
 
 
 def add_subscription_local(youtube_auth, channel_id, by_username=False):

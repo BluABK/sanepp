@@ -1,4 +1,4 @@
-from handlers.log_handler import create_logger
+from sane_legacy.handlers.log_handler import create_logger
 
 YOUTUBE_URL = "https://www.youtube.com/"
 YOUTUBE_PARM_VIDEO = "watch?v="

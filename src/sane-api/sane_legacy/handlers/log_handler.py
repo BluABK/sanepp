@@ -5,8 +5,8 @@ import logging
 import os
 from logging.handlers import SocketHandler
 
-from absolute_paths import LOG_DIR
-from handlers.config_handler import read_config
+from sane_legacy.absolute_paths import LOG_DIR
+from sane_legacy.handlers.config_handler import read_config
 
 LOG_FILE_HANDLER = None
 LOG_FILE = 'debug.log'

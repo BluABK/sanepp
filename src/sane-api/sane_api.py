@@ -4,10 +4,10 @@ from flask import Flask, jsonify, render_template, request
 from flask_restful import Api
 
 # Sane legacy
-from handlers.log_handler import create_logger
-import remote
+from sane_legacy.handlers.log_handler import create_logger
+from resources import remote
 from resources.youtube_auth import load_key, load_youtube_resource_oauth
-from youtube.youtube_dl_handler import YoutubeDownload
+from sane_legacy.youtube.youtube_dl_handler import YoutubeDownload
 
 # Create logger instance
 logger = create_logger(__name__)

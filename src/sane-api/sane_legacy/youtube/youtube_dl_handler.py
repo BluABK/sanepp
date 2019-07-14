@@ -4,8 +4,8 @@ import datetime
 import os
 import threading
 
-from handlers.config_handler import read_config, get_options, get_valid_options
-from handlers.log_handler import create_logger
+from sane_legacy.handlers.config_handler import read_config, get_options, get_valid_options
+from sane_legacy.handlers.log_handler import create_logger
 
 logger = create_logger(__name__)
 try:

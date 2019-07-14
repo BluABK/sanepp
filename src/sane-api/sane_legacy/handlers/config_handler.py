@@ -2,7 +2,7 @@ import ast
 import copy
 import os
 from configparser import ConfigParser, NoSectionError, NoOptionError
-from absolute_paths import CONFIG_PATH, SAMPLE_PATH, CONFIG_HOTKEYS_PATH, SAMPLE_HOTKEYS_PATH
+from sane_legacy.absolute_paths import CONFIG_PATH, SAMPLE_PATH, CONFIG_HOTKEYS_PATH, SAMPLE_HOTKEYS_PATH
 
 default_parser = ConfigParser()
 default_parser.read(CONFIG_PATH)

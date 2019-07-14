@@ -10,10 +10,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from oauthlib.oauth2 import MissingCodeError
 
-from absolute_paths import KEYS_FILE, CLIENT_SECRET_FILE, YOUTUBE_RESOURCE_OAUTH_PICKLE, YOUTUBE_RESOURCE_KEYS_PICKLE
-from handlers.config_handler import read_config
-from handlers.log_handler import create_logger
-from settings import mutable_settings
+from sane_legacy.absolute_paths import KEYS_FILE, CLIENT_SECRET_FILE, YOUTUBE_RESOURCE_OAUTH_PICKLE, \
+    YOUTUBE_RESOURCE_KEYS_PICKLE
+from sane_legacy.handlers.config_handler import read_config
+from sane_legacy.handlers.log_handler import create_logger
+from sane_legacy.settings import mutable_settings
 
 logger = create_logger(__name__)
 

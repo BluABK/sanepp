@@ -138,6 +138,7 @@ def youtube_channel_remote():
 """
 
 
+# noinspection PyUnreachableCode
 @app.route('/api/v1/download', methods=['GET', 'PUT', 'CREATE'])
 def youtube_download(video_id, db_update_listeners=None, youtube_dl_finished_listener=None, wait=False):
     # Vital parts unimplemented, return error for now.
@@ -176,6 +177,9 @@ def youtube_download(video_id, db_update_listeners=None, youtube_dl_finished_lis
 
 """
 YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+
+Functions that are not actually supported on their end won't be implemented, see:
+https://developers.google.com/youtube/v3/getting-started#supported-operations
 """
 
 
@@ -192,6 +196,178 @@ def remove_empty_kwargs(**kwargs):
                 good_kwargs[key] = value
 
     return good_kwargs
+
+
+""" Activities """
+
+
+@app.route('/api/v1/youtube/activities/list')
+def youtube_api_activities_list():
+    """
+    Passes on any kwargs directly to the YouTube API: activities.list().
+
+    https://developers.google.com/youtube/v3/docs/activities/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.activities().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/activities/insert')
+def youtube_api_activities_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: activities.insert().
+
+    https://developers.google.com/youtube/v3/docs/activities/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.activities().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Captions """
+
+
+@app.route('/api/v1/youtube/captions/list')
+def youtube_api_captions_list():
+    """
+    Passes on any kwargs directly to the YouTube API: captions.list().
+
+    https://developers.google.com/youtube/v3/docs/captions/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.captions().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/captions/insert')
+def youtube_api_captions_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: captions.insert().
+
+    https://developers.google.com/youtube/v3/docs/captions/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.captions().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/captions/update')
+def youtube_api_captions_update():
+    """
+    Passes on any kwargs directly to the YouTube API: captions.update().
+
+    https://developers.google.com/youtube/v3/docs/captions/update
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.captions().update(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/captions/download')
+def youtube_api_captions_download():
+    """
+    Passes on any kwargs directly to the YouTube API: captions.download().
+
+    https://developers.google.com/youtube/v3/docs/captions/download
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.captions().download(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/captions/delete')
+def youtube_api_captions_delete():
+    """
+    Passes on any kwargs directly to the YouTube API: captions.delete().
+
+    https://developers.google.com/youtube/v3/docs/captions/delete
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.captions().delete(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" ChannelBanners """
+
+
+@app.route('/api/v1/youtube/channelBanners/insert')
+def youtube_api_channel_banners_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: channelBanners.insert().
+
+    https://developers.google.com/youtube/v3/docs/channelBanners/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.channelBanners().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Channels """
 
 
 @app.route('/api/v1/youtube/channels/list')
@@ -216,6 +392,513 @@ def youtube_api_channels_list():
     return jsonify(response)
 
 
+""" ChannelSections """
+
+
+@app.route('/api/v1/youtube/channelSection/list')
+def youtube_api_channel_section_list():
+    """
+    Passes on any kwargs directly to the YouTube API: channelSection.list().
+
+    https://developers.google.com/youtube/v3/docs/channelSection/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.channelSection().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/channelSection/insert')
+def youtube_api_channel_section_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: channelSection.insert().
+
+    https://developers.google.com/youtube/v3/docs/channelSection/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.channelSection().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/channelSection/update')
+def youtube_api_channel_section_update():
+    """
+    Passes on any kwargs directly to the YouTube API: channelSection.update().
+
+    https://developers.google.com/youtube/v3/docs/channelSection/update
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.channelSection().update(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/channelSection/delete')
+def youtube_api_channel_section_delete():
+    """
+    Passes on any kwargs directly to the YouTube API: channelSection.delete().
+
+    https://developers.google.com/youtube/v3/docs/channelSection/delete
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.channelSection().delete(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Comments """
+
+
+@app.route('/api/v1/youtube/comment/list')
+def youtube_api_comment_list():
+    """
+    Passes on any kwargs directly to the YouTube API: comment.list().
+
+    https://developers.google.com/youtube/v3/docs/comment/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.comment().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/comment/insert')
+def youtube_api_comment_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: comment.insert().
+
+    https://developers.google.com/youtube/v3/docs/comment/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.comment().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/comment/update')
+def youtube_api_comment_update():
+    """
+    Passes on any kwargs directly to the YouTube API: comment.update().
+
+    https://developers.google.com/youtube/v3/docs/comment/update
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.comment().update(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/comment/markAsSpam')
+def youtube_api_comment_mark_as_spam():
+    """
+    Passes on any kwargs directly to the YouTube API: comment.markAsSpam().
+
+    https://developers.google.com/youtube/v3/docs/comment/markAsSpam
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.comment().markAsSpam(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/comment/setModerationStatus')
+def youtube_api_comment_set_moderation_status():
+    """
+    Passes on any kwargs directly to the YouTube API: comment.setModerationStatus().
+
+    https://developers.google.com/youtube/v3/docs/comment/setModerationStatus
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.comment().setModerationStatus(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/comment/delete')
+def youtube_api_comment_delete():
+    """
+    Passes on any kwargs directly to the YouTube API: comment.delete().
+
+    https://developers.google.com/youtube/v3/docs/comment/delete
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.comment().delete(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" CommentThreads """
+
+
+@app.route('/api/v1/youtube/commentThread/list')
+def youtube_api_comment_thread_list():
+    """
+    Passes on any kwargs directly to the YouTube API: commentThread.list().
+
+    https://developers.google.com/youtube/v3/docs/commentThread/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.commentThread().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/commentThread/insert')
+def youtube_api_comment_thread_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: commentThread.insert().
+
+    https://developers.google.com/youtube/v3/docs/commentThread/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.commentThread().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/commentThread/update')
+def youtube_api_comment_thread_update():
+    """
+    Passes on any kwargs directly to the YouTube API: commentThread.update().
+
+    https://developers.google.com/youtube/v3/docs/commentThread/update
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.commentThread().update(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" GuideCategories """
+
+
+@app.route('/api/v1/youtube/guideCategories/list')
+def youtube_api_guide_categories_list():
+    """
+    Passes on any kwargs directly to the YouTube API: guideCategories.list().
+
+    https://developers.google.com/youtube/v3/docs/guideCategories/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.guideCategories().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" i18nLanguages """
+
+
+@app.route('/api/v1/youtube/i18nLanguages/list')
+def youtube_api_i18n_languages_list():
+    """
+    Passes on any kwargs directly to the YouTube API: i18nLanguages.list().
+
+    https://developers.google.com/youtube/v3/docs/i18nLanguages/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.i18nLanguages().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" i18nRegions """
+
+
+@app.route('/api/v1/youtube/i18nRegions/list')
+def youtube_api_i18n_regions_list():
+    """
+    Passes on any kwargs directly to the YouTube API: i18nRegions.list().
+
+    https://developers.google.com/youtube/v3/docs/i18nRegions/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.i18nRegions().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" PlaylistItems """
+
+
+@app.route('/api/v1/youtube/playlistItems/list')
+def youtube_api_playlist_items_list():
+    """
+    Passes on any kwargs directly to the YouTube API: playlistItems.list().
+
+    https://developers.google.com/youtube/v3/docs/playlistItems/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlistItems().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/playlistItems/insert')
+def youtube_api_playlist_items_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: playlistItems.insert().
+
+    https://developers.google.com/youtube/v3/docs/playlistItems/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlistItems().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/playlistItems/update')
+def youtube_api_playlist_items_update():
+    """
+    Passes on any kwargs directly to the YouTube API: playlistItems.update().
+
+    https://developers.google.com/youtube/v3/docs/playlistItems/update
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlistItems().update(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/playlistItems/delete')
+def youtube_api_playlist_items_delete():
+    """
+    Passes on any kwargs directly to the YouTube API: playlistItems.delete().
+
+    https://developers.google.com/youtube/v3/docs/playlistItems/delete
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlistItems().delete(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Playlists """
+
+
+@app.route('/api/v1/youtube/playlists/list')
+def youtube_api_playlists_list():
+    """
+    Passes on any kwargs directly to the YouTube API: playlists.list().
+
+    https://developers.google.com/youtube/v3/docs/playlists/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlists().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/playlists/insert')
+def youtube_api_playlists_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: playlists.insert().
+
+    https://developers.google.com/youtube/v3/docs/playlists/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlists().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/playlists/update')
+def youtube_api_playlists_update():
+    """
+    Passes on any kwargs directly to the YouTube API: playlists.update().
+
+    https://developers.google.com/youtube/v3/docs/playlists/update
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlists().update(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/playlists/delete')
+def youtube_api_playlists_delete():
+    """
+    Passes on any kwargs directly to the YouTube API: playlists.delete().
+
+    https://developers.google.com/youtube/v3/docs/playlists/delete
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.playlists().delete(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Search """
+
+
 @app.route('/api/v1/youtube/search')
 def youtube_api_search():
     """
@@ -232,6 +915,284 @@ def youtube_api_search():
 
     response = youtube_auth.search().list(**kwargs).execute()
 
+    return jsonify(response)
+
+
+""" Subscriptions """
+
+
+@app.route('/api/v1/youtube/subscriptions/list')
+def youtube_api_subscriptions_list():
+    """
+    Passes on any kwargs directly to the YouTube API: subscriptions.list().
+
+    https://developers.google.com/youtube/v3/docs/subscriptions/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.subscriptions().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Thumbnails """
+
+
+@app.route('/api/v1/youtube/thumbnails/set')
+def youtube_api_thumbnails_set():
+    """
+    Passes on any kwargs directly to the YouTube API: thumbnails.set().
+
+    https://developers.google.com/youtube/v3/docs/thumbnails/set
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.thumbnails().set(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" VideoAbuseReportReasons """
+
+
+@app.route('/api/v1/youtube/videoAbuseReportReasons/list')
+def youtube_api_video_abuse_report_reasons_list():
+    """
+    Passes on any kwargs directly to the YouTube API: videoAbuseReportReasons.list().
+
+    https://developers.google.com/youtube/v3/docs/videoAbuseReportReasons/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videoAbuseReportReasons().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" VideoCategories """
+
+
+@app.route('/api/v1/youtube/videoCategories/list')
+def youtube_api_video_categories_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: videoCategories.list().
+
+    https://developers.google.com/youtube/v3/docs/videoCategories/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videoCategories().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Videos """
+
+
+@app.route('/api/v1/youtube/videos/list')
+def youtube_api_videos_list():
+    """
+    Passes on any kwargs directly to the YouTube API: videos.list().
+
+    https://developers.google.com/youtube/v3/docs/videos/list
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videos().list(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/videos/insert')
+def youtube_api_videos_insert():
+    """
+    Passes on any kwargs directly to the YouTube API: videos.insert().
+
+    https://developers.google.com/youtube/v3/docs/videos/insert
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videos().insert(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/videos/update')
+def youtube_api_videos_update():
+    """
+    Passes on any kwargs directly to the YouTube API: videos.update().
+
+    https://developers.google.com/youtube/v3/docs/videos/update
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videos().update(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/videos/rate')
+def youtube_api_videos_rate():
+    """
+    Passes on any kwargs directly to the YouTube API: videos.rate().
+
+    https://developers.google.com/youtube/v3/docs/videos/rate
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videos().rate(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/videos/getRating')
+def youtube_api_videos_get_rating():
+    """
+    Passes on any kwargs directly to the YouTube API: videos.getRating().
+
+    https://developers.google.com/youtube/v3/docs/videos/getRating
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videos().getRating(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/videos/reportAbuse')
+def youtube_api_videos_report_abuse():
+    """
+    Passes on any kwargs directly to the YouTube API: videos.reportAbuse().
+
+    https://developers.google.com/youtube/v3/docs/videos/reportAbuse
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videos().reportAbuse(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/videos/delete')
+def youtube_api_videos_delete():
+    """
+    Passes on any kwargs directly to the YouTube API: videos.delete().
+
+    https://developers.google.com/youtube/v3/docs/videos/delete
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.videos().delete(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+""" Watermarks """
+
+
+@app.route('/api/v1/youtube/watermarks/set')
+def youtube_api_watermarks_set():
+    """
+    Passes on any kwargs directly to the YouTube API: watermarks.set().
+
+    https://developers.google.com/youtube/v3/docs/watermarks/set
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.watermarks().set(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
+    return jsonify(response)
+
+
+@app.route('/api/v1/youtube/watermarks/unset')
+def youtube_api_watermarks_unset():
+    """
+    Passes on any kwargs directly to the YouTube API: watermarks.unset().
+
+    https://developers.google.com/youtube/v3/docs/watermarks/unset
+    :return:
+    """
+    # Get an authenticated API key object
+    youtube_auth = load_key()
+
+    # Strip out empty kwargs.
+    kwargs = remove_empty_kwargs(**request.args)
+
+    response = youtube_auth.watermarks().unset(**kwargs).execute()
+
+    # Pass on kwargs and return (JSONified) result
     return jsonify(response)
 
 

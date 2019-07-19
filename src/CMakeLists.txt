@@ -1,8 +1,8 @@
 cmake_minimum_required (VERSION 3.8)
-project (Sane++ CXX)
+project (Sane++ VERSION "0.0.0")
 
 # The version number.
-set (SanePP_VERSION "0.0.0")
+#set (SanePP_VERSION "0.0.0")
 
 # Configure a header file to pass some of the CMake settings to the source code
 configure_file (

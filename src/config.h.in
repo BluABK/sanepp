@@ -1,6 +1,4 @@
 // the configured options and settings for Sane++
-#define SanePP_VERSION @SanePP_VERSION@
-
 #ifndef INCLUDE_GUARD
 #define INCLUDE_GUARD
 

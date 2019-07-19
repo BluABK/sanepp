@@ -18,7 +18,7 @@ using namespace std;
 
 int main(void)
 {
-	cout << "project name: " << PROJECT_NAME << " version1: " << PROJECT_VER << endl;
+	cout << PROJECT_NAME << " version: " << PROJECT_VER << endl;
 	string staticJsonResponse = sapiTestStaticJson();
 	cout << staticJsonResponse << endl;
 	return 0;

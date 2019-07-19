@@ -1196,6 +1196,20 @@ def youtube_api_watermarks_unset():
     return jsonify(response)
 
 
+"""
+Testing and mock calls.
+"""
+
+
+@app.route('/api/v1/test/static/json')
+def testing_api_static_json():
+    # return jsonify({'one': 1, 'two': 2, 'three': 3, "sub_dict": {'subitem1': 'cake', 'subitem2': 4.20}, 'the list':
+    #         ['this', 'is', 'a', 'list']})
+    return jsonify([{'one': '1', 'two': '2', 'three': '3', "sub_dict": {'subitem1': 'cake', 'subitem2': '4.20'},
+                     'the list': ['this', 'is', 'a', 'list']}])
+    # return jsonify(['a', 'b', 'c'])
+
+
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
     # Run API

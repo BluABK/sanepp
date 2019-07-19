@@ -16,6 +16,8 @@ sane_legacy/resources/thumbnails/*.jpg
 # Auth
 sane_legacy/resources/client_secret.json
 sane_legacy/resources/keys.json
+sane_legacy/resources/client_secret.json.old
+sane_legacy/resources/keys.json.old
 
 # DB
 sane_legacy/resources/permanents.db

@@ -1,0 +1,38 @@
+cmake_minimum_required (VERSION 3.8)
+project (Sane++ CXX)
+
+# The version number.
+set (SanePP_VERSION "0.0.0")
+
+# Configure a header file to pass some of the CMake settings to the source code
+configure_file (
+  "${CMAKE_SOURCE_DIR}/config.h.in"
+  "${CMAKE_BINARY_DIR}/config.h"
+  )
+
+# Set output directories
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# Add the binary tree to the search path for include files so that 
+# we will find config.h
+include_directories("${CMAKE_BINARY_DIR}" gui database core)
+
+set(SOURCES_CORE	core/main.cpp)
+set(SOURCES_GUI		gui/main.cpp)
+set(SOURCES_CLI		cli/main.cpp)
+
+
+# Add 1st party libraries
+#include_directories("${PROJECT_SOURCE_DIR}/api")
+#add_subdirectory (api)
+
+# Add 3rd party libraries
+#find_package(libCurl4 REQUIRED)
+ 
+# Add the executables
+# Core
+add_executable(Sane++ ${SOURCES_CORE})
+target_link_libraries (Sane++ -lcurl)
+#install(TARGETS sane_core DESTINATION bin)

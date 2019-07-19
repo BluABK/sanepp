@@ -19,7 +19,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # we will find config.h
 include_directories("${CMAKE_BINARY_DIR}" gui database core)
 
-set(SOURCES_CORE	core/main.cpp)
+set(SOURCES_CORE	core/main.cpp core/api_handler.cpp)
 set(SOURCES_GUI		gui/main.cpp)
 set(SOURCES_CLI		cli/main.cpp)
 

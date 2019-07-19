@@ -2,23 +2,23 @@
  *  Sane Core.
  */
 
-# Standard Libraries
+// Standard Libraries
 #include <iostream>
 #include <string>
 
-# 3rd Party Libraries
+// 3rd Party Libraries
 //#include <curl/curl.h>
 
-# Sane++ Project specific
+// Sane++ Project specific
 #include "config.h"
 #include "api_handler.h"
 
 
-using namespace std
+using namespace std;
 
 int main(void)
 {
-	cout << "project name: " << PROJECT_NAME << " version: " << PROJECT_VER << endl;
+	cout << "project name: " << PROJECT_NAME << " version1: " << PROJECT_VER << endl;
 	string staticJsonResponse = sapiTestStaticJson();
 	cout << staticJsonResponse << endl;
 	return 0;

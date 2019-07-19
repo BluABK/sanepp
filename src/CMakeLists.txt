@@ -1,8 +1,9 @@
 cmake_minimum_required (VERSION 3.8)
 project (Sane++ VERSION "0.0.0")
 
-# The version number.
-#set (SanePP_VERSION "0.0.0")
+# DEBUG Flags, TODO: Figure out some RELEASE flags.
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
+message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 
 # Configure a header file to pass some of the CMake settings to the source code
 configure_file (

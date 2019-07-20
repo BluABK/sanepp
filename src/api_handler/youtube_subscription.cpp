@@ -7,9 +7,6 @@
 
 using json = nlohmann::json;
 
-//bool jsonIsValid() {
-//
-//}
 
 void YoutubeSubscription::addFromJson(json t_data) {
     try {
@@ -20,12 +17,13 @@ void YoutubeSubscription::addFromJson(json t_data) {
             std::cerr << "WARNING: YoutubeSubscription::addFromJson.favouritesPlaylist "
                          "is NULL not string, setting empty string in its stead!" << std::endl;
             favouritesPlaylist = "";
-            std::cerr << t_data.dump(4);
+            warningCount++;
         }
         else if (!favouritesPlaylistType.is_string()) {
             std::cerr << "WARNING: YoutubeSubscription::addFromJson.favouritesPlaylist is "
             << favouritesPlaylistType.type_name() << " not string, setting empty string in its stead!" << std::endl;
             std::cerr << t_data.dump(4);
+            warningCount++;
         } else {
             favouritesPlaylist = favouritesPlaylistType.get<std::string>();
         }
@@ -49,9 +47,6 @@ void YoutubeSubscription::addFromJson(json t_data) {
     }
 }
 
-//YoutubeSubscription YoutubeSubscription::get() {
-//    return YoutubeSubscription();
-//}
 
 void YoutubeSubscription::print(int indentationLevel = 0) {
     std::string indentation;
@@ -73,6 +68,14 @@ void YoutubeSubscription::print(int indentationLevel = 0) {
     std::cout << indentation << "Thumbnail URL (medium): " << thumbnails["medium"] << std::endl;
 }
 
-//YoutubeSubscription::YoutubeSubscription(const std::shared_ptr<YoutubeSubscription>& sharedPtr) {
-//
-//}
+int YoutubeSubscription::getErrorCount() {
+    return errorCount;
+}
+
+int YoutubeSubscription::getWarningCount() {
+    return warningCount;
+}
+
+bool YoutubeSubscription::wasAborted() {
+    return aborted;
+}

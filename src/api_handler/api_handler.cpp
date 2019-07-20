@@ -34,7 +34,7 @@ using namespace std;
  * @return
  */
 static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    ((string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
 /**
@@ -89,24 +89,40 @@ SapiTestStaticJson sapiTestStaticJsonResponse() {
 	return staticJsonResponse;
 }
 
-std::shared_ptr<YoutubeSubscription> sapiGetSubscriptions() {
-    std::shared_ptr<YoutubeSubscription> subscriptions;
+shared_ptr<YoutubeSubscription> sapiGetSubscriptions() {
+    shared_ptr<YoutubeSubscription> subscriptions;
 
     // Parse the JSON response from the API.
     json jsonData = getSapiResponse("http://127.0.0.1:5002/api/v1/remote/subscriptions");
 
     // iterate the JSON array of multiple subscriptions and append a YoutubeSubscription.
     int counter = 0;
+    int warnings = 0;
+    int errors = 0;
     for (auto & subscriptionJson : jsonData) {
         // Create a new YoutubeSubscription object for each subscription.
-        std::shared_ptr<YoutubeSubscription> subscription = std::make_shared<YoutubeSubscription>();
-        std::cout << "Sub#" << counter << ":\n";
-        subscription->addFromJson(subscriptionJson);
-        subscription->print(1);
+        shared_ptr<YoutubeSubscription> subscription = make_shared<YoutubeSubscription>();
+        cout << "Sub#" << counter << ":\n";
+        if (subscription->wasAborted()) {
+            cerr << "\tERROR: Creation of the following subscription was aborted:" << endl;
+            cerr << jsonData.dump(4);
+        } else {
+            subscription->addFromJson(subscriptionJson);
+            subscription->print(1);
+            warnings += subscription->getWarningCount();
+            errors += subscription->getErrorCount();
+        }
 
         // Append subscriptions list with the new YoutubeSubscription object.
 //        subscriptions.push_back(subscription);
         counter++;
+    }
+
+    if (warnings > 0) {
+        cerr << warnings << " Warnings." << endl;
+    }
+    if (errors > 0) {
+        cerr << errors << " Errors." << endl;
     }
 	// Return the parsed SapiTestStaticJson object.
 	return subscriptions;

@@ -10,13 +10,15 @@ using json = nlohmann::json;
 
 class YoutubeSubscription {
 public:
-//    explicit YoutubeSubscription(const std::shared_ptr<YoutubeSubscription>& sharedPtr);
-
     void addFromJson(json t_data);
 
-//    YoutubeSubscription get();
-
     void print(int indentationLevel);
+
+    int getErrorCount();
+
+    int getWarningCount();
+
+    bool wasAborted();
 private:
     // Relevant JSON response values.
 
@@ -47,6 +49,15 @@ private:
 
     // Subscription/Channel title.
     std::string title;
+
+    // Track amount of errors that occur
+    int errorCount;
+
+    // Track amount of warnings that occur
+    int warningCount;
+
+    // Indicate whether the operation was aborted
+    bool aborted = false;
 };
 
 

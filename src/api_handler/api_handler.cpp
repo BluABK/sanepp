@@ -13,6 +13,7 @@
 // Project specific libraries.
 #include <sapi_objs/sapi_test_static_json.hpp>
 #include "api_handler.hpp"
+#include "youtube_subscription.hpp"
 
 
 using json = nlohmann::json;
@@ -88,14 +89,25 @@ SapiTestStaticJson sapiTestStaticJsonResponse() {
 	return staticJsonResponse;
 }
 
-YoutubeSubscriptions sapiGetSubscriptions() {
-    // Instantiate the YouTubeSubscriptions class.
-    YoutubeSubscriptions subscriptions;
+std::shared_ptr<YoutubeSubscription> sapiGetSubscriptions() {
+    std::shared_ptr<YoutubeSubscription> subscriptions;
 
     // Parse the JSON response from the API.
     json jsonData = getSapiResponse("http://127.0.0.1:5002/api/v1/remote/subscriptions");
-    subscriptions.addFromJson(jsonData);
 
+    // iterate the JSON array of multiple subscriptions and append a YoutubeSubscription.
+    int counter = 0;
+    for (auto & subscriptionJson : jsonData) {
+        // Create a new YoutubeSubscription object for each subscription.
+        std::shared_ptr<YoutubeSubscription> subscription = std::make_shared<YoutubeSubscription>();
+        std::cout << "Sub#" << counter << ":\n\t";
+        subscription->addFromJson(subscriptionJson);
+        subscription->print(1);
+
+        // Append subscriptions list with the new YoutubeSubscription object.
+//        subscriptions.push_back(subscription);
+        counter++;
+    }
 	// Return the parsed SapiTestStaticJson object.
 	return subscriptions;
 }

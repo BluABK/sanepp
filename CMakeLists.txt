@@ -29,10 +29,10 @@ add_executable(SaneCLI
         src/api_handler/sapi_objs/sapi_test_static_json.cpp
         src/api_handler/sapi_objs/sapi_test_static_json.hpp
         src/api_handler/api_handler.cpp
-        src/api_handler/api_handler.hpp src/api_handler/youtube_subscriptions.cpp src/api_handler/youtube_subscriptions.hpp src/api_handler/youtube_subscription.cpp src/api_handler/youtube_subscription.hpp)
+        src/api_handler/api_handler.hpp src/api_handler/youtube_subscription.cpp src/api_handler/youtube_subscription.hpp)
 
 target_link_libraries (SaneCLI -lcurl)
 
 # GUI
 add_executable(SaneGUI
-        src/gui/main.cpp src/api_handler/youtube_subscriptions.cpp src/api_handler/youtube_subscriptions.hpp src/api_handler/youtube_subscription.cpp src/api_handler/youtube_subscription.hpp)
+        src/gui/main.cpp src/api_handler/youtube_subscription.cpp src/api_handler/youtube_subscription.hpp)

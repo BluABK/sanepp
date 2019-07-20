@@ -29,7 +29,7 @@ int main()
 	//cout << staticJsonResponse << endl;
 	staticJsonResponse.print();
 
-    YoutubeSubscriptions subscriptions;
+    std::shared_ptr<YoutubeSubscription> subscriptions;
     subscriptions = sapiGetSubscriptions();
 
 	return 0;

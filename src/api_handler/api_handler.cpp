@@ -5,6 +5,7 @@
 // Standard libraries.
 #include <iostream>
 #include <string>
+#include <list>
 
 // 3rd party libraries.
 #include <curl/curl.h>
@@ -89,32 +90,37 @@ SapiTestStaticJson sapiTestStaticJsonResponse() {
 	return staticJsonResponse;
 }
 
-shared_ptr<YoutubeSubscription> sapiGetSubscriptions() {
-    shared_ptr<YoutubeSubscription> subscriptions;
+list <shared_ptr<YoutubeSubscription>> sapiGetSubscriptions() {
+    list <shared_ptr<YoutubeSubscription>> subscriptions;
 
     // Parse the JSON response from the API.
     json jsonData = getSapiResponse("http://127.0.0.1:5002/api/v1/remote/subscriptions");
 
     // iterate the JSON array of multiple subscriptions and append a YoutubeSubscription.
-    int counter = 0;
+    int counter = 1;  // Humanized counting.
     int warnings = 0;
     int errors = 0;
     for (auto & subscriptionJson : jsonData) {
         // Create a new YoutubeSubscription object for each subscription.
         shared_ptr<YoutubeSubscription> subscription = make_shared<YoutubeSubscription>();
+
         cout << "Sub#" << counter << ":\n";
+        subscription->addFromJson(subscriptionJson);
+
         if (subscription->wasAborted()) {
+            // Explicitly delete the broken subscription object now instead of waiting for smart ptr deallocation.
+            subscription.reset();
             cerr << "\tERROR: Creation of the following subscription was aborted:" << endl;
             cerr << jsonData.dump(4);
         } else {
-            subscription->addFromJson(subscriptionJson);
             subscription->print(1);
             warnings += subscription->getWarningCount();
             errors += subscription->getErrorCount();
+
+            subscriptions.push_back(subscription);
         }
 
         // Append subscriptions list with the new YoutubeSubscription object.
-//        subscriptions.push_back(subscription);
         counter++;
     }
 

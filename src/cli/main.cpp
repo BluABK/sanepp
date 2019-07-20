@@ -29,8 +29,9 @@ int main()
 	//cout << staticJsonResponse << endl;
 	staticJsonResponse.print();
 
-    std::shared_ptr<YoutubeSubscription> subscriptions;
+    list <shared_ptr<YoutubeSubscription>> subscriptions;
     subscriptions = sapiGetSubscriptions();
+    cout << "len(subs): " << subscriptions.size() << endl;
 
 	return 0;
 }

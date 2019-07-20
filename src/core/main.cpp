@@ -10,17 +10,14 @@
 #include <nlohmann/json.hpp>
 
 // Sane++ Project specific
-#include "config.hpp"
 #include "api_handler.hpp"
 #include <sapi_objs/sapi_test_static_json.hpp>
 
 using json = nlohmann::json;
 using namespace std;
 
-int main(void)
+int main()
 {
-	cout << PROJECT_NAME << " version: " << PROJECT_VER << endl;
-	
 	// Instantiate the SapiTestStaticJson class.
 	SapiTestStaticJson staticJsonResponse;
 	

@@ -7,8 +7,8 @@ message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 
 # Configure a header file to pass some of the CMake settings to the source code
 configure_file (
-  "${CMAKE_SOURCE_DIR}/config.h.in"
-  "${CMAKE_BINARY_DIR}/config.h"
+  "${CMAKE_SOURCE_DIR}/config.hpp.in"
+  "${CMAKE_BINARY_DIR}/config.hpp"
   )
 
 # Set output directories
@@ -20,7 +20,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # we will find config.h
 include_directories("${CMAKE_BINARY_DIR}" gui database core)
 
-set(SOURCES_CORE	core/main.cpp core/api_handler.cpp)
+set(SOURCES_CORE	core/main.cpp core/api_handler.cpp core/sapi_objs/sapi_test_static_json.cpp)
 set(SOURCES_GUI		gui/main.cpp)
 set(SOURCES_CLI		cli/main.cpp)
 

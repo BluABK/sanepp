@@ -177,6 +177,7 @@ def load_youtube_resource_oauth():
         youtube_oauth = load_pickle(YOUTUBE_RESOURCE_OAUTH_PICKLE)
 
     except FileNotFoundError as file404_exc:
+        exc_occured = True
         logger.warning("Loading of cached OAuth: File not found. Requesting new OAuth from user.", exc_info=file404_exc)
         youtube_oauth = youtube_auth_oauth()
         if youtube_oauth is None:
@@ -184,6 +185,7 @@ def load_youtube_resource_oauth():
             return None
 
     except ModuleNotFoundError as mod404_exc:
+        exc_occured = True
         logger.warning("Loading of cached OAuth: Module not found. Requesting new OAuth from user.",
                        exc_info=mod404_exc)
         youtube_oauth = youtube_auth_oauth()
@@ -192,6 +194,7 @@ def load_youtube_resource_oauth():
             return None
 
     except Exception as exc:
+        exc_occured = True
         logger.warning("Loading of cached OAuth: Unexpected exception. Requesting new OAuth from user.", exc_info=exc)
         youtube_oauth = youtube_auth_oauth()
         if youtube_oauth is None:
@@ -199,6 +202,7 @@ def load_youtube_resource_oauth():
             return None
 
     if exc_occured:
+        logger.debug("Exception occurred while loading OAuth")
         # If an exception had to be handled, save the new re-authenticated OAuth2 resource to disk.
         save_youtube_resource_oauth(youtube_oauth)
 

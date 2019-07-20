@@ -100,7 +100,7 @@ std::shared_ptr<YoutubeSubscription> sapiGetSubscriptions() {
     for (auto & subscriptionJson : jsonData) {
         // Create a new YoutubeSubscription object for each subscription.
         std::shared_ptr<YoutubeSubscription> subscription = std::make_shared<YoutubeSubscription>();
-        std::cout << "Sub#" << counter << ":\n\t";
+        std::cout << "Sub#" << counter << ":\n";
         subscription->addFromJson(subscriptionJson);
         subscription->print(1);
 

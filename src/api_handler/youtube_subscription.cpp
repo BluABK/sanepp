@@ -12,15 +12,23 @@ using json = nlohmann::json;
 //}
 
 void YoutubeSubscription::addFromJson(json t_data) {
-    std::cout << t_data.dump(4);
-//    if (true) {
-//        std::cout << "ERROR: Empty JSON given, skipping add!";
-//        std::cout << t_data["contentDetails"];
-//        std::cout << t_data["contentDetails"]["favorites"];
-//    }
     try {
         // Relevant JSON response values. See header for explanations.
-        favouritesPlaylist = t_data["contentDetails"]["relatedPlaylists"]["favorites"].get<std::string>();
+        // Assign JSON values to an auto type and check if it actually is a string, if it is then explicitly cast it.
+        auto favouritesPlaylistType = t_data["contentDetails"]["relatedPlaylists"]["favorites"];
+        if (favouritesPlaylistType.is_null()) {
+            std::cerr << "WARNING: YoutubeSubscription::addFromJson.favouritesPlaylist "
+                         "is NULL not string, setting empty string in its stead!" << std::endl;
+            favouritesPlaylist = "";
+            std::cerr << t_data.dump(4);
+        }
+        else if (!favouritesPlaylistType.is_string()) {
+            std::cerr << "WARNING: YoutubeSubscription::addFromJson.favouritesPlaylist is "
+            << favouritesPlaylistType.type_name() << " not string, setting empty string in its stead!" << std::endl;
+            std::cerr << t_data.dump(4);
+        } else {
+            favouritesPlaylist = favouritesPlaylistType.get<std::string>();
+        }
         uploadsPlaylist = t_data["contentDetails"]["relatedPlaylists"]["uploads"].get<std::string>();
         etag = t_data["etag"].get<std::string>();
         subscriptionId = t_data["id"].get<std::string>();
@@ -34,8 +42,10 @@ void YoutubeSubscription::addFromJson(json t_data) {
         title = t_data["snippet"]["title"].get<std::string>();
     } catch (nlohmann::detail::type_error &exc) {
         std::cerr << "WARNING: Skipping YoutubeSubscription::addFromJson due to Exception: " << exc.what() << std::endl;
+        std::cerr << t_data.dump(4);
     } catch (const std::exception &exc) {
         std::cerr << "WARNING: Skipping YoutubeSubscription::addFromJson due to Unexpected Exception: " << exc.what() << std::endl;
+        std::cerr << t_data.dump(4);
     }
 }
 

@@ -6,25 +6,33 @@ set(CMAKE_CXX_STANDARD 14)              # Enable c++14 standard
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
 
 include_directories(src/cli)
-include_directories(src/core)
-include_directories(src/core/nlohmann)
-include_directories(src/core/sapi_objs)
+include_directories(src/api_handler)
+include_directories(src/api_handler/nlohmann)
+include_directories(src/api_handler/sapi_objs)
 include_directories(src/gui)
 
-# Core
-add_executable(SaneCore
-        src/core/nlohmann/json.hpp
-        src/core/sapi_objs/sapi_test_static_json.cpp
-        src/core/sapi_objs/sapi_test_static_json.hpp
-        src/core/api_handler.cpp
-        src/core/api_handler.hpp
-        src/core/main.cpp)
+# API (was Core)
+#add_executable(SaneAPIHandler
+#        src/api_handler/nlohmann/json.hpp
+#        src/api_handler/sapi_objs/sapi_test_static_json.cpp
+#        src/api_handler/sapi_objs/sapi_test_static_json.hpp
+#        src/api_handler/api_handler.cpp
+#        src/api_handler/api_handler.hpp
+#        src/cli/main.cpp)
 
-target_link_libraries (SaneCore -lcurl)
+#target_link_libraries (SaneAPIHandler -lcurl)
 
 # CLI
 add_executable(SaneCLI
-        src/cli/main.cpp)
+        src/cli/main.cpp
+        src/api_handler/nlohmann/json.hpp
+        src/api_handler/sapi_objs/sapi_test_static_json.cpp
+        src/api_handler/sapi_objs/sapi_test_static_json.hpp
+        src/api_handler/api_handler.cpp
+        src/api_handler/api_handler.hpp)
+
+target_link_libraries (SaneCLI -lcurl)
+
 # GUI
 add_executable(SaneGUI
         src/gui/main.cpp)

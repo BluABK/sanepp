@@ -6,9 +6,10 @@
 #define SANEPP_API_HANDLER_HEADER
 
 #include <sapi_objs/sapi_test_static_json.hpp>
+#include "youtube_subscriptions.hpp"
 
 SapiTestStaticJson sapiTestStaticJsonResponse();
 
-//SapiGetSubscriptions sapiGetSubscriptions();
+YoutubeSubscriptions sapiGetSubscriptions();
 
 #endif

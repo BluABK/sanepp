@@ -88,9 +88,14 @@ SapiTestStaticJson sapiTestStaticJsonResponse() {
 	return staticJsonResponse;
 }
 
-//SapiGetSubscriptions sapiGetSubscriptions() {
-//    // Instantiate the SapiTestStaticJson class.
-//    YouTubeSubscriptions subscriptions;
-//
-//    return nullptr;
-//}
+YoutubeSubscriptions sapiGetSubscriptions() {
+    // Instantiate the YouTubeSubscriptions class.
+    YoutubeSubscriptions subscriptions;
+
+    // Parse the JSON response from the API.
+    json jsonData = getSapiResponse("http://127.0.0.1:5002/api/v1/remote/subscriptions");
+    subscriptions.addFromJson(jsonData);
+
+	// Return the parsed SapiTestStaticJson object.
+	return subscriptions;
+}

@@ -28,5 +28,9 @@ int main()
 
 	//cout << staticJsonResponse << endl;
 	staticJsonResponse.print();
+
+    YoutubeSubscriptions subscriptions;
+    subscriptions = sapiGetSubscriptions();
+
 	return 0;
 }

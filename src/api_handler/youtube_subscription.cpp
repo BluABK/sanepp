@@ -7,9 +7,6 @@
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 
-using json = nlohmann::json;
-using namespace std;
-
 namespace sane {
     /**
      * Attempts to assign a JSON value to a given string and handle any bogus data.
@@ -21,31 +18,32 @@ namespace sane {
      * @param unknownJsonTypeValue  The undetermined JSON value to assign the string.
      * @param fullJson              The complete JSON object, for use in debugging/error reporting.
      */
-    void YoutubeSubscription::assignJsonStringValue(string &stringToAssignValue,
-            const json &unknownJsonTypeValue, const json &fullJson) {
+    void YoutubeSubscription::assignJsonStringValue(std::string &stringToAssignValue,
+            const nlohmann::json &unknownJsonTypeValue, const nlohmann::json &fullJson) {
         if (unknownJsonTypeValue.is_null()) {
             if (reportWarnings) {
-                cerr << "WARNING: YoutubeSubscription::addFromJson." << GET_VARIABLE_NAME(stringToAssignValue) <<
-                     " is NULL not string, setting \"N/A\" string in its stead!" << endl;
+                std::cerr << "WARNING: YoutubeSubscription::addFromJson." << GET_VARIABLE_NAME(stringToAssignValue) <<
+                     " is NULL not string, setting \"N/A\" string in its stead!" << std::endl;
             }
             stringToAssignValue = "N/A";
             warningCount++;
         }
         else if (!unknownJsonTypeValue.is_string()) {
             if (reportWarnings) {
-                cerr << "WARNING: YoutubeSubscription::addFromJson.favouritesPlaylist is "
-                     << unknownJsonTypeValue.type_name() << " not string, setting \"N/A\" string in its stead!" << endl;
+                std::cerr << "WARNING: YoutubeSubscription::addFromJson.favouritesPlaylist is " <<
+                unknownJsonTypeValue.type_name() << " not string, setting \"N/A\" string in its stead!" <<
+                std::endl;
             }
             stringToAssignValue = "N/A";
-            cerr << fullJson.dump(4);
+            std::cerr << fullJson.dump(4);
             warningCount++;
         } else {
             // If it actually is a string, then explicitly cast it.
-            stringToAssignValue = unknownJsonTypeValue.get<string>();
+            stringToAssignValue = unknownJsonTypeValue.get<std::string>();
         }
     }
 
-    void YoutubeSubscription::addFromJson(json t_data) {
+    void YoutubeSubscription::addFromJson(nlohmann::json t_data) {
         try {
             // Relevant JSON response values. See header for explanations.
             assignJsonStringValue(favouritesPlaylist, t_data["contentDetails"]["relatedPlaylists"]["favorites"], t_data);
@@ -61,38 +59,38 @@ namespace sane {
             assignJsonStringValue(title, t_data["snippet"]["title"], t_data);
         } catch (nlohmann::detail::type_error &exc) {
             if (reportErrors) {
-                cerr << "ERROR: Skipping YoutubeSubscription::addFromJson "
-                        "due to Exception: " << exc.what() << endl;
-                cerr << t_data.dump(4);
+                std::cerr << "ERROR: Skipping YoutubeSubscription::addFromJson "
+                        "due to Exception: " << exc.what() << std::endl;
+                std::cerr << t_data.dump(4);
             }
-        } catch (const exception &exc) {
+        } catch (const std::exception &exc) {
             if (reportErrors) {
-                cerr << "ERROR: Skipping YoutubeSubscription::addFromJson "
-                        "due to Unexpected Exception: " << exc.what() << endl;
-                cerr << t_data.dump(4);
+                std::cerr << "ERROR: Skipping YoutubeSubscription::addFromJson "
+                        "due to Unexpected Exception: " << exc.what() << std::endl;
+                std::cerr << t_data.dump(4);
             }
         }
     }
 
 
     void YoutubeSubscription::print(int indentationLevel = 0) {
-        string indentation;
+        std::string indentation;
 
         for (int i = 0; i <= indentationLevel; ++i) {
             indentation += "\t";
         }
 
-        cout << indentation << "Title: " << title << endl;
-        cout << indentation << "Subscription ID: " << subscriptionId << endl;
-        cout << indentation << "Channel ID: " << channelId << endl;
-        cout << indentation << "Etag: " << etag << endl;
-        cout << indentation << "Published: " << publishedAt << endl;
-        cout << indentation << "Description: " << description << endl;
-        cout << indentation << "Favourites Playlist: " << favouritesPlaylist << endl;
-        cout << indentation << "Uploads Playlist: " << uploadsPlaylist << endl;
-        cout << indentation << "Thumbnail URL (default): " << thumbnails["default"] << endl;
-        cout << indentation << "Thumbnail URL (high): " << thumbnails["high"] << endl;
-        cout << indentation << "Thumbnail URL (medium): " << thumbnails["medium"] << endl;
+        std::cout << indentation << "Title: " << title << std::endl;
+        std::cout << indentation << "Subscription ID: " << subscriptionId << std::endl;
+        std::cout << indentation << "Channel ID: " << channelId << std::endl;
+        std::cout << indentation << "Etag: " << etag << std::endl;
+        std::cout << indentation << "Published: " << publishedAt << std::endl;
+        std::cout << indentation << "Description: " << description << std::endl;
+        std::cout << indentation << "Favourites Playlist: " << favouritesPlaylist << std::endl;
+        std::cout << indentation << "Uploads Playlist: " << uploadsPlaylist << std::endl;
+        std::cout << indentation << "Thumbnail URL (default): " << thumbnails["default"] << std::endl;
+        std::cout << indentation << "Thumbnail URL (high): " << thumbnails["high"] << std::endl;
+        std::cout << indentation << "Thumbnail URL (medium): " << thumbnails["medium"] << std::endl;
     }
 
     int YoutubeSubscription::getErrorCount() {

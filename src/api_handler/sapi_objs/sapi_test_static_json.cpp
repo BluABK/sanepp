@@ -8,11 +8,8 @@
 // Project specfic libraries.
 #include "sapi_test_static_json.hpp"
 
-using json = nlohmann::json;
-
 namespace sane {
-
-    void SapiTestStaticJson::parse(json t_data) {
+    void SapiTestStaticJson::parse(nlohmann::json t_data) {
         m_one = t_data[0]["one"];
         m_subitemOne = t_data[0]["sub_dict"]["subitem1"];
         m_subitemTwo = t_data[0]["sub_dict"]["subitem2"];

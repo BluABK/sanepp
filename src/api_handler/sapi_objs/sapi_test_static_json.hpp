@@ -8,7 +8,6 @@
 #include <nlohmann/json.hpp>
 
 namespace sane {
-
     class SapiTestStaticJson {
     public:
         void parse(nlohmann::json t_data);

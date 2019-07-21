@@ -6,19 +6,14 @@
 #include <iostream>
 #include <string>
 
-// 3rd Party Libraries
-//#include <nlohmann/json.hpp>
-
 // Sane++ Project specific
 #include <api_handler.hpp>
 #include <sapi_objs/sapi_test_static_json.hpp>
 
-using json = nlohmann::json;
-using namespace std;
 using namespace sane;
 
 int main() {
-    cout << "Sane CLI ~" << endl;
+    std::cout << "Sane CLI ~" << std::endl;
 
     // Instantiate the SapiTestStaticJson class.
     SapiTestStaticJson staticJsonResponse;
@@ -29,9 +24,9 @@ int main() {
     //cout << staticJsonResponse << endl;
     staticJsonResponse.print();
 
-    list<shared_ptr<YoutubeSubscription>> subscriptions;
+    std::list<std::shared_ptr<YoutubeSubscription>> subscriptions;
     subscriptions = sapiGetSubscriptions();
-    cout << "len(subs): " << subscriptions.size() << endl;
+    std::cout << "len(subs): " << subscriptions.size() << std::endl;
 
     return 0;
 }

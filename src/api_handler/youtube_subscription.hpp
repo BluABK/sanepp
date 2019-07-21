@@ -6,14 +6,12 @@
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
-
 class YoutubeSubscription {
 public:
     void assignJsonStringValue(std::string &stringToAssignValue,
-            const json &unknownJsonTypeValue, const json &fullJson);
+            const nlohmann::json &unknownJsonTypeValue, const nlohmann::json &fullJson);
 
-    void addFromJson(json t_data);
+    void addFromJson(nlohmann::json t_data);
 
     void print(int indentationLevel);
 

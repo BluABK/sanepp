@@ -3,7 +3,7 @@ project(Sane++)                         # Create project
 set(CMAKE_CXX_STANDARD 14)              # Enable c++14 standard
 
 # DEBUG Flags, TODO: Figure out some RELEASE flags.
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
 
 include_directories(src/cli)
 include_directories(src/api_handler)

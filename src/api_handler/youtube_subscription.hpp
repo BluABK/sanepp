@@ -6,70 +6,73 @@
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
 
-class YoutubeSubscription {
-public:
-    void assignJsonStringValue(std::string &stringToAssignValue,
-            const nlohmann::json &unknownJsonTypeValue, const nlohmann::json &fullJson);
+namespace sane {
+    class YoutubeSubscription {
+    public:
+        void assignJsonStringValue(std::string &stringToAssignValue,
+                                   const nlohmann::json &unknownJsonTypeValue, const nlohmann::json &fullJson);
 
-    void addFromJson(nlohmann::json t_data);
+        void addFromJson(nlohmann::json t_data);
 
-    void print(int indentationLevel);
+        void print(int indentationLevel);
 
-    int getErrorCount();
+        int getErrorCount();
 
-    int getWarningCount();
+        int getWarningCount();
 
-    void enableWarnings(bool b);
+        void enableWarnings(bool b);
 
-    void enableErrors(bool b);
+        void enableErrors(bool b);
 
-    bool wasAborted();
-private:
-    // Relevant JSON response values.
+        bool wasAborted();
 
-    // Important playlists.
-    std::string favouritesPlaylist;
-    std::string uploadsPlaylist;
+    private:
+        // Relevant JSON response values.
 
-    // YouTube resource Etag
-    std::string etag;
+        // Important playlists.
+        std::string favouritesPlaylist;
+        std::string uploadsPlaylist;
 
-    // The ID that YouTube uses to uniquely identify the subscription.
-    std::string subscriptionId;
+        // YouTube resource Etag
+        std::string etag;
 
-    // The value that YouTube uses to uniquely identify the channel that the user subscribed to.
-    // NB: Grab the one inside resourceId, the outer one is *yours*.
-    std::string channelId;
+        // The ID that YouTube uses to uniquely identify the subscription.
+        std::string subscriptionId;
 
-    // The subscription's details.
-    std::string description;
+        // The value that YouTube uses to uniquely identify the channel that the user subscribed to.
+        // NB: Grab the one inside resourceId, the outer one is *yours*.
+        std::string channelId;
 
-    // The date and time that the subscription was created.
-    // The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format.
-    std::string publishedAt;
+        // The subscription's details.
+        std::string description;
 
-    // A map of thumbnail images associated with the subscription.
-    // Should in most cases contain keys: "default", "high" and "medium".
-    std::map<std::string,std::string> thumbnails;
+        // The date and time that the subscription was created.
+        // The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format.
+        std::string publishedAt;
 
-    // Subscription/Channel title.
-    std::string title;
+        // A map of thumbnail images associated with the subscription.
+        // Should in most cases contain keys: "default", "high" and "medium".
+        std::map<std::string, std::string> thumbnails;
 
-    // Track amount of errors that occur
-    int errorCount;
+        // Subscription/Channel title.
+        std::string title;
 
-    // Track amount of warnings that occur
-    int warningCount;
+        // Track amount of errors that occur
+        int errorCount;
 
-    // Whether or not to print warnings
-    bool reportWarnings = false;
+        // Track amount of warnings that occur
+        int warningCount;
 
-    // Whether or not to print warnings
-    bool reportErrors = true;
+        // Whether or not to print warnings
+        bool reportWarnings = false;
 
-    // Indicate whether the operation was aborted
-    bool aborted = false;
-};
+        // Whether or not to print warnings
+        bool reportErrors = true;
 
+        // Indicate whether the operation was aborted
+        bool aborted = false;
+    };
+
+} // namespace sane
 
 #endif //SANE_YOUTUBE_SUBSCRIPTION_HPP

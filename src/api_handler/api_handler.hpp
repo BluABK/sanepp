@@ -10,8 +10,9 @@
 #include <sapi_objs/sapi_test_static_json.hpp>
 #include "youtube_subscription.hpp"
 
-SapiTestStaticJson sapiTestStaticJsonResponse();
+namespace sane {
+    SapiTestStaticJson sapiTestStaticJsonResponse();
 
-std::list <std::shared_ptr<YoutubeSubscription>> sapiGetSubscriptions();
-
-#endif
+    std::list<std::shared_ptr<YoutubeSubscription>> sapiGetSubscriptions();
+} // namespace sane.
+#endif // Header guards.

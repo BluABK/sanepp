@@ -7,19 +7,20 @@
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
 
-class SapiTestStaticJson
-{
-public:
-		void parse(nlohmann::json t_data);
+namespace sane {
 
-		void print();
+    class SapiTestStaticJson {
+    public:
+        void parse(nlohmann::json t_data);
 
-private:
-		std::string m_one;
-		std::string m_subitemOne;
-		std::string m_subitemTwo;
-		std::string m_three;
-		std::string m_two;
-};
+        void print();
 
+    private:
+        std::string m_one;
+        std::string m_subitemOne;
+        std::string m_subitemTwo;
+        std::string m_three;
+        std::string m_two;
+    };
+} // namespace sane.
 #endif // Header guards

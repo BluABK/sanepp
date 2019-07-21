@@ -15,23 +15,23 @@
 
 using json = nlohmann::json;
 using namespace std;
+using namespace sane;
 
-int main()
-{
+int main() {
     cout << "Sane CLI ~" << endl;
 
-	// Instantiate the SapiTestStaticJson class.
-	SapiTestStaticJson staticJsonResponse;
-	
-	// Assign it an object.
-	staticJsonResponse = sapiTestStaticJsonResponse();
+    // Instantiate the SapiTestStaticJson class.
+    SapiTestStaticJson staticJsonResponse;
 
-	//cout << staticJsonResponse << endl;
-	staticJsonResponse.print();
+    // Assign it an object.
+    staticJsonResponse = sapiTestStaticJsonResponse();
 
-    list <shared_ptr<YoutubeSubscription>> subscriptions;
+    //cout << staticJsonResponse << endl;
+    staticJsonResponse.print();
+
+    list<shared_ptr<YoutubeSubscription>> subscriptions;
     subscriptions = sapiGetSubscriptions();
     cout << "len(subs): " << subscriptions.size() << endl;
 
-	return 0;
+    return 0;
 }

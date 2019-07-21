@@ -22,7 +22,6 @@ using namespace std;
  */
 void YoutubeSubscription::assignJsonStringValue(string &stringToAssignValue,
         const json &unknownJsonTypeValue, const json &fullJson) {
-    // Assign JSON values to an auto type and check
     if (unknownJsonTypeValue.is_null()) {
         if (reportWarnings) {
             cerr << "WARNING: YoutubeSubscription::addFromJson." << GET_VARIABLE_NAME(stringToAssignValue) <<

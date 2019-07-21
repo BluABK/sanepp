@@ -10,6 +10,9 @@ using json = nlohmann::json;
 
 class YoutubeSubscription {
 public:
+    void assignJsonStringValue(std::string &stringToAssignValue,
+            const json &unknownJsonTypeValue, const json &fullJson);
+
     void addFromJson(json t_data);
 
     void print(int indentationLevel);
@@ -17,6 +20,10 @@ public:
     int getErrorCount();
 
     int getWarningCount();
+
+    void enableWarnings(bool b);
+
+    void enableErrors(bool b);
 
     bool wasAborted();
 private:
@@ -55,6 +62,12 @@ private:
 
     // Track amount of warnings that occur
     int warningCount;
+
+    // Whether or not to print warnings
+    bool reportWarnings = false;
+
+    // Whether or not to print warnings
+    bool reportErrors = true;
 
     // Indicate whether the operation was aborted
     bool aborted = false;

@@ -89,8 +89,12 @@ namespace sane {
     std::list <std::shared_ptr<YoutubeSubscription>> sapiGetSubscriptions() {
         std::list <std::shared_ptr<YoutubeSubscription>> subscriptions;
 
+        std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
+
         // Parse the JSON response from the API.
+        std::cout << "Waiting for SaneAPI response..." << std::endl;
         nlohmann::json jsonData = getSapiResponse("http://127.0.0.1:5002/api/v1/remote/subscriptions");
+        std::cout << "Got response from SaneAPI, processing " << jsonData.size() << " subscriptions..." << std::endl;
 
         // iterate the JSON array of multiple subscriptions and append a YoutubeSubscription.
         int counter = 1;  // Humanized counting.
@@ -122,13 +126,20 @@ namespace sane {
             counter++;
         }
 
-        if (warnings > 0) {
-            std::cerr << warnings << " Warnings." << std::endl;
+        std::string reportedProblems;
+        if (warnings > 0 and errors > 0) {
+            reportedProblems = " with " + std::to_string(warnings) + " warnings and "
+                    + std::to_string(errors) + " errors";
         }
-        if (errors > 0) {
-            std::cerr << errors << " Errors." << std::endl;
+        else if (warnings > 0) {
+            reportedProblems = " with " + std::to_string(warnings) + " warnings";
         }
+        else if (errors > 0) {
+            reportedProblems = " with " + std::to_string(errors) + " errors";
+        }
+
         // Return the parsed SapiTestStaticJson object.
+        std::cout << "Processing completed" << reportedProblems << "." << std::endl;
         return subscriptions;
     }
 } // namespace sane.

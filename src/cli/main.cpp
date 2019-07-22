@@ -9,10 +9,14 @@
 // Sane++ Project specific
 #include <api_handler.hpp>
 #include <sapi_objs/sapi_test_static_json.hpp>
-#include "interactive_cli.hpp"
+#include "cli.hpp"
 
 int main() {
-    std::shared_ptr<sane::InteractiveCLI> cli = std::make_shared<sane::InteractiveCLI>();
+    // Instantiate the CLI class.
+    std::shared_ptr<sane::CLI> cli = std::make_shared<sane::CLI>();
+    
+    // Make the CLI interactive
+    cli->interactive();
 
     return 0;
 }

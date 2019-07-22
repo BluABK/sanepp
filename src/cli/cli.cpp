@@ -3,10 +3,10 @@
 
 #include <youtube_subscription.hpp>
 #include <api_handler.hpp>
-#include "interactive_cli.hpp"
+#include "cli.hpp"
 
 namespace sane {
-    InteractiveCLI::InteractiveCLI(bool t_testMode) {
+    CLI::CLI() {
         // Add commands to map of commands on the form of <name, description>.
         commands[EXIT] = "Exit program";
         commands[HELP] = "Print help";
@@ -30,35 +30,9 @@ namespace sane {
             // Increment iterator to point at next command entry.
             it++;
         }
-
-        // If testing, don't enter the runtime loop as it won't ever end.
-        if (t_testMode) {
-            return;
-        }
-
-        // Do the loop
-        std::string input;
-        std::cout << COMMAND_PROMPT_STYLE;
-        while (std::getline(std::cin, input)) { // quit the program with ctrl-d
-            // Check if input is junk
-            if ( input.empty()) {
-                continue;
-            }
-            // Check if input is a valid command.
-            if ( commands.find(input) == commands.end() ) {
-                std::cout << "Error: Invalid command! (see 'help' for available commands)" << std::endl;
-            } else{
-                executeCommand(input);
-            }
-            // Check for manual exit here instead of at start due to the boolean being set from the above code,
-            if (manuallyExit) {
-                return;
-            }
-            std::cout << COMMAND_PROMPT_STYLE;
-        }
     }
 
-    void InteractiveCLI::help() {
+    void CLI::help() {
         // Create a map iterator and point it to the beginning of the map.
         auto it = commands.begin();
 
@@ -80,11 +54,11 @@ namespace sane {
         std::cout << std::endl;
     }
 
-    void InteractiveCLI::exit() {
+    void CLI::exit() {
         manuallyExit = true;
     }
 
-    void InteractiveCLI::executeCommand(const std::string &command) {
+    void CLI::executeCommand(const std::string &command) {
         if (command == HELP) {
             help();
         } else if (command == EXIT) {
@@ -103,13 +77,13 @@ namespace sane {
     /**
      * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
      */
-    std::list<std::shared_ptr<YoutubeSubscription>> InteractiveCLI::getSubscriptionsFromApi() {
+    std::list<std::shared_ptr<YoutubeSubscription>> CLI::getSubscriptionsFromApi() {
         subscriptions = sapiGetSubscriptions();
 
         return subscriptions;
     }
 
-    void InteractiveCLI::printSubscriptionsFull() {
+    void CLI::printSubscriptionsFull() {
         int counter = 1;  // Humanized counting.
         for (auto & subscription : subscriptions) {
             std::cout << "Sub#" << counter << ":" << std::endl;
@@ -118,7 +92,7 @@ namespace sane {
         }
     }
 
-    const std::string InteractiveCLI::padStringValue(const std::string &string_t,
+    const std::string CLI::padStringValue(const std::string &string_t,
             const std::size_t maxLength) {
         std::string paddedString;
 
@@ -133,7 +107,7 @@ namespace sane {
         return paddedString;
     }
 
-    void InteractiveCLI::printSubscriptionsBasic() {
+    void CLI::printSubscriptionsBasic() {
         // Spacing between each column item.
         const std::string columnSpacing(4, ' ');
         // Pad subscription counter based on the amount of digits in the sum total.
@@ -161,6 +135,28 @@ namespace sane {
             subscription->getTitle() << std::endl;
 
             counter++;
+        }
+    }
+
+    void CLI::interactive() {
+        std::string input;
+        std::cout << COMMAND_PROMPT_STYLE;
+        while (std::getline(std::cin, input)) { // quit the program with ctrl-d
+            // Check if input is junk
+            if ( input.empty()) {
+                continue;
+            }
+            // Check if input is a valid command.
+            if ( commands.find(input) == commands.end() ) {
+                std::cout << "Error: Invalid command! (see 'help' for available commands)" << std::endl;
+            } else{
+                executeCommand(input);
+            }
+            // Check for manual exit here instead of at start due to the boolean being set from the above code,
+            if (manuallyExit) {
+                return;
+            }
+            std::cout << COMMAND_PROMPT_STYLE;
         }
     }
 } // namespace sane

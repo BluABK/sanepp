@@ -1,5 +1,5 @@
-#ifndef SANE_INTERACTIVE_CLI_HPP
-#define SANE_INTERACTIVE_CLI_HPP
+#ifndef SANE_CLI_HPP
+#define SANE_CLI_HPP
 
 #include <map>
 #include <list>
@@ -10,9 +10,11 @@
 #include <api_handler.hpp>
 
 namespace sane {
-    class InteractiveCLI {
+    class CLI {
     public:
-        explicit InteractiveCLI(bool t_testMode = false);
+        explicit CLI();
+        
+        void interactive();
 
         const std::string padStringValue(const std::string &string_t, std::size_t maxLength);
     private:
@@ -52,6 +54,7 @@ namespace sane {
         void printSubscriptionsFull();
 
         void printSubscriptionsBasic();
+
     };
 } // namespace sane
-#endif //SANE_INTERACTIVE_CLI_HPP
+#endif //SANE_CLI_HPP

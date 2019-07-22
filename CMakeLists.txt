@@ -32,8 +32,8 @@ add_executable(SaneCLI
         src/api_handler/api_handler.hpp
         src/api_handler/youtube_subscription.cpp
         src/api_handler/youtube_subscription.hpp
-        src/cli/interactive_cli.cpp
-        src/cli/interactive_cli.hpp)
+        src/cli/cli.cpp
+        src/cli/cli.hpp)
 
 target_link_libraries (SaneCLI -lcurl)
 
@@ -48,8 +48,8 @@ add_executable(SaneCLITest
         src/api_handler/api_handler.hpp
         src/api_handler/youtube_subscription.cpp
         src/api_handler/youtube_subscription.hpp
-        src/cli/interactive_cli.cpp
-        src/cli/interactive_cli.hpp src/cli/tests/test_interactive_cli.cpp)
+        src/cli/cli.cpp
+        src/cli/cli.hpp src/cli/tests/test_cli.cpp)
 
 target_link_libraries (SaneCLITest -lcurl)
 

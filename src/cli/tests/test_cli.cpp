@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
 
-#include "interactive_cli.hpp"
+#include "cli.hpp"
 
-
-std::shared_ptr<sane::InteractiveCLI> cli = std::make_shared<sane::InteractiveCLI>(true);
+// Instantiate the CLI class.
+std::shared_ptr<sane::CLI> cli = std::make_shared<sane::CLI>();
 
 TEST_CASE( "Strings are padded with correct length (pass)", "[multi-file:2]" ) {
     REQUIRE( cli->padStringValue("Test", 10).length() == 10 );

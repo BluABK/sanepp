@@ -137,8 +137,10 @@ namespace sane {
         int counter = 1;
 
         // Print a table heading/legend.
-        std::cout << "Sub#" << std::string(maxCounterDigitAmount, ' ') << columnSpacing <<
-        "Channel ID" << columnSpacing << "Uploads playlist ID" << columnSpacing << "Channel title" <<  std::endl;
+        std::cout << padStringValue("#", maxCounterDigitAmount) << columnSpacing <<
+        padStringValue("Channel ID", idItemMaxLength) << columnSpacing <<
+        padStringValue("Uploads playlist ID", idItemMaxLength) <<
+        columnSpacing << "Channel title" <<  std::endl;
 
         for (auto & subscription : subscriptions) {
             // Pad item columns with spaces to ensure a uniform indentation.

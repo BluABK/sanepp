@@ -58,7 +58,8 @@ before_script:
   - cmake ..
 
 script:
-  # once CMake has done its job we just build using make as usual
-  - make
-  # if the project uses ctest we can run the tests like this
-  - make SaneCLITest
+  ## once CMake has done its job we just build using make as usual
+  ## - make
+  cmake --build . --config Release
+  # Execute unit tests
+  - ctest -C Release -V -j

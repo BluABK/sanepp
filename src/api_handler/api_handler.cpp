@@ -97,7 +97,6 @@ namespace sane {
         std::cout << "Got response from SaneAPI, processing " << jsonData.size() << " subscriptions..." << std::endl;
 
         // iterate the JSON array of multiple subscriptions and append a YoutubeSubscription.
-        int counter = 1;  // Humanized counting.
         int warnings = 0;
         int errors = 0;
         for (auto & subscriptionJson : jsonData) {
@@ -105,8 +104,6 @@ namespace sane {
             std::shared_ptr<YoutubeSubscription> subscription = std::make_shared<YoutubeSubscription>();
     //        // Report warnings (errors are on by default).
     //        subscription->enableWarnings(true);
-
-            std::cout << "Sub#" << counter << ":\n";
             subscription->addFromJson(subscriptionJson);
 
             if (subscription->wasAborted()) {
@@ -115,15 +112,12 @@ namespace sane {
                 std::cerr << "\tERROR: Creation of the following subscription was aborted:" << std::endl;
                 std::cerr << jsonData.dump(4);
             } else {
-                subscription->print(1);
                 warnings += subscription->getWarningCount();
                 errors += subscription->getErrorCount();
 
+                // Append subscriptions list with the new YoutubeSubscription object.
                 subscriptions.push_back(subscription);
             }
-
-            // Append subscriptions list with the new YoutubeSubscription object.
-            counter++;
         }
 
         std::string reportedProblems;

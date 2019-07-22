@@ -72,13 +72,45 @@ namespace sane {
         }
     }
 
+    const std::string &YoutubeSubscription::getFavouritesPlaylist() const {
+        return favouritesPlaylist;
+    }
 
-    void YoutubeSubscription::print(int indentationLevel = 0) {
-        std::string indentation;
+    const std::string &YoutubeSubscription::getUploadsPlaylist() const {
+        return uploadsPlaylist;
+    }
 
-        for (int i = 0; i <= indentationLevel; ++i) {
-            indentation += "\t";
-        }
+    const std::string &YoutubeSubscription::getEtag() const {
+        return etag;
+    }
+
+    const std::string &YoutubeSubscription::getSubscriptionId() const {
+        return subscriptionId;
+    }
+
+    const std::string &YoutubeSubscription::getChannelId() const {
+        return channelId;
+    }
+
+    const std::string &YoutubeSubscription::getDescription() const {
+        return description;
+    }
+
+    const std::string &YoutubeSubscription::getPublishedAt() const {
+        return publishedAt;
+    }
+
+    const std::map<std::string, std::string> &YoutubeSubscription::getThumbnails() const {
+        return thumbnails;
+    }
+
+    const std::string &YoutubeSubscription::getTitle() const {
+        return title;
+    }
+
+
+    void YoutubeSubscription::print(int indentationSpacing = 0) {
+        std::string indentation(indentationSpacing, ' ');
 
         std::cout << indentation << "Title: " << title << std::endl;
         std::cout << indentation << "Subscription ID: " << subscriptionId << std::endl;

@@ -14,7 +14,7 @@ namespace sane {
 
         void addFromJson(nlohmann::json t_data);
 
-        void print(int indentationLevel);
+        void print(int indentationSpacing);
 
         int getErrorCount();
 
@@ -25,6 +25,24 @@ namespace sane {
         void enableErrors(bool b);
 
         bool wasAborted();
+
+        const std::string &getFavouritesPlaylist() const;
+
+        const std::string &getUploadsPlaylist() const;
+
+        const std::string &getEtag() const;
+
+        const std::string &getSubscriptionId() const;
+
+        const std::string &getChannelId() const;
+
+        const std::string &getDescription() const;
+
+        const std::string &getPublishedAt() const;
+
+        const std::map<std::string, std::string> &getThumbnails() const;
+
+        const std::string &getTitle() const;
 
     private:
         // Relevant JSON response values.

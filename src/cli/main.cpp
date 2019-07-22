@@ -11,10 +11,8 @@
 #include <sapi_objs/sapi_test_static_json.hpp>
 #include "basic_interactive_command_prompt.hpp"
 
-using namespace sane;
-
 int main() {
-    std::shared_ptr<BasicInteractiveCommandPrompt> cli = std::make_shared<BasicInteractiveCommandPrompt>();
+    std::shared_ptr<sane::BasicInteractiveCommandPrompt> cli = std::make_shared<sane::BasicInteractiveCommandPrompt>();
 
     return 0;
 }

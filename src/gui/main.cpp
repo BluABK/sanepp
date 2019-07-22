@@ -1,9 +1,8 @@
 #include <iostream>
-using namespace std;
 
-int main(int argc, char *argv[])
+int main()
 {
-	cout << "Sane ~\n";
+	std::cout << "Sane GUI TODO~\n";
 
 	return 0;
 }

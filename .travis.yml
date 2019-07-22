@@ -54,10 +54,8 @@ install:
   - git clone https://github.com/catchorg/Catch2.git
   - cd Catch2
   - cmake -Bbuild -H. -DBUILD_TESTING=OFF
-  # sudo uses another dir than ours
-  - echo which cmake
-  - echo ${TRAVIS_BUILD_DIR}
-  - sudo cmake --build build/ --target install 
+  # sudo uses root's PATH so we need to carry over ours.
+  - sudo env PATH="$PATH" cmake --build build/ --target install 
 
 before_script:
   # create a build folder for the out-of-source build

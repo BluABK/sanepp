@@ -18,3 +18,5 @@ qrc_src*
 *backdoor*.cpp
 *backdoor*.go
 *backdoor*.py
+.gitconfig
+youtube_api_samples

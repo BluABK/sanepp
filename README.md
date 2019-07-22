@@ -2,11 +2,11 @@
 A Sane Subscription Feed C++ rewrite.
 
 [![Build Status](https://api.travis-ci.org/BluABK/sanepp.svg?branch=master)](https://travis-ci.org/BluABK/sanepp)
-![GitHub](https://img.shields.io/github/license/bluabk/sanepp.svg)
-![GitHub issues](https://img.shields.io/github/issues/bluabk/sanepp.svg)
+[![GitHub](https://img.shields.io/github/license/bluabk/sanepp.svg)](https://raw.githubusercontent.com/BluABK/sanepp/master/LICENSE.md)
+[![GitHub issues](https://img.shields.io/github/issues/bluabk/sanepp.svg)](https://github.com/BluABK/sanepp/issues)
+[![Discord](https://img.shields.io/discord/499274159839379473.svg?style=popout)](https://discord.gg/7KcvPt4)
 ![GitHub repo size](https://img.shields.io/github/repo-size/bluabk/sanepp.svg?style=popout)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/bluabk/sanepp.svg)
-![Discord](https://img.shields.io/discord/499274159839379473.svg?style=popout)
 
 
 ## What is this?

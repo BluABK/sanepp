@@ -1,6 +1,14 @@
 # Sane++
 A Sane Subscription Feed C++ rewrite.
 
+[![Build Status](https://api.travis-ci.org/BluABK/sanepp.svg?branch=master)](https://travis-ci.org/BluABK/sanepp)
+![GitHub](https://img.shields.io/github/license/bluabk/sanepp.svg)
+![GitHub issues](https://img.shields.io/github/issues/bluabk/sanepp.svg)
+![GitHub repo size](https://img.shields.io/github/repo-size/bluabk/sanepp.svg?style=popout)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/bluabk/sanepp.svg)
+![Discord](https://img.shields.io/discord/499274159839379473.svg?style=popout)
+
+
 ## What is this?
 Simply put the core function is to create a more reliable subfeed than YouYube's.
 

@@ -6,7 +6,11 @@ TEST_CASE( "Testing sane::CLI" ) {
     // Instantiate the CLI class.
     std::shared_ptr<sane::CLI> cli = std::make_shared<sane::CLI>();
 
-    SECTION( "[function] padStringValue" ) {
+    SECTION( "Check that CLI initialized" ) {
+        REQUIRE(cli);
+    }
+
+    SECTION( "padStringValue" ) {
 
         SECTION( "Strings are padded with correct length.", "[multi-file:2]" ) {
             REQUIRE( cli->padStringValue("Test", 10).length() == 10 );

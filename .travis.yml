@@ -55,7 +55,9 @@ install:
   - cd Catch2
   - cmake -Bbuild -H. -DBUILD_TESTING=OFF
   # sudo uses root's PATH so we need to carry over ours.
-  - sudo env PATH="$PATH" cmake --build build/ --target install 
+  - sudo env PATH="$PATH" cmake --build build/ --target install
+  # don't forget to switch back to the main build directory once you are done
+  - cd ${TRAVIS_BUILD_DIR}
 
 before_script:
   # create a build folder for the out-of-source build

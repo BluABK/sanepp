@@ -113,32 +113,42 @@ namespace sane {
         }
     }
 
-    const std::string padStringValue(const std::string &string_t, const int maxLength) {
-        std::string paddedString = string_t + std::string(string_t.length() - maxLength, ' ');
+    const std::string padStringValue(const std::string &string_t, const std::size_t maxLength) {
+        std::string paddedString;
 
+        if (string_t.length() <= maxLength) {
+            paddedString = string_t + std::string(maxLength - string_t.length(), ' ');
+        } else {
+            std::cerr << "padStringValue ERROR: Given string '" << string_t <<
+            "' is longer than specified max length: " << maxLength << "!" << std::endl;
+            return "padStringValue ERROR";
+        }
         return paddedString;
     }
 
     void BasicInteractiveCommandPrompt::printSubscriptionsBasic() {
         // Spacing between each column item.
         const std::string columnSpacing(4, ' ');
-        // Spacing based on the number of subscriptions.
-        const std::string subscriptionNumberingSpacing(subscriptions.size(), ' ');
+        // Pad subscription counter based on the amount of digits in the sum total.
+        const std::size_t maxCounterDigitAmount = std::to_string(subscriptions.size()).length();
         // Max length of IDs, used to calculate padding.
-        const int idItemMaxLength = 24;
+        const std::size_t idItemMaxLength = 24;
+        // Humanized counting.
+        int counter = 1;
 
-        int counter = 1;  // Humanized counting.
-        // ID: Len max ca. 24
-        std::cout << "Sub#" << subscriptionNumberingSpacing <<
+        // Print a table heading/legend.
+        std::cout << "Sub#" << std::string(maxCounterDigitAmount, ' ') << columnSpacing <<
         "Channel ID" << columnSpacing << "Uploads playlist ID" << columnSpacing << "Channel title" <<  std::endl;
 
         for (auto & subscription : subscriptions) {
-            // Pad ID ID item columns with spaces to ensure a uniform indentation.
+            // Pad item columns with spaces to ensure a uniform indentation.
             const std::string paddedChannelId = padStringValue(subscription->getChannelId(), idItemMaxLength);
             const std::string paddedUploadsPlaylistId = padStringValue(
                     subscription->getUploadsPlaylist(), idItemMaxLength);
+            const std::string paddedNumbering = padStringValue(std::to_string(counter), maxCounterDigitAmount);
 
-            std::cout << counter << paddedChannelId << columnSpacing << paddedUploadsPlaylistId << columnSpacing <<
+            std::cout << paddedNumbering << columnSpacing <<
+            paddedChannelId << columnSpacing << paddedUploadsPlaylistId << columnSpacing <<
             subscription->getTitle() << std::endl;
 
             counter++;

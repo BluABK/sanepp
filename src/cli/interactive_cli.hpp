@@ -1,15 +1,20 @@
-#ifndef SANE_BASIC_INTERACTIVE_COMMAND_PROMPT_HPP
-#define SANE_BASIC_INTERACTIVE_COMMAND_PROMPT_HPP
+#ifndef SANE_INTERACTIVE_CLI_HPP
+#define SANE_INTERACTIVE_CLI_HPP
 
 #include <map>
+#include <list>
 #include <string>
 #include <iostream>
 
-namespace sane {
-    class BasicInteractiveCommandPrompt {
-    public:
-        BasicInteractiveCommandPrompt();
+#include <youtube_subscription.hpp>
+#include <api_handler.hpp>
 
+namespace sane {
+    class InteractiveCLI {
+    public:
+        explicit InteractiveCLI(bool t_testMode = false);
+
+        const std::string padStringValue(const std::string &string_t, std::size_t maxLength);
     private:
         // Internal
         bool manuallyExit = false;
@@ -43,9 +48,10 @@ namespace sane {
 
         std::list<std::shared_ptr<YoutubeSubscription>> getSubscriptionsFromApi();
 
+
         void printSubscriptionsFull();
 
         void printSubscriptionsBasic();
     };
 } // namespace sane
-#endif //SANE_BASIC_INTERACTIVE_COMMAND_PROMPT_HPP
+#endif //SANE_INTERACTIVE_CLI_HPP

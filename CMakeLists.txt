@@ -31,9 +31,27 @@ add_executable(SaneCLI
         src/api_handler/api_handler.cpp
         src/api_handler/api_handler.hpp
         src/api_handler/youtube_subscription.cpp
-        src/api_handler/youtube_subscription.hpp src/third_party/catch2/catch.hpp src/cli/basic_interactive_command_prompt.cpp src/cli/basic_interactive_command_prompt.hpp)
+        src/api_handler/youtube_subscription.hpp
+        src/cli/interactive_cli.cpp
+        src/cli/interactive_cli.hpp)
 
 target_link_libraries (SaneCLI -lcurl)
+
+# CLI Tests
+add_executable(SaneCLITest
+        src/cli/tests.cpp
+        src/third_party/catch2/catch.hpp
+        src/third_party/nlohmann/json.hpp
+        src/api_handler/sapi_objs/sapi_test_static_json.cpp
+        src/api_handler/sapi_objs/sapi_test_static_json.hpp
+        src/api_handler/api_handler.cpp
+        src/api_handler/api_handler.hpp
+        src/api_handler/youtube_subscription.cpp
+        src/api_handler/youtube_subscription.hpp
+        src/cli/interactive_cli.cpp
+        src/cli/interactive_cli.hpp src/cli/tests/test_interactive_cli.cpp)
+
+target_link_libraries (SaneCLITest -lcurl)
 
 # GUI
 add_executable(SaneGUI

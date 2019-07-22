@@ -3,10 +3,10 @@
 
 #include <youtube_subscription.hpp>
 #include <api_handler.hpp>
-#include "basic_interactive_command_prompt.hpp"
+#include "interactive_cli.hpp"
 
 namespace sane {
-    BasicInteractiveCommandPrompt::BasicInteractiveCommandPrompt() {
+    InteractiveCLI::InteractiveCLI(bool t_testMode) {
         // Add commands to map of commands on the form of <name, description>.
         commands[EXIT] = "Exit program";
         commands[HELP] = "Print help";
@@ -31,6 +31,11 @@ namespace sane {
             it++;
         }
 
+        // If testing, don't enter the runtime loop as it won't ever end.
+        if (t_testMode) {
+            return;
+        }
+
         // Do the loop
         std::string input;
         std::cout << COMMAND_PROMPT_STYLE;
@@ -53,7 +58,7 @@ namespace sane {
         }
     }
 
-    void BasicInteractiveCommandPrompt::help() {
+    void InteractiveCLI::help() {
         // Create a map iterator and point it to the beginning of the map.
         auto it = commands.begin();
 
@@ -75,11 +80,11 @@ namespace sane {
         std::cout << std::endl;
     }
 
-    void BasicInteractiveCommandPrompt::exit() {
+    void InteractiveCLI::exit() {
         manuallyExit = true;
     }
 
-    void BasicInteractiveCommandPrompt::executeCommand(const std::string &command) {
+    void InteractiveCLI::executeCommand(const std::string &command) {
         if (command == HELP) {
             help();
         } else if (command == EXIT) {
@@ -98,13 +103,13 @@ namespace sane {
     /**
      * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
      */
-    std::list<std::shared_ptr<YoutubeSubscription>> BasicInteractiveCommandPrompt::getSubscriptionsFromApi() {
+    std::list<std::shared_ptr<YoutubeSubscription>> InteractiveCLI::getSubscriptionsFromApi() {
         subscriptions = sapiGetSubscriptions();
 
         return subscriptions;
     }
 
-    void BasicInteractiveCommandPrompt::printSubscriptionsFull() {
+    void InteractiveCLI::printSubscriptionsFull() {
         int counter = 1;  // Humanized counting.
         for (auto & subscription : subscriptions) {
             std::cout << "Sub#" << counter << ":" << std::endl;
@@ -113,20 +118,22 @@ namespace sane {
         }
     }
 
-    const std::string padStringValue(const std::string &string_t, const std::size_t maxLength) {
+    const std::string InteractiveCLI::padStringValue(const std::string &string_t,
+            const std::size_t maxLength) {
         std::string paddedString;
 
         if (string_t.length() <= maxLength) {
             paddedString = string_t + std::string(maxLength - string_t.length(), ' ');
         } else {
-            std::cerr << "padStringValue ERROR: Given string '" << string_t <<
-            "' is longer than specified max length: " << maxLength << "!" << std::endl;
-            return "padStringValue ERROR";
+            // If the string is longer than pad length, give a warning and return the original string.
+//            std::cerr << "padStringValue WARNING: Given string '" << string_t <<
+//            "' is longer than specified max length: " << maxLength << "!" << std::endl;
+            return string_t;
         }
         return paddedString;
     }
 
-    void BasicInteractiveCommandPrompt::printSubscriptionsBasic() {
+    void InteractiveCLI::printSubscriptionsBasic() {
         // Spacing between each column item.
         const std::string columnSpacing(4, ' ');
         // Pad subscription counter based on the amount of digits in the sum total.

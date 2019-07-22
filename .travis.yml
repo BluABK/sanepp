@@ -1,8 +1,29 @@
+# Enable sudo for use of apt.
+sudo: required
+# Set this to w/e the latest ubuntu release is.
+dist: bionic
 language: c++
-
 compiler:
   - g++
- 
+
+# Install a more recent version of g++.
+install: export CXX="g++-8"
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-8
+
+# Notification settings.
+notifications:
+ email:
+  on_success: never
+  on_failure: always
+
+# Update the system.
+before_install: sudo apt-get update -qq
+
 ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
 ## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)
 # The install step will take care of deploying a newer cmake version

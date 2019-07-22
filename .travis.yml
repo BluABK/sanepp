@@ -14,7 +14,7 @@ install:
   - travis_retry wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-x86_64.tar.gz
   # this is optional, but useful:
   # do a quick md5 check to ensure that the archive we downloaded did not get compromised
-  - echo "0678d74a45832cacaea053d85a5685f3ed8352475e6ddf9fcb742ffca00199b5 *cmake-3.15.0-Linux-x86_64.tar.gz" > cmake_sha256.txt
+  - echo "5a681e37b142006ab44aef9b976db610dc5d94124da41743ff53412f4b36a7fe *cmake-3.15.0-Linux-x86_64.tar.gz" > cmake_sha256.txt
   - sha256sum -c cmake_sha256.txt
   # extract the binaries; the output here is quite lengthy,
   # so we swallow it to not clutter up the travis console

@@ -24,7 +24,7 @@ notifications:
 # Update the system.
 before_install: 
   - sudo apt-get update -qq
-  - sudo apt-get install -y catch2
+  # - sudo apt-get install -y catch2 # Oh you wish... manually built from source further down..
 
 ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
 ## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)
@@ -49,6 +49,12 @@ install:
   - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
   # don't forget to switch back to the main build directory once you are done
   - cd ${TRAVIS_BUILD_DIR}
+  
+  # Build Catch2 from source as it is absent from ubuntu repos =/
+  - git clone https://github.com/catchorg/Catch2.git
+  - cd Catch2
+  - cmake -Bbuild -H. -DBUILD_TESTING=OFF
+  - sudo cmake --build build/ --target install 
 
 before_script:
   # create a build folder for the out-of-source build

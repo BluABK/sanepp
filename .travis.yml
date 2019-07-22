@@ -13,7 +13,7 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - g++-8 catch2
+    - g++-8
 
 # Notification settings.
 notifications:
@@ -22,7 +22,9 @@ notifications:
   on_failure: always
 
 # Update the system.
-before_install: sudo apt-get update -qq
+before_install: 
+  - sudo apt-get update -qq
+  - sudo apt-get install -y catch2
 
 ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
 ## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)

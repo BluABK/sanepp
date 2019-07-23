@@ -22,9 +22,16 @@ include_directories(src/api_handler)
 include_directories(src/third_party)
 include_directories(src/api_handler/sapi_objs)
 include_directories(src/gui)
+
 # Database
 include_directories(sanepp_rusty_db/src)
 include_directories(sanepp_rusty_db/target/debug)
+
+# Build required libs
+execute_process(
+        COMMAND /bin/bash -c ${CMAKE_SOURCE_DIR}/build-libs.sh
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+include_directories(lib/sanepp_rusty_db/debug)
 
 # CLI
 add_executable(SaneCLI
@@ -41,14 +48,7 @@ add_executable(SaneCLI
         sanepp_rusty_db/src/sanepp_rusty_db.h)
 
 target_link_libraries (SaneCLI -lcurl)
-
-# Set libraries search path
-#link_directories(sanepp_rusty_db/target/debug/)
-#set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/sanepp_rusty_db/target/debug")
-#find_library(SANEPP_RUSTY_DB_LIB libsanepp_rusty_db)
-target_link_libraries(SaneCLI ${CMAKE_SOURCE_DIR}/sanepp_rusty_db/target/debug/libsanepp_rusty_db.so)
-#target_link_libraries(SaneCLI libsanepp_rusty_db)
-#target_link_libraries(SaneCLI sanepp_rusty_db/target/debug/libsanepp_rusty_db.so)
+target_link_libraries(SaneCLI ${CMAKE_SOURCE_DIR}/lib/sanepp_rusty_db/debug/libsanepp_rusty_db.so)
 
 # GUI
 add_executable(SaneGUI

@@ -25,7 +25,6 @@ include_directories(src/gui)
 
 # Database
 include_directories(sanepp_rusty_db/src)
-include_directories(sanepp_rusty_db/target/debug)
 
 # Build required libs
 execute_process(

@@ -1,4 +1,3 @@
-
 // The Rust compiler mangles symbol names differently than native code linkers expect.
 // As such, any function that Rust exports to be used outside of Rust needs to be told
 // not to be mangled by the compiler.

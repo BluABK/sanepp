@@ -9,9 +9,8 @@
 // Sane++ Project specific
 #include <api_handler.hpp>
 #include <sapi_objs/sapi_test_static_json.hpp>
+#include <sanepp_rusty_db.h>
 #include "cli.hpp"
-//#include <sanepp_rusty_db.h>
-#include "sanepp_rusty_db.h"
 
 int main() {
     // Instantiate the CLI class.

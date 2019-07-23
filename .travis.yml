@@ -2,75 +2,93 @@
 sudo: required
 # Set this to w/e the latest ubuntu release is.
 dist: bionic
-language: c++
-compiler:
-  - g++
+matrix:
+  include:
+    - language: rust
+    rust:
+      - stable
+      - beta
+      - nightly
+    matrix:
+      allow_failures:
+        - rust: nightly
+      fast_finish: true
+    script:
+      # Create a build folder for the out-of-source build
+      #- mkdir sane-test-build -- made by cargo build
+      - CARGO_TARGET_DIR="${TRAVIS_BUILD_DIR}/sane-test-build/lib/sanepp_rusty_db" cargo build --lib
 
-# Install a more recent version of g++.
-install: export CXX="g++-8"
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-8
+    - language: c++
+    compiler:
+      - g++
+
+    # Install a more recent version of g++.
+    install: export CXX="g++-8"
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-8
+
+
+    # Update the system.
+    before_install:
+      - sudo apt-get update -qq
+      # - sudo apt-get install -y catch2 # Oh you wish... manually built from source further down..
+
+    ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
+    ## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)
+    # The install step will take care of deploying a newer cmake version
+    install:
+      # first we create a directory for the CMake binaries
+      - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+      - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+      # we use wget to fetch the cmake binaries
+      - travis_retry wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-x86_64.tar.gz
+      # this is optional, but useful:
+      # do a quick md5 check to ensure that the archive we downloaded did not get compromised
+      - echo "5a681e37b142006ab44aef9b976db610dc5d94124da41743ff53412f4b36a7fe *cmake-3.15.0-Linux-x86_64.tar.gz" > cmake_sha256.txt
+      - sha256sum -c cmake_sha256.txt
+      # extract the binaries; the output here is quite lengthy,
+      # so we swallow it to not clutter up the travis console
+      - tar -xvf cmake-3.15.0-Linux-x86_64.tar.gz > /dev/null
+      - mv cmake-3.15.0-Linux-x86_64 cmake-install
+      # add both the top-level directory and the bin directory from the archive
+      # to the system PATH. By adding it to the front of the path we hide the
+      # preinstalled CMake with our own.
+      - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
+      # don't forget to switch back to the main build directory once you are done
+      - cd ${TRAVIS_BUILD_DIR}
+
+      # Build Catch2 from source as it is absent from ubuntu repos =/
+      - git clone https://github.com/catchorg/Catch2.git
+      - cd Catch2
+      - cmake -Bbuild -H. -DBUILD_TESTING=OFF
+      # sudo uses root's PATH so we need to carry over ours.
+      - sudo env PATH="$PATH" cmake --build build/ --target install
+      # don't forget to switch back to the main build directory once you are done
+      - cd ${TRAVIS_BUILD_DIR}
+
+    before_script:
+      # oos dir is now created in prior rust conf
+      # create a build folder for the out-of-source build
+      # - mkdir sane-test-build
+      # switch to build directory
+      - cd sane-test-build
+      # run cmake; here we assume that the project's
+      # top-level CMakeLists.txt is located at '..'
+      - cmake ..
+
+    script:
+      ## once CMake has done its job we just build using make as usual
+      ## - make
+      - cmake --build . --config Release
+      # Execute unit tests
+      - ctest -C Release -V -j
 
 # Notification settings.
 notifications:
  email:
   on_success: never
   on_failure: always
-
-# Update the system.
-before_install: 
-  - sudo apt-get update -qq
-  # - sudo apt-get install -y catch2 # Oh you wish... manually built from source further down..
-
-## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
-## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)
-# The install step will take care of deploying a newer cmake version
-install:    
-  # first we create a directory for the CMake binaries
-  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-  - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
-  # we use wget to fetch the cmake binaries
-  - travis_retry wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-x86_64.tar.gz
-  # this is optional, but useful:
-  # do a quick md5 check to ensure that the archive we downloaded did not get compromised
-  - echo "5a681e37b142006ab44aef9b976db610dc5d94124da41743ff53412f4b36a7fe *cmake-3.15.0-Linux-x86_64.tar.gz" > cmake_sha256.txt
-  - sha256sum -c cmake_sha256.txt
-  # extract the binaries; the output here is quite lengthy,
-  # so we swallow it to not clutter up the travis console
-  - tar -xvf cmake-3.15.0-Linux-x86_64.tar.gz > /dev/null
-  - mv cmake-3.15.0-Linux-x86_64 cmake-install
-  # add both the top-level directory and the bin directory from the archive
-  # to the system PATH. By adding it to the front of the path we hide the
-  # preinstalled CMake with our own.
-  - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
-  # don't forget to switch back to the main build directory once you are done
-  - cd ${TRAVIS_BUILD_DIR}
-  
-  # Build Catch2 from source as it is absent from ubuntu repos =/
-  - git clone https://github.com/catchorg/Catch2.git
-  - cd Catch2
-  - cmake -Bbuild -H. -DBUILD_TESTING=OFF
-  # sudo uses root's PATH so we need to carry over ours.
-  - sudo env PATH="$PATH" cmake --build build/ --target install
-  # don't forget to switch back to the main build directory once you are done
-  - cd ${TRAVIS_BUILD_DIR}
-
-before_script:
-  # create a build folder for the out-of-source build
-  - mkdir sane-test-build
-  # switch to build directory
-  - cd sane-test-build
-  # run cmake; here we assume that the project's
-  # top-level CMakeLists.txt is located at '..'
-  - cmake ..
-
-script:
-  ## once CMake has done its job we just build using make as usual
-  ## - make
-  - cmake --build . --config Release
-  # Execute unit tests
-  - ctest -C Release -V -j

@@ -57,7 +57,7 @@ install:
 before_script:
   # oos dir is now created in prior rust conf
   # create a build folder for the out-of-source build
-  # - mkdir sane-test-build
+  - mkdir sane-test-build
   # switch to build directory
   - cd sane-test-build
   # run cmake; here we assume that the project's

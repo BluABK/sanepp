@@ -13,10 +13,12 @@ matrix:
       allow_failures:
         - rust: nightly
       fast_finish: true
-    script:
+    before-script:
       # Create a build folder for the out-of-source build
-      #- mkdir sane-test-build -- made by cargo build
-      - CARGO_TARGET_DIR="${TRAVIS_BUILD_DIR}/sane-test-build/lib/sanepp_rusty_db" cargo build --lib
+      - mkdir sane-test-build
+      - cd sane-test-build
+    script:
+      - CARGO_TARGET_DIR=lib/sanepp_rusty_db cargo build --lib
 
     - language: c++
     compiler:

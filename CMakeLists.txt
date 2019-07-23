@@ -84,10 +84,13 @@ add_executable(tests test/src/test.cpp
         src/api_handler/youtube_subscription.cpp
         src/api_handler/youtube_subscription.hpp
         src/cli/cli.cpp
-        src/cli/cli.hpp)
+        src/cli/cli.hpp
+        sanepp_rusty_db/src/sanepp_rusty_db.h
+        test/src/sanepp_rusty_db/unit-test_db.cpp)
 
 target_link_libraries(tests -lcurl)
 target_link_libraries(tests Catch2::Catch2)
+target_link_libraries(tests ${CMAKE_SOURCE_DIR}/lib/sanepp_rusty_db/debug/libsanepp_rusty_db.so)
 
 include(CTest)
 include(Catch)

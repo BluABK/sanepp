@@ -6,6 +6,6 @@
 // By default, any function you write in Rust will use the Rust ABI (which is also not stabilized).
 // Instead, when building outwards facing FFI APIs we need to tell the compiler to use
 // the system ABI.
-pub extern "C" fn rust_function() {
-    println!("I am Database.");
+pub extern "C" fn test_rust_linkage<'a>() -> &'a str {
+    return "Tested rust linkage";
 }

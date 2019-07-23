@@ -14,6 +14,6 @@
  * https://stackoverflow.com/a/50234125
  */
 
-extern "C" void rust_function();
+extern "C" const char * test_rust_linkage();
 
 #endif //SANE_SANEPP_RUSTY_DB_H

@@ -4,21 +4,21 @@ sudo: required
 dist: bionic
 matrix:
   include:
-    - language: rust
-    rust:
-      - stable
-      - beta
-      - nightly
-    matrix:
-      allow_failures:
-        - rust: nightly
-      fast_finish: true
-    before-script:
-      # Create a build folder for the out-of-source build
-      - mkdir sane-test-build
-      - cd sane-test-build
-    script:
-      - CARGO_TARGET_DIR=lib/sanepp_rusty_db cargo build --lib
+#    - language: rust
+#    rust:
+#      - stable
+#      - beta
+#      - nightly
+#    matrix:
+#      allow_failures:
+#        - rust: nightly
+#      fast_finish: true
+#    before-script:
+#      # Create a build folder for the out-of-source build
+#      - mkdir sane-test-build
+#      - cd sane-test-build
+#    script:
+#      - CARGO_TARGET_DIR=lib/sanepp_rusty_db cargo build --lib
 
     - language: c++
     compiler:

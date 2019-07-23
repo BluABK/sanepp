@@ -1,3 +1,5 @@
+mod db;
+
 // The Rust compiler mangles symbol names differently than native code linkers expect.
 // As such, any function that Rust exports to be used outside of Rust needs to be told
 // not to be mangled by the compiler.
@@ -8,4 +10,8 @@
 // the system ABI.
 pub extern "C" fn test_rust_linkage<'a>() -> &'a str {
     return "Tested rust linkage";
+}
+
+pub extern "C" fn run_example() {
+    db::example()
 }

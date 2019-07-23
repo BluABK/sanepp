@@ -7,3 +7,6 @@ name = "sanepp_rusty_db"
 version = "0.1.0"
 crate-type = ["cdylib"]      # Creates dynamic lib
 # crate-type = ["staticlib"] # Creates static lib
+
+[dependencies]
+noria = "0.1.2"

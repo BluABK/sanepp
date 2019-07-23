@@ -22,6 +22,7 @@ include_directories(src/api_handler)
 include_directories(src/third_party)
 include_directories(src/api_handler/sapi_objs)
 include_directories(src/gui)
+include_directories(src/sanepp_rusty_db)
 
 # CLI
 add_executable(SaneCLI
@@ -34,7 +35,8 @@ add_executable(SaneCLI
         src/api_handler/youtube_subscription.cpp
         src/api_handler/youtube_subscription.hpp
         src/cli/cli.cpp
-        src/cli/cli.hpp)
+        src/cli/cli.hpp
+        src/sanepp_rusty_db/src/sanepp_rusty_db.h)
 
 target_link_libraries (SaneCLI -lcurl)
 

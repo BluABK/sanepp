@@ -8,5 +8,5 @@
 // Instead, when building outwards facing FFI APIs we need to tell the compiler to use
 // the system ABI.
 pub extern "C" fn rust_function() {
-    printf("I am Database.");
+    println!("I am Database.");
 }

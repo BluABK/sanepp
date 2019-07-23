@@ -22,7 +22,9 @@ include_directories(src/api_handler)
 include_directories(src/third_party)
 include_directories(src/api_handler/sapi_objs)
 include_directories(src/gui)
-include_directories(src/sanepp_rusty_db)
+# Database
+include_directories(sanepp_rusty_db/src)
+include_directories(sanepp_rusty_db/target/debug)
 
 # CLI
 add_executable(SaneCLI
@@ -36,9 +38,17 @@ add_executable(SaneCLI
         src/api_handler/youtube_subscription.hpp
         src/cli/cli.cpp
         src/cli/cli.hpp
-        src/sanepp_rusty_db/src/sanepp_rusty_db.h)
+        sanepp_rusty_db/src/sanepp_rusty_db.h)
 
 target_link_libraries (SaneCLI -lcurl)
+
+# Set libraries search path
+#link_directories(sanepp_rusty_db/target/debug/)
+#set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/sanepp_rusty_db/target/debug")
+#find_library(SANEPP_RUSTY_DB_LIB libsanepp_rusty_db)
+target_link_libraries(SaneCLI ${CMAKE_SOURCE_DIR}/sanepp_rusty_db/target/debug/libsanepp_rusty_db.so)
+#target_link_libraries(SaneCLI libsanepp_rusty_db)
+#target_link_libraries(SaneCLI sanepp_rusty_db/target/debug/libsanepp_rusty_db.so)
 
 # GUI
 add_executable(SaneGUI

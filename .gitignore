@@ -21,3 +21,8 @@ qrc_src*
 *backdoor*.py
 .gitconfig
 youtube_api_samples
+sanepp_rusty_db/Cargo.lock
+lib/sanepp_rusty_db/debug/*
+lib/sanepp_rusty_db/.rustc_info.json
+!lib/sanepp_rusty_db/debug/libsanepp_rusty_db.so
+sanepp_rusty_db/third_party/noria

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "cli.hpp"
+#include "src/cli.hpp"
 
 TEST_CASE( "Testing sane::CLI" ) {
     // Instantiate the CLI class.

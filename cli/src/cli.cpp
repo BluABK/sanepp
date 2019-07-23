@@ -1,8 +1,8 @@
 #include <iostream>
 #include <list>
 
-#include <youtube_subscription.hpp>
-#include <api_handler.hpp>
+#include <src/youtube_subscription.hpp>
+#include <src/api_handler.hpp>
 #include "cli.hpp"
 
 namespace sane {

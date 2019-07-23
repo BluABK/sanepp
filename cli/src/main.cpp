@@ -7,8 +7,8 @@
 #include <string>
 
 // Sane++ Project specific
-#include <api_handler.hpp>
-#include <sapi_objs/sapi_test_static_json.hpp>
+#include <src/api_handler.hpp>
+#include <src/sapi_objs/sapi_test_static_json.hpp>
 #include "cli.hpp"
 
 int main() {

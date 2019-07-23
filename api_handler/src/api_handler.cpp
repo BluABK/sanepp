@@ -12,7 +12,7 @@
 #include <nlohmann/json.hpp>
 
 // Project specific libraries.
-#include <sapi_objs/sapi_test_static_json.hpp>
+#include <src/sapi_objs/sapi_test_static_json.hpp>
 #include "api_handler.hpp"
 #include "youtube_subscription.hpp"
 

@@ -7,7 +7,7 @@
 
 #include <list>
 
-#include <sapi_objs/sapi_test_static_json.hpp>
+#include <src/sapi_objs/sapi_test_static_json.hpp>
 #include "youtube_subscription.hpp"
 
 namespace sane {

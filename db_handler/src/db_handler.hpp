@@ -21,8 +21,10 @@ namespace sane {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Method B: The better method using prepared statements.
-    int prepareAndRunSqlStatement(std::function<int(sqlite3_stmt *sqlite3PreparedStatement)> &t_callbackFunction,
-                                  const std::string &t_dbName, const std::string &t_sql);
+    int dummyCallback(sqlite3_stmt *t_sqlite3PreparedStatement);
+
+    int prepareAndRunSqlStatement(std::function<int(sqlite3_stmt *sqlite3PreparedStatement)> t_callbackFunction,
+            const std::string &t_dbName, const std::string &t_sql);
 }
 
 #endif //SANE_DB_HANDLER_HPP

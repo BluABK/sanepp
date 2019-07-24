@@ -7,7 +7,7 @@
 
 #include <db_handler.hpp>
 
-TEST_CASE ("1: Testing sane::DBHandler: CREATE TABLE test_db_functionality") {
+TEST_CASE ("1: Testing sane::DBHandler.doRawSqlite3ExecStatement: CREATE TABLE test_db_functionality") {
     // Setup
     const std::string databaseFilename = "sane_db_handler_test.db";
     int returnStatus;
@@ -21,7 +21,7 @@ TEST_CASE ("1: Testing sane::DBHandler: CREATE TABLE test_db_functionality") {
     REQUIRE(returnStatus == 0);
 }
 
-TEST_CASE( "2: Testing sane::DBHandler" ) {
+TEST_CASE( "2: Testing sane::DBHandler.doRawSqlite3ExecStatement" ) {
     // Setup
     const std::string databaseFilename = "sane_db_handler_test.db";
     std::string sqlStatement;

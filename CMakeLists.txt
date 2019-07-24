@@ -49,8 +49,19 @@ target_link_libraries(SaneCLI -ldl)
 
 # GUI
 add_executable(SaneGUI
-        gui/src/main.cpp api_handler/src/youtube_subscription.cpp api_handler/src/youtube_subscription.hpp db_handler/src/db_handler.cpp db_handler/src/db_handler.hpp)
+        gui/src/main.cpp
+        api_handler/src/youtube_subscription.cpp
+        api_handler/src/youtube_subscription.hpp
+        db_handler/src/db_handler.cpp
+        db_handler/src/db_handler.hpp
+        third_party/sqlite/sqlite3.h
+        third_party/sqlite/sqlite3.c)
 
+# API Handler
+target_link_libraries (SaneGUI -lcurl)
+# Database
+target_link_libraries(SaneGUI -lpthread)
+target_link_libraries(SaneGUI -ldl)
 
 ##
 ## TESTS

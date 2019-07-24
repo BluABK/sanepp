@@ -3,6 +3,7 @@
 #include <vector>
 #include <sqlite3.h>
 #include <functional>
+#include <type_traits>
 
 #include "db_handler.hpp"
 namespace sane {
@@ -30,19 +31,19 @@ namespace sane {
      * @param columnNames           The column names.
      * @return                      0.
      */
-    static int callback(void *t_unusedFunction, int resultSetColumnCount, char** rowData, char **columnNames) {
+    static int callback(void *t_unused, int t_columnCount, char** t_rowData, char **t_columnNames) {
         int index;
 
         // "Use" the unused function to clear irrelevant unused warnings.
-        if (t_unusedFunction) {}
+        if (t_unused) {}
 
-        for (index = 0; index < resultSetColumnCount; index++) {
-            std::cout <<  "The data in column " << columnNames[index] << " is: " << rowData[index] << std::endl;
-            if (rowData[index]) {
-                std::cout << columnNames[index] << " = " << rowData[index] << std::endl;
-                addCallbackResult(rowData[index]);
+        for (index = 0; index < t_columnCount; index++) {
+            std::cout <<  "Default callback: The data in column " << t_columnNames[index] << " is: " << t_rowData[index] << std::endl;
+            if (t_rowData[index]) {
+                std::cout << t_columnNames[index] << " = " << t_rowData[index] << std::endl;
+                addCallbackResult(t_rowData[index]);
             } else {
-                std::cout << columnNames[index] << " = " << "NULL" << std::endl;
+                std::cout << t_columnNames[index] << " = " << "NULL" << std::endl;
                 addCallbackResult("NULL");
             }
         }
@@ -53,13 +54,51 @@ namespace sane {
     }
 
     /**
-     * Performs a SQLite statement using sqlite3_exec
+     * **DISABLED**: Works for one single query and then SQLite throws "query aborted".
+     *
+     * Performs a SQLite statement using sqlite3_exec, but with a custom callback function.
      *
      * @param t_dbName         Filename for the database.
      * @param t_sqlStatement   A SQLite statement.
      * @return
      */
-    int doRawSqlite3ExecStatement(const std::string &t_dbName, const std::string &t_sqlStatement) {
+    #if generic_false_statement
+    int execSqlStatementCustom(sqlite3_callback_ t_callbackFunction, const std::string &t_dbName, const std::string &t_sqlStatement) {
+        sqlite3 *db;
+        char *errorMessages = nullptr;
+        int rc;
+
+        // Open the database file.
+        rc = sqlite3_open(t_dbName.c_str(), &db);
+        if (rc != SQLITE_OK) {
+            fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+            sqlite3_close(db);
+            return (SQLITE_CANTOPEN);
+        }
+
+        // Execute the passed SQL statement and for every result row that it finds it will call callback.
+        rc = sqlite3_exec(db, t_sqlStatement.c_str(), t_callbackFunction, nullptr, &errorMessages);
+        if (rc != SQLITE_OK) {
+            fprintf(stderr, "SQL error: %s\n", errorMessages);
+            std::cerr << "SQL Error ver2: " << sqlite3_errmsg(db) << std::endl;
+            sqlite3_free(errorMessages);
+        }
+
+        // Close database after all successful operations.
+        sqlite3_close(db);
+
+        return SQLITE_OK;
+    }
+    #endif
+
+    /**
+     * Performs a SQLite statement using sqlite3_exec, with the default callback function.
+     *
+     * @param t_dbName         Filename for the database.
+     * @param t_sqlStatement   A SQLite statement.
+     * @return
+     */
+    int execSqlStatement(const std::string &t_dbName, const std::string &t_sqlStatement) {
         sqlite3 *db;
         char *errorMessages = nullptr;
         int rc;

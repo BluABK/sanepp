@@ -7,7 +7,7 @@
 
 #include <db_handler.hpp>
 
-TEST_CASE ("1: Testing sane::DBHandler.doRawSqlite3ExecStatement: CREATE TABLE test_db_functionality") {
+TEST_CASE ("1: Testing sane::DBHandler.execSqlStatement: CREATE TABLE test_db_functionality") {
     // Setup
     const std::string databaseFilename = "sane_db_handler_test.db";
     int returnStatus;
@@ -16,12 +16,12 @@ TEST_CASE ("1: Testing sane::DBHandler.doRawSqlite3ExecStatement: CREATE TABLE t
     const std::string sqlStatement = "CREATE TABLE test_db_functionality ("
                                            "SomeID int, SomeWord varchar(255)"
                                            ");";
-    returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
+    returnStatus = sane::execSqlStatement(databaseFilename, sqlStatement);
 
     REQUIRE(returnStatus == 0);
 }
 
-TEST_CASE( "2: Testing sane::DBHandler.doRawSqlite3ExecStatement" ) {
+TEST_CASE( "2: Testing sane::DBHandler.execSqlStatement" ) {
     // Setup
     const std::string databaseFilename = "sane_db_handler_test.db";
     std::string sqlStatement;
@@ -32,19 +32,19 @@ TEST_CASE( "2: Testing sane::DBHandler.doRawSqlite3ExecStatement" ) {
         // Add some rows
         sqlStatement = "INSERT INTO test_db_functionality (SomeID, SomeWord)"
                                                "VALUES (0, 'Database');";
-        returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
+        returnStatus = sane::execSqlStatement(databaseFilename, sqlStatement);
         REQUIRE(returnStatus == 0);
 
         sqlStatement = "INSERT INTO test_db_functionality (SomeID, SomeWord)"
                                                "VALUES (1, 'Self-Test');";
-        returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
+        returnStatus = sane::execSqlStatement(databaseFilename, sqlStatement);
         REQUIRE(returnStatus == 0);
     }
 
     SECTION("Read from TABLE test_db_functionality") {
         // Read some rows
         sqlStatement = "SELECT SomeWord FROM test_db_functionality;";
-        returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
+        returnStatus = sane::execSqlStatement(databaseFilename, sqlStatement);
 
         REQUIRE(returnStatus == 0);
 

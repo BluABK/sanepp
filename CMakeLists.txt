@@ -98,7 +98,7 @@ add_executable(tests test/src/test.cpp
         db_handler/src/db_handler.hpp
         third_party/sqlite/sqlite3.h
         third_party/sqlite/sqlite3.c
-        test/src/db_handler/unit-test_do_raw_sqlite3_exec_statement.cpp)
+        test/src/db_handler/unit-test_exec_sql_statement_default_callback.cpp)
 
 # API Handler
 target_link_libraries(tests -lcurl)

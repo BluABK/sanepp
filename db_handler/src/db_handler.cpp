@@ -48,55 +48,35 @@ namespace sane {
     }
 
     /**
-     * Proxy function that converts a vector of C++ strings to a traditional C-String array,
-     * and then calls doSqlite3ExecStatement with the converted array as param.
+     * Performs a SQLite statement using sqlite3_exec
      *
-     * @param list
+     * @param t_dbName         Filename for the database.
+     * @param t_sqlStatement   A SQLite statement.
      * @return
      */
-    int callDBWithCArgs(const std::vector<std::string> &list) {
-        std::vector<const char*> strings;
-        for (const auto & i : list)
-            strings.push_back(i.c_str());
-        int returnStatus = doSqlite3ExecStatement(strings.size(), strings.data());
-
-        return returnStatus;
-    }
-
-    /**
-     * Performs a sql statement using sqlite3_exec
-     * @param argc
-     * @param argv
-     * @return
-     */
-    int doSqlite3ExecStatement(int argc, const char **argv) {
-        const char *databaseName = argv[0];
-        const char *sqlStatement = argv[1];
+    int doSqlite3ExecStatement(const std::string &t_dbName, const std::string &t_sqlStatement) {
         sqlite3 *db;
         char *errorMessages = nullptr;
         int rc;
 
-        // Check that the required amount of args were given.
-        if (argc != 2) {
-            std::cerr << argc << std::endl;
-            fprintf(stderr, "Usage: DATABASE SQL-STATEMENT\n");
-            return (1);
-        }
         // Open the database file.
-        rc = sqlite3_open(databaseName, &db);
+        rc = sqlite3_open(t_dbName.c_str(), &db);
         if (rc) {
             fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
-            return (1);
+            return (SQLITE_ERROR);
         }
+
         // Execute the passed SQL statement and for every result row that it finds it will call callback.
-        rc = sqlite3_exec(db, sqlStatement, callback, nullptr, &errorMessages);
+        rc = sqlite3_exec(db, t_sqlStatement.c_str(), callback, nullptr, &errorMessages);
         if (rc != SQLITE_OK) {
             fprintf(stderr, "SQL error: %s\n", errorMessages);
             sqlite3_free(errorMessages);
         }
 
+        // Close database after all successful operations.
         sqlite3_close(db);
-        return 0;
+
+        return SQLITE_OK;
     }
 }

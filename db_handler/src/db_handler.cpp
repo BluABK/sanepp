@@ -24,14 +24,17 @@ namespace sane {
     /**
      * Callback function for sqlite3_exec() to call for every result row that it finds.
      *
-     * @param NotUsed               An open sqlite3* database, in this case not used but declared to match signature.
+     * @param t_unusedFunction      An open sqlite3* database, in this case not used but declared to match signature.
      * @param resultSetColumnCount  The number of columns in the result set.
      * @param rowData               The row's data.
      * @param columnNames           The column names.
      * @return                      0.
      */
-    static int callback(void *NotUsed, int resultSetColumnCount, char** rowData, char **columnNames) {
+    static int callback(void *t_unusedFunction, int resultSetColumnCount, char** rowData, char **columnNames) {
         int index;
+
+        // "Use" the unused function to clear irrelevant unused warnings.
+        if (t_unusedFunction) {}
 
         for (index = 0; index < resultSetColumnCount; index++) {
             std::cout <<  "The data in column " << columnNames[index] << " is: " << rowData[index] << std::endl;

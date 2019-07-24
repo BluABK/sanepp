@@ -2,6 +2,8 @@
 #include <list>
 #include <vector>
 #include <sqlite3.h>
+#include <functional>
+
 #include "db_handler.hpp"
 namespace sane {
     // A way to store the callback results.
@@ -88,12 +90,21 @@ namespace sane {
      *
      * Based on https://stackoverflow.com/a/31168999
      *
-     * @param t_sql     An SQL statement.
+     * @param t_callbackFunction    Function to be called with prepared SQLite3 statement as parameter.
+     *                              This is to let the function step through the statement and perform
+     *                              its own set of code. This function *MUST* return SQLITE_DONE if successful.
+     *
+     *                              Suggested step-method:
+     *                                  while ((rc = sqlite3_step(t_sqlite3PreparedStatment)) == SQLITE_ROW) { //code }
+     *
+     * @param t_dbName              Filename of database.
+     * @param t_sql                 An SQL statement.
      * @return
      */
-    int prepareSqlStatement(const std::string &t_dbName, const std::string &t_sql) {
+    int prepareAndRunSqlStatement(std::function<int(sqlite3_stmt *sqlite3PreparedStatement)> &t_callbackFunction,
+                                  const std::string &t_dbName, const std::string &t_sql) {
         sqlite3 *db;
-        sqlite3_stmt *sqlite3PreparedStatment;
+        sqlite3_stmt *sqlite3PreparedStatement;
 
         int rc;
 
@@ -105,28 +116,23 @@ namespace sane {
             return (SQLITE_ERROR);
         }
 
-        rc = sqlite3_prepare_v2(db, t_sql.c_str(), -1, &sqlite3PreparedStatment, nullptr);
+        rc = sqlite3_prepare_v2(db, t_sql.c_str(), -1, &sqlite3PreparedStatement, nullptr);
         if (rc != SQLITE_OK) {
             std::cerr << "Error opening database '" << t_dbName << "': " << sqlite3_errmsg(db) << std::endl;
             sqlite3_close(db);
             return SQLITE_CANTOPEN;
         }
-        // Step through the statements and store results to variables.
-        while ((rc = sqlite3_step(sqlite3PreparedStatment)) == SQLITE_ROW) {
-            int id           = sqlite3_column_int (sqlite3PreparedStatment, 0);
-            const char *name = sqlite3_column_text(sqlite3PreparedStatment, 1);
-            // ...
-        }
+        // Send the prepared statement to the callback function to let it step through the statements and run own code.
+        rc = t_callbackFunction(sqlite3PreparedStatement);
+
         if (rc != SQLITE_DONE) {
             std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(db) <<
             std::endl;
         }
-        sqlite3_finalize(sqlite3PreparedStatment);
+
+        // Finalize it.
+        sqlite3_finalize(sqlite3PreparedStatement);
 
         return SQLITE_OK;
     }
-
-    int stepThroughSqlStatement(sqlite3_stmt &t_sqlite3PreparedStatment) {
-
-    }
-}
+} // namespace sane

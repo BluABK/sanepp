@@ -16,7 +16,7 @@ TEST_CASE ("1: Testing sane::DBHandler: CREATE TABLE test_db_functionality") {
     const std::string sqlStatement = "CREATE TABLE test_db_functionality ("
                                            "SomeID int, SomeWord varchar(255)"
                                            ");";
-    returnStatus = sane::doSqlite3ExecStatement(databaseFilename, sqlStatement);
+    returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
 
     REQUIRE(returnStatus == 0);
 }
@@ -32,19 +32,19 @@ TEST_CASE( "2: Testing sane::DBHandler" ) {
         // Add some rows
         sqlStatement = "INSERT INTO test_db_functionality (SomeID, SomeWord)"
                                                "VALUES (0, 'Database');";
-        returnStatus =  sane::doSqlite3ExecStatement(databaseFilename, sqlStatement);
+        returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
         REQUIRE(returnStatus == 0);
 
         sqlStatement = "INSERT INTO test_db_functionality (SomeID, SomeWord)"
                                                "VALUES (1, 'Self-Test');";
-        returnStatus = sane::doSqlite3ExecStatement(databaseFilename, sqlStatement);
+        returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
         REQUIRE(returnStatus == 0);
     }
 
     SECTION("Read from TABLE test_db_functionality") {
         // Read some rows
         sqlStatement = "SELECT SomeWord FROM test_db_functionality;";
-        returnStatus =  sane::doSqlite3ExecStatement(databaseFilename, sqlStatement);
+        returnStatus = sane::doRawSqlite3ExecStatement(databaseFilename, sqlStatement);
 
         REQUIRE(returnStatus == 0);
 

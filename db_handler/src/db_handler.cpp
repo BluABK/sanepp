@@ -50,11 +50,13 @@ namespace sane {
     /**
      * Performs a SQLite statement using sqlite3_exec
      *
+     * **DISCOURAGED** See https://stackoverflow.com/a/31168999
+     *
      * @param t_dbName         Filename for the database.
      * @param t_sqlStatement   A SQLite statement.
      * @return
      */
-    int doSqlite3ExecStatement(const std::string &t_dbName, const std::string &t_sqlStatement) {
+    int doRawSqlite3ExecStatement(const std::string &t_dbName, const std::string &t_sqlStatement) {
         sqlite3 *db;
         char *errorMessages = nullptr;
         int rc;
@@ -64,7 +66,7 @@ namespace sane {
         if (rc) {
             fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
             sqlite3_close(db);
-            return (SQLITE_ERROR);
+            return (SQLITE_CANTOPEN);
         }
 
         // Execute the passed SQL statement and for every result row that it finds it will call callback.
@@ -78,5 +80,53 @@ namespace sane {
         sqlite3_close(db);
 
         return SQLITE_OK;
+    }
+
+    /**
+     * Perform an SQLite3 statement using sqlite3_prepare_v2()/sqlite3_step()/sqlite3_column_*()/sqlite3_finalize()
+     * calls so that you can read the data in the same place where you actually need to handle it.
+     *
+     * Based on https://stackoverflow.com/a/31168999
+     *
+     * @param t_sql     An SQL statement.
+     * @return
+     */
+    int prepareSqlStatement(const std::string &t_dbName, const std::string &t_sql) {
+        sqlite3 *db;
+        sqlite3_stmt *sqlite3PreparedStatment;
+
+        int rc;
+
+        // Open the database file.
+        rc = sqlite3_open(t_dbName.c_str(), &db);
+        if (rc) {
+            fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+            sqlite3_close(db);
+            return (SQLITE_ERROR);
+        }
+
+        rc = sqlite3_prepare_v2(db, t_sql.c_str(), -1, &sqlite3PreparedStatment, nullptr);
+        if (rc != SQLITE_OK) {
+            std::cerr << "Error opening database '" << t_dbName << "': " << sqlite3_errmsg(db) << std::endl;
+            sqlite3_close(db);
+            return SQLITE_CANTOPEN;
+        }
+        // Step through the statements and store results to variables.
+        while ((rc = sqlite3_step(sqlite3PreparedStatment)) == SQLITE_ROW) {
+            int id           = sqlite3_column_int (sqlite3PreparedStatment, 0);
+            const char *name = sqlite3_column_text(sqlite3PreparedStatment, 1);
+            // ...
+        }
+        if (rc != SQLITE_DONE) {
+            std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(db) <<
+            std::endl;
+        }
+        sqlite3_finalize(sqlite3PreparedStatment);
+
+        return SQLITE_OK;
+    }
+
+    int stepThroughSqlStatement(sqlite3_stmt &t_sqlite3PreparedStatment) {
+
     }
 }

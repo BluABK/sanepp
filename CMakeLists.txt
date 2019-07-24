@@ -19,9 +19,10 @@ set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedan
 
 include_directories(cli)
 include_directories(api_handler)
-include_directories(third_party)
 include_directories(api_handler/src/sapi_objs)
+include_directories(db_handler/src)
 include_directories(gui)
+include_directories(third_party)
 
 # CLI
 add_executable(SaneCLI
@@ -34,13 +35,21 @@ add_executable(SaneCLI
         api_handler/src/youtube_subscription.cpp
         api_handler/src/youtube_subscription.hpp
         cli/src/cli.cpp
-        cli/src/cli.hpp)
+        cli/src/cli.hpp db_handler/src/db_handler.cpp
+        db_handler/src/db_handler.hpp
+        third_party/sqlite/sqlite3.h
+        third_party/sqlite/sqlite3.c)
 
+# API Handler
 target_link_libraries (SaneCLI -lcurl)
+# Database
+target_link_libraries(SaneCLI -lpthread)
+target_link_libraries(SaneCLI -ldl)
+
 
 # GUI
 add_executable(SaneGUI
-        gui/src/main.cpp api_handler/src/youtube_subscription.cpp api_handler/src/youtube_subscription.hpp)
+        gui/src/main.cpp api_handler/src/youtube_subscription.cpp api_handler/src/youtube_subscription.hpp db_handler/src/db_handler.cpp db_handler/src/db_handler.hpp)
 
 
 ##
@@ -73,10 +82,20 @@ add_executable(tests test/src/test.cpp
         api_handler/src/youtube_subscription.cpp
         api_handler/src/youtube_subscription.hpp
         cli/src/cli.cpp
-        cli/src/cli.hpp)
+        cli/src/cli.hpp
+        db_handler/src/db_handler.cpp
+        db_handler/src/db_handler.hpp
+        third_party/sqlite/sqlite3.h
+        third_party/sqlite/sqlite3.c
+        test/src/db_handler/unit-test_db_handler.cpp)
 
+# API Handler
 target_link_libraries(tests -lcurl)
+# Testing suite.
 target_link_libraries(tests Catch2::Catch2)
+# Database.
+target_link_libraries(tests -lpthread)
+target_link_libraries(tests -ldl)
 
 include(CTest)
 include(Catch)

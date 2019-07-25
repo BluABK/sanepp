@@ -10,7 +10,7 @@ A Sane Subscription Feed C++ rewrite.
 
 
 ## What is this?
-Simply put the core function is to create a more reliable subfeed than YouYube's.
+Simply put the core function is to create a more reliable subfeed than YouTube's.
 
 Sane++ grabs the "uploaded videos" playlist for all channels you're subscribed to and generates a feed based on that, bypasing the infamous algorithm. 
 

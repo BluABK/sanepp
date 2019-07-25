@@ -8,6 +8,7 @@
 #include <type_traits>
 
 #include <sqlite3.h>
+const std::string DATABASE_FILENAME = "sane.db";
 
 namespace sane {
     // sqlite_exec called with custom callback function provided by parameter.
@@ -29,6 +30,8 @@ namespace sane {
     std::vector<std::string> getCallbackResults();
 
     void clearCallbackResults();
+
+//    const std::string DATABASE_FILENAME = "sane.db";
 }
 
 #endif //SANE_DB_HANDLER_HPP

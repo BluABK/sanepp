@@ -37,23 +37,26 @@ namespace sane {
      */
     std::string compileValues(const std::list<std::string>& listOfValues) {
         std::string compiledString;
-        unsigned long index = 0;
+        unsigned long index = 1;  // size() returns number of items, which counts from 1 not 0.
 
+//        std::cout << "size() = " << listOfValues.size() << std::endl;
         for (auto & value : listOfValues) {
             compiledString += value;
 
+//            std::cout << "index: " << index << ", str = " << compiledString << std::endl;
             // Append separator as long as it isn't the last item in the list.
-            if (index != listOfValues.size() -1) {
+            if (index != listOfValues.size()) {
                 compiledString += ", ";
             }
+            index++;
         }
-
+//        std::cout << "VALUES(" << compiledString << ");" << std::endl;
         return compiledString;
     }
 
-    int addChannelsToDB(std::list <std::shared_ptr<YoutubeChannel>> &channels) {
+    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels) {
         // Setup
-        const std::string databaseFilename = "sane_db_handler_test.db";
+        const std::string databaseFilename = DATABASE_FILENAME;
         std::string sqlStatement;
         int returnStatus;
 
@@ -63,14 +66,17 @@ namespace sane {
 
         // Create the table, if it doesn't already exist.
         sqlStatement = "CREATE TABLE IF NOT EXISTS youtube_channels ("
-                       "ID INTEGER,"
-                       "Title TEXT,"
-                       "Description TEXT,"
-                       "ThumbnailDefault TEXT,"
-                       "ThumbnailHigh TEXT,"
-                       "ThumbnailMedium TEXT,"
-                       "SubscribedOnYouTube BOOLEAN,"
-                       "SubscribedLocalOverride BOOLEAN"
+                       "ID INTEGER, "
+                       "Title TEXT, "
+                       "HasUploadsPlaylist, "
+                       "HasFavouritesPlaylist, "
+                       "HasLikesPlaylist, "
+                       "Description TEXT, "
+                       "SubscribedOnYouTube BOOLEAN, "
+                       "SubscribedLocalOverride BOOLEAN, "
+                       "ThumbnailDefault TEXT, "
+                       "ThumbnailHigh TEXT, "
+                       "ThumbnailMedium TEXT"
                        ");";
 
         returnStatus = sane::execSqlStatementNoCallback(databaseFilename, sqlStatement);
@@ -82,7 +88,7 @@ namespace sane {
 
         // Iterate through the subscription objects and add relevant fields to DB.
         int counter = 0;
-        for (auto & channel : channels) {
+        for (auto & channel : t_channels) {
             // Figure out and sanitize the values.
             std::string id = validateSQLiteInput(channel->getId());
             std::string hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? "TRUE" : "FALSE";
@@ -108,7 +114,7 @@ namespace sane {
 
             // Construct the SQL statement.
             sqlStatement = std::string("INSERT INTO youtube_channels ("
-                           "ID, hasUploadsPlaylist, hasFavouritesPlaylist, hasLikesPlaylist, Title, Description, "
+                           "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
                            "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
                            "SubscribedLocalOverride"
                            ") VALUES (") + insertValues + std::string(");");

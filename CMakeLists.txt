@@ -42,7 +42,9 @@ add_executable(SaneCLI
         cli/src/cli.hpp db_handler/src/db_handler.cpp
         db_handler/src/db_handler.hpp
         third_party/sqlite/sqlite3.h
-        third_party/sqlite/sqlite3.c db_handler/src/db_youtube_channels.cpp db_handler/src/db_youtube_channels.hpp)
+        third_party/sqlite/sqlite3.c
+        db_handler/src/db_youtube_channels.cpp
+        db_handler/src/db_youtube_channels.hpp)
 
 # API Handler
 target_link_libraries (SaneCLI -lcurl)
@@ -59,7 +61,9 @@ add_executable(SaneGUI
         db_handler/src/db_handler.cpp
         db_handler/src/db_handler.hpp
         third_party/sqlite/sqlite3.h
-        third_party/sqlite/sqlite3.c db_handler/src/db_youtube_channels.cpp db_handler/src/db_youtube_channels.hpp)
+        third_party/sqlite/sqlite3.c
+        db_handler/src/db_youtube_channels.cpp
+        db_handler/src/db_youtube_channels.hpp)
 
 # API Handler
 target_link_libraries (SaneGUI -lcurl)
@@ -99,7 +103,9 @@ add_executable(test_all tests/test_all.cpp
         db_handler/src/db_handler.hpp
         third_party/sqlite/sqlite3.h
         third_party/sqlite/sqlite3.c
-        db_handler/test/unit-test_exec_sql_statement_default_callback.cpp)
+        db_handler/test/unit-test_exec_sql_statement_default_callback.cpp
+        db_handler/src/db_youtube_channels.cpp
+        db_handler/src/db_youtube_channels.hpp)
 
 # API Handler
 target_link_libraries(test_all -lcurl)

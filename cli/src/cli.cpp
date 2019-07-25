@@ -1,7 +1,7 @@
 #include <iostream>
 #include <list>
 
-#include <src/youtube_channel.hpp>
+#include <entities/youtube_channel.hpp>
 #include <src/api_handler.hpp>
 #include "cli.hpp"
 

@@ -14,7 +14,7 @@
 // Project specific libraries.
 #include <src/sapi_objs/sapi_test_static_json.hpp>
 #include "api_handler.hpp"
-#include "youtube_channel.hpp"
+#include <entities/youtube_channel.hpp>
 
 namespace sane {
     /**

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <src/youtube_channel.hpp>
+#include <entities/youtube_channel.hpp>
 
 #include "db_handler.hpp"
 #include "youtube_channels.hpp"

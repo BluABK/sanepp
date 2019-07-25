@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 
-#include <src/youtube_channel.hpp>
+#include <entities/youtube_channel.hpp>
 #include <src/api_handler.hpp>
 
 namespace sane {

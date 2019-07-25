@@ -8,7 +8,7 @@
 #include <list>
 
 #include <src/sapi_objs/sapi_test_static_json.hpp>
-#include "youtube_channel.hpp"
+#include <entities/youtube_channel.hpp>
 
 namespace sane {
     SapiTestStaticJson sapiTestStaticJsonResponse();

@@ -17,12 +17,17 @@ option(SanePP_BuildTests "Build the unit tests when BUILD_TESTING is enabled." O
 # DEBUG Flags, TODO: Figure out some RELEASE flags.
 set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
 
+include_directories(libsane++/src)
 include_directories(cli)
 include_directories(api_handler)
 include_directories(api_handler/src/sapi_objs)
 include_directories(db_handler/src)
 include_directories(gui)
 include_directories(third_party)
+
+# Shared resources // FIXME: Import the local lib libsane++ the proper way.
+#find_library(libsane++)
+#add_library(libsane++ PATHS libsane++)
 
 # CLI
 add_executable(SaneCLI
@@ -32,8 +37,8 @@ add_executable(SaneCLI
         api_handler/src/sapi_objs/sapi_test_static_json.hpp
         api_handler/src/api_handler.cpp
         api_handler/src/api_handler.hpp
-        api_handler/src/youtube_channel.cpp
-        api_handler/src/youtube_channel.hpp
+        libsane++/src/entities/youtube_channel.cpp
+        libsane++/src/entities/youtube_channel.hpp
         cli/src/cli.cpp
         cli/src/cli.hpp db_handler/src/db_handler.cpp
         db_handler/src/db_handler.hpp
@@ -50,8 +55,8 @@ target_link_libraries(SaneCLI -ldl)
 # GUI
 add_executable(SaneGUI
         gui/src/main.cpp
-        api_handler/src/youtube_channel.cpp
-        api_handler/src/youtube_channel.hpp
+        libsane++/src/entities/youtube_channel.cpp
+        libsane++/src/entities/youtube_channel.hpp
         db_handler/src/db_handler.cpp
         db_handler/src/db_handler.hpp
         third_party/sqlite/sqlite3.h
@@ -90,8 +95,8 @@ add_executable(tests test/src/test.cpp
         api_handler/src/sapi_objs/sapi_test_static_json.hpp
         api_handler/src/api_handler.cpp
         api_handler/src/api_handler.hpp
-        api_handler/src/youtube_channel.cpp
-        api_handler/src/youtube_channel.hpp
+        libsane++/src/entities/youtube_channel.cpp
+        libsane++/src/entities/youtube_channel.hpp
         cli/src/cli.cpp
         cli/src/cli.hpp
         db_handler/src/db_handler.cpp

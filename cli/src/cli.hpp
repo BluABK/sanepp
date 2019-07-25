@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 
-#include <src/youtube_subscription.hpp>
+#include <src/youtube_channel.hpp>
 #include <src/api_handler.hpp>
 
 namespace sane {
@@ -22,7 +22,7 @@ namespace sane {
         bool manuallyExit = false;
 
         // YouTube
-        std::list<std::shared_ptr<YoutubeSubscription>> subscriptions;
+        std::list<std::shared_ptr<YoutubeChannel>> subscriptions;
 
         // Define Command names.
         const std::string EXIT = "exit";
@@ -48,7 +48,7 @@ namespace sane {
 
         void executeCommand(const std::string &command);
 
-        std::list<std::shared_ptr<YoutubeSubscription>> getSubscriptionsFromApi();
+        std::list<std::shared_ptr<YoutubeChannel>> getSubscriptionsFromApi();
 
 
         void printSubscriptionsFull();

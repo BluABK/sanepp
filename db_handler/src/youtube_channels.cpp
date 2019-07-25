@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <src/youtube_subscription.hpp>
+#include <src/youtube_channel.hpp>
 
 #include "db_handler.hpp"
 #include "youtube_channels.hpp"
@@ -51,7 +51,7 @@ namespace sane {
         return compiledString;
     }
 
-    int addChannelsToDB(std::list <std::shared_ptr<YoutubeSubscription>> &subscriptions) {
+    int addChannelsToDB(std::list <std::shared_ptr<YoutubeChannel>> &subscriptions) {
         // Setup
         const std::string databaseFilename = "sane_db_handler_test.db";
         std::string sqlStatement;

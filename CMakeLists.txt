@@ -32,8 +32,8 @@ add_executable(SaneCLI
         api_handler/src/sapi_objs/sapi_test_static_json.hpp
         api_handler/src/api_handler.cpp
         api_handler/src/api_handler.hpp
-        api_handler/src/youtube_subscription.cpp
-        api_handler/src/youtube_subscription.hpp
+        api_handler/src/youtube_channel.cpp
+        api_handler/src/youtube_channel.hpp
         cli/src/cli.cpp
         cli/src/cli.hpp db_handler/src/db_handler.cpp
         db_handler/src/db_handler.hpp
@@ -50,8 +50,8 @@ target_link_libraries(SaneCLI -ldl)
 # GUI
 add_executable(SaneGUI
         gui/src/main.cpp
-        api_handler/src/youtube_subscription.cpp
-        api_handler/src/youtube_subscription.hpp
+        api_handler/src/youtube_channel.cpp
+        api_handler/src/youtube_channel.hpp
         db_handler/src/db_handler.cpp
         db_handler/src/db_handler.hpp
         third_party/sqlite/sqlite3.h
@@ -90,8 +90,8 @@ add_executable(tests test/src/test.cpp
         api_handler/src/sapi_objs/sapi_test_static_json.hpp
         api_handler/src/api_handler.cpp
         api_handler/src/api_handler.hpp
-        api_handler/src/youtube_subscription.cpp
-        api_handler/src/youtube_subscription.hpp
+        api_handler/src/youtube_channel.cpp
+        api_handler/src/youtube_channel.hpp
         cli/src/cli.cpp
         cli/src/cli.hpp
         db_handler/src/db_handler.cpp

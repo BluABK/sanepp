@@ -8,11 +8,11 @@
 #include <list>
 
 #include <src/sapi_objs/sapi_test_static_json.hpp>
-#include "youtube_subscription.hpp"
+#include "youtube_channel.hpp"
 
 namespace sane {
     SapiTestStaticJson sapiTestStaticJsonResponse();
 
-    std::list<std::shared_ptr<YoutubeSubscription>> sapiGetSubscriptions();
+    std::list<std::shared_ptr<YoutubeChannel>> sapiGetSubscriptions();
 } // namespace sane.
 #endif // Header guards.

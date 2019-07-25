@@ -34,8 +34,8 @@ namespace sane {
     static int callback(void *t_unused, int t_columnCount, char** t_rowData, char **t_columnNames) {
         int index;
 
-        // "Use" the unused function to clear irrelevant unused warnings.
-        if (t_unused) {}
+        // "Use" the unused function and other parameters to clear irrelevant unused warnings.
+        if (t_unused or t_columnNames) {}
 
         for (index = 0; index < t_columnCount; index++) {
 //            std::cout <<  "Default callback: The data in column " << t_columnNames[index] << " is: " << t_rowData[index] << std::endl;
@@ -60,7 +60,7 @@ namespace sane {
      * @return                            Always returns SQLITE_DONE
      */
     static int dummyCallback(void *t_unused, int t_columnCount, char** t_rowData, char **t_columnNames) {
-        // "Use" the unused functions to clear irrelevant unused warnings.
+        // "Use" the unused function and other parameters to clear irrelevant unused warnings.
         if (t_unused or t_columnCount or t_rowData or t_columnNames) {}
 
         return SQLITE_DONE;

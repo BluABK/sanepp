@@ -1,5 +1,5 @@
-#ifndef SANE_YOUTUBE_SUBSCRIPTION_HPP
-#define SANE_YOUTUBE_SUBSCRIPTION_HPP
+#ifndef SANE_YOUTUBE_CHANNEL_HPP
+#define SANE_YOUTUBE_CHANNEL_HPP
 
 #include <map>
 
@@ -7,7 +7,7 @@
 #include <nlohmann/json.hpp>
 
 namespace sane {
-    class YoutubeSubscription {
+    class YoutubeChannel {
     public:
         void assignJsonStringValue(std::string &stringToAssignValue,
                                    const nlohmann::json &unknownJsonTypeValue, const nlohmann::json &fullJson);
@@ -93,4 +93,4 @@ namespace sane {
 
 } // namespace sane
 
-#endif //SANE_YOUTUBE_SUBSCRIPTION_HPP
+#endif //SANE_YOUTUBE_CHANNEL_HPP

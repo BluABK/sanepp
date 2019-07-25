@@ -14,7 +14,7 @@
 // Project specific libraries.
 #include <src/sapi_objs/sapi_test_static_json.hpp>
 #include "api_handler.hpp"
-#include "youtube_subscription.hpp"
+#include "youtube_channel.hpp"
 
 namespace sane {
     /**
@@ -86,8 +86,8 @@ namespace sane {
         return staticJsonResponse;
     }
 
-    std::list <std::shared_ptr<YoutubeSubscription>> sapiGetSubscriptions() {
-        std::list <std::shared_ptr<YoutubeSubscription>> subscriptions;
+    std::list <std::shared_ptr<YoutubeChannel>> sapiGetSubscriptions() {
+        std::list <std::shared_ptr<YoutubeChannel>> subscriptions;
 
         std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
 
@@ -96,12 +96,12 @@ namespace sane {
         nlohmann::json jsonData = getSapiResponse("http://127.0.0.1:5002/api/v1/remote/subscriptions");
         std::cout << "Got response from SaneAPI, processing " << jsonData.size() << " subscriptions..." << std::endl;
 
-        // iterate the JSON array of multiple subscriptions and append a YoutubeSubscription.
+        // iterate the JSON array of multiple subscriptions and append a YoutubeChannel.
         int warnings = 0;
         int errors = 0;
         for (auto & subscriptionJson : jsonData) {
-            // Create a new YoutubeSubscription object for each subscription.
-            std::shared_ptr<YoutubeSubscription> subscription = std::make_shared<YoutubeSubscription>();
+            // Create a new YoutubeChannel object for each subscription.
+            std::shared_ptr<YoutubeChannel> subscription = std::make_shared<YoutubeChannel>();
     //        // Report warnings (errors are on by default).
     //        subscription->enableWarnings(true);
             subscription->addFromJson(subscriptionJson);
@@ -115,7 +115,7 @@ namespace sane {
                 warnings += subscription->getWarningCount();
                 errors += subscription->getErrorCount();
 
-                // Append subscriptions list with the new YoutubeSubscription object.
+                // Append subscriptions list with the new YoutubeChannel object.
                 subscriptions.push_back(subscription);
             }
         }

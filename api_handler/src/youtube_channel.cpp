@@ -3,7 +3,7 @@
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
 
-#include "youtube_subscription.hpp"
+#include "youtube_channel.hpp"
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 
@@ -18,11 +18,11 @@ namespace sane {
      * @param unknownJsonTypeValue  The undetermined JSON value to assign the string.
      * @param fullJson              The complete JSON object, for use in debugging/error reporting.
      */
-    void YoutubeSubscription::assignJsonStringValue(std::string &stringToAssignValue,
+    void YoutubeChannel::assignJsonStringValue(std::string &stringToAssignValue,
             const nlohmann::json &unknownJsonTypeValue, const nlohmann::json &fullJson) {
         if (unknownJsonTypeValue.is_null()) {
             if (reportWarnings) {
-                std::cerr << "WARNING: YoutubeSubscription::addFromJson." << GET_VARIABLE_NAME(stringToAssignValue) <<
+                std::cerr << "WARNING: YoutubeChannel::addFromJson." << GET_VARIABLE_NAME(stringToAssignValue) <<
                      " is NULL not string, setting \"N/A\" string in its stead!" << std::endl;
             }
             stringToAssignValue = "N/A";
@@ -30,7 +30,7 @@ namespace sane {
         }
         else if (!unknownJsonTypeValue.is_string()) {
             if (reportWarnings) {
-                std::cerr << "WARNING: YoutubeSubscription::addFromJson.favouritesPlaylist is " <<
+                std::cerr << "WARNING: YoutubeChannel::addFromJson.favouritesPlaylist is " <<
                 unknownJsonTypeValue.type_name() << " not string, setting \"N/A\" string in its stead!" <<
                 std::endl;
             }
@@ -43,7 +43,7 @@ namespace sane {
         }
     }
 
-    void YoutubeSubscription::addFromJson(nlohmann::json t_data) {
+    void YoutubeChannel::addFromJson(nlohmann::json t_data) {
         try {
             // Relevant JSON response values. See header for explanations.
             assignJsonStringValue(favouritesPlaylist, t_data["contentDetails"]["relatedPlaylists"]["favorites"], t_data);
@@ -59,57 +59,57 @@ namespace sane {
             assignJsonStringValue(title, t_data["snippet"]["title"], t_data);
         } catch (nlohmann::detail::type_error &exc) {
             if (reportErrors) {
-                std::cerr << "ERROR: Skipping YoutubeSubscription::addFromJson "
+                std::cerr << "ERROR: Skipping YoutubeChannel::addFromJson "
                         "due to Exception: " << exc.what() << std::endl;
                 std::cerr << t_data.dump(4);
             }
         } catch (const std::exception &exc) {
             if (reportErrors) {
-                std::cerr << "ERROR: Skipping YoutubeSubscription::addFromJson "
+                std::cerr << "ERROR: Skipping YoutubeChannel::addFromJson "
                         "due to Unexpected Exception: " << exc.what() << std::endl;
                 std::cerr << t_data.dump(4);
             }
         }
     }
 
-    const std::string &YoutubeSubscription::getFavouritesPlaylist() const {
+    const std::string &YoutubeChannel::getFavouritesPlaylist() const {
         return favouritesPlaylist;
     }
 
-    const std::string &YoutubeSubscription::getUploadsPlaylist() const {
+    const std::string &YoutubeChannel::getUploadsPlaylist() const {
         return uploadsPlaylist;
     }
 
-    const std::string &YoutubeSubscription::getEtag() const {
+    const std::string &YoutubeChannel::getEtag() const {
         return etag;
     }
 
-    const std::string &YoutubeSubscription::getSubscriptionId() const {
+    const std::string &YoutubeChannel::getSubscriptionId() const {
         return subscriptionId;
     }
 
-    const std::string &YoutubeSubscription::getChannelId() const {
+    const std::string &YoutubeChannel::getChannelId() const {
         return channelId;
     }
 
-    const std::string &YoutubeSubscription::getDescription() const {
+    const std::string &YoutubeChannel::getDescription() const {
         return description;
     }
 
-    const std::string &YoutubeSubscription::getPublishedAt() const {
+    const std::string &YoutubeChannel::getPublishedAt() const {
         return publishedAt;
     }
 
-    const std::map<std::string, std::string> &YoutubeSubscription::getThumbnails() const {
+    const std::map<std::string, std::string> &YoutubeChannel::getThumbnails() const {
         return thumbnails;
     }
 
-    const std::string &YoutubeSubscription::getTitle() const {
+    const std::string &YoutubeChannel::getTitle() const {
         return title;
     }
 
 
-    void YoutubeSubscription::print(int indentationSpacing = 0) {
+    void YoutubeChannel::print(int indentationSpacing = 0) {
         std::string indentation(indentationSpacing, ' ');
 
         std::cout << indentation << "Title: " << title << std::endl;
@@ -125,23 +125,23 @@ namespace sane {
         std::cout << indentation << "Thumbnail URL (medium): " << thumbnails["medium"] << std::endl;
     }
 
-    int YoutubeSubscription::getErrorCount() {
+    int YoutubeChannel::getErrorCount() {
         return errorCount;
     }
 
-    int YoutubeSubscription::getWarningCount() {
+    int YoutubeChannel::getWarningCount() {
         return warningCount;
     }
 
-    bool YoutubeSubscription::wasAborted() {
+    bool YoutubeChannel::wasAborted() {
         return aborted;
     }
 
-    void YoutubeSubscription::enableWarnings(bool b) {
+    void YoutubeChannel::enableWarnings(bool b) {
         reportWarnings = b;
     }
 
-    void YoutubeSubscription::enableErrors(bool b) {
+    void YoutubeChannel::enableErrors(bool b) {
         reportErrors = b;
     }
 } // namespace sane

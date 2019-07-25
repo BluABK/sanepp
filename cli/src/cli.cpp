@@ -1,7 +1,7 @@
 #include <iostream>
 #include <list>
 
-#include <src/youtube_subscription.hpp>
+#include <src/youtube_channel.hpp>
 #include <src/api_handler.hpp>
 #include "cli.hpp"
 
@@ -77,7 +77,7 @@ namespace sane {
     /**
      * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
      */
-    std::list<std::shared_ptr<YoutubeSubscription>> CLI::getSubscriptionsFromApi() {
+    std::list<std::shared_ptr<YoutubeChannel>> CLI::getSubscriptionsFromApi() {
         subscriptions = sapiGetSubscriptions();
 
         return subscriptions;

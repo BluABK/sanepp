@@ -125,7 +125,7 @@ namespace sane {
 
         for (auto & subscription : subscriptions) {
             // Pad item columns with spaces to ensure a uniform indentation.
-            const std::string paddedChannelId = padStringValue(subscription->getChannelId(), idItemMaxLength);
+            const std::string paddedChannelId = padStringValue(subscription->getId(), idItemMaxLength);
             const std::string paddedUploadsPlaylistId = padStringValue(
                     subscription->getUploadsPlaylist(), idItemMaxLength);
             const std::string paddedNumbering = padStringValue(std::to_string(counter), maxCounterDigitAmount);

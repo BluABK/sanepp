@@ -25,7 +25,7 @@ namespace sane {
                 std::cerr << "WARNING: YoutubeChannel::addFromJson." << GET_VARIABLE_NAME(stringToAssignValue) <<
                      " is NULL not string, setting \"N/A\" string in its stead!" << std::endl;
             }
-            stringToAssignValue = "N/A";
+            stringToAssignValue = MISSING_VALUE;
             warningCount++;
         }
         else if (!unknownJsonTypeValue.is_string()) {
@@ -46,11 +46,7 @@ namespace sane {
     void YoutubeChannel::addFromJson(nlohmann::json t_data) {
         try {
             // Relevant JSON response values. See header for explanations.
-            assignJsonStringValue(favouritesPlaylist, t_data["contentDetails"]["relatedPlaylists"]["favorites"], t_data);
-            assignJsonStringValue(uploadsPlaylist, t_data["contentDetails"]["relatedPlaylists"]["uploads"], t_data);
-            assignJsonStringValue(etag, t_data["etag"], t_data);
-            assignJsonStringValue(subscriptionId, t_data["id"], t_data);
-            assignJsonStringValue(channelId, t_data["snippet"]["resourceId"]["channelId"], t_data);
+            assignJsonStringValue(id, t_data["snippet"]["resourceId"]["channelId"], t_data);
             assignJsonStringValue(description, t_data["snippet"]["description"], t_data);
             assignJsonStringValue(publishedAt, t_data["snippet"]["publishedAt"], t_data);
             assignJsonStringValue(thumbnails["default"], t_data["snippet"]["thumbnails"]["default"]["url"], t_data);
@@ -72,39 +68,60 @@ namespace sane {
         }
     }
 
-    const std::string &YoutubeChannel::getFavouritesPlaylist() const {
-        return favouritesPlaylist;
+    const std::string YoutubeChannel::getFavouritesPlaylist() {
+        if (id != MISSING_VALUE) {
+            return std::string("FL" + id);
+        } else {
+            return MISSING_VALUE;
+        }
     }
 
-    const std::string &YoutubeChannel::getUploadsPlaylist() const {
-        return uploadsPlaylist;
+    const std::string YoutubeChannel::getUploadsPlaylist() {
+        if (id != MISSING_VALUE) {
+            return std::string("UU" + id);
+        } else {
+            return MISSING_VALUE;
+        }
     }
 
-    const std::string &YoutubeChannel::getEtag() const {
-        return etag;
+    const std::string YoutubeChannel::getChannelId() {
+        if (id != MISSING_VALUE) {
+            return std::string("UC" + id);
+        } else {
+            return MISSING_VALUE;
+        }
     }
 
-    const std::string &YoutubeChannel::getSubscriptionId() const {
-        return subscriptionId;
+    const std::string YoutubeChannel::getId() {
+        return id;
     }
 
-    const std::string &YoutubeChannel::getChannelId() const {
-        return channelId;
-    }
 
-    const std::string &YoutubeChannel::getDescription() const {
+    const std::string YoutubeChannel::getDescription() {
         return description;
     }
 
-    const std::string &YoutubeChannel::getPublishedAt() const {
+    const std::string YoutubeChannel::getPublishedAt() {
         return publishedAt;
     }
 
-    const std::map<std::string, std::string> &YoutubeChannel::getThumbnails() const {
+    const std::map<std::string, std::string> YoutubeChannel::getThumbnails() {
         return thumbnails;
     }
 
-    const std::string &YoutubeChannel::getTitle() const {
+    const std::string YoutubeChannel::getThumbnailDefault()  {
+        return thumbnails["default"];
+    }
+
+    const std::string YoutubeChannel::getThumbnailHigh() {
+        return thumbnails["high"];
+    }
+
+    const std::string YoutubeChannel::getThumbnailMedium() {
+        return thumbnails["medium"];
+    }
+
+    const std::string YoutubeChannel::getTitle() {
         return title;
     }
 
@@ -112,17 +129,16 @@ namespace sane {
     void YoutubeChannel::print(int indentationSpacing = 0) {
         std::string indentation(indentationSpacing, ' ');
 
-        std::cout << indentation << "Title: " << title << std::endl;
-        std::cout << indentation << "Subscription ID: " << subscriptionId << std::endl;
-        std::cout << indentation << "Channel ID: " << channelId << std::endl;
-        std::cout << indentation << "Etag: " << etag << std::endl;
-        std::cout << indentation << "Published: " << publishedAt << std::endl;
-        std::cout << indentation << "Description: " << description << std::endl;
-        std::cout << indentation << "Favourites Playlist: " << favouritesPlaylist << std::endl;
-        std::cout << indentation << "Uploads Playlist: " << uploadsPlaylist << std::endl;
-        std::cout << indentation << "Thumbnail URL (default): " << thumbnails["default"] << std::endl;
-        std::cout << indentation << "Thumbnail URL (high): " << thumbnails["high"] << std::endl;
-        std::cout << indentation << "Thumbnail URL (medium): " << thumbnails["medium"] << std::endl;
+        std::cout << indentation << "Title: " << getTitle() << std::endl;
+        std::cout << indentation << "ID: " << getId() << std::endl;
+        std::cout << indentation << "Channel ID: " << getChannelId() << std::endl;
+        std::cout << indentation << "Published: " << getPublishedAt() << std::endl;
+        std::cout << indentation << "Description: " << getDescription() << std::endl;
+        std::cout << indentation << "Favourites Playlist: " << getFavouritesPlaylist() << std::endl;
+        std::cout << indentation << "Uploads Playlist: " << getUploadsPlaylist() << std::endl;
+        std::cout << indentation << "Thumbnail URL (default): " << getThumbnailDefault()<< std::endl;
+        std::cout << indentation << "Thumbnail URL (high): " << getThumbnailHigh() << std::endl;
+        std::cout << indentation << "Thumbnail URL (medium): " << getThumbnailMedium() << std::endl;
     }
 
     int YoutubeChannel::getErrorCount() {

@@ -84,7 +84,7 @@ namespace sane {
         int counter = 0;
         for (auto & subscription : subscriptions) {
             // Figure out and sanitize the values.
-            std::string id = validateSQLiteInput(subscription->getChannelId());
+            std::string id = validateSQLiteInput(subscription->getId());
             std::string title = validateSQLiteInput(subscription->getTitle());
             std::string description = validateSQLiteInput(subscription->getDescription());
 

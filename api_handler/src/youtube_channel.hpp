@@ -7,6 +7,12 @@
 #include <nlohmann/json.hpp>
 
 namespace sane {
+    /**
+     * Notes:
+       channel id and uploads playlist id are identical if you remove their static prefixes:
+
+       channel = UC, uploads playlist = UU, favourites playlist = FL
+     */
     class YoutubeChannel {
     public:
         void assignJsonStringValue(std::string &stringToAssignValue,
@@ -26,40 +32,35 @@ namespace sane {
 
         bool wasAborted();
 
-        const std::string &getFavouritesPlaylist() const;
+        const std::string getUploadsPlaylist();
 
-        const std::string &getUploadsPlaylist() const;
+        const std::string getFavouritesPlaylist();
 
-        const std::string &getEtag() const;
+        const std::string getId();
 
-        const std::string &getSubscriptionId() const;
+        const std::string getChannelId();
 
-        const std::string &getChannelId() const;
+        const std::string getDescription();
 
-        const std::string &getDescription() const;
+        const std::string getPublishedAt();
 
-        const std::string &getPublishedAt() const;
+        const std::map<std::string, std::string> getThumbnails();
 
-        const std::map<std::string, std::string> &getThumbnails() const;
+        const std::string getThumbnailDefault();
 
-        const std::string &getTitle() const;
+        const std::string getThumbnailHigh();
+
+        const std::string getThumbnailMedium();
+
+        const std::string getTitle();
 
     private:
+        const std::string MISSING_VALUE = "N/A";
         // Relevant JSON response values.
-
-        // Important playlists.
-        std::string favouritesPlaylist;
-        std::string uploadsPlaylist;
-
-        // YouTube resource Etag
-        std::string etag;
-
-        // The ID that YouTube uses to uniquely identify the subscription.
-        std::string subscriptionId;
 
         // The value that YouTube uses to uniquely identify the channel that the user subscribed to.
         // NB: Grab the one inside resourceId, the outer one is *yours*.
-        std::string channelId;
+        std::string id;
 
         // The subscription's details.
         std::string description;
@@ -89,6 +90,7 @@ namespace sane {
 
         // Indicate whether the operation was aborted
         bool aborted = false;
+
     };
 
 } // namespace sane

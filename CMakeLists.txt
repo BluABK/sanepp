@@ -24,6 +24,7 @@ include_directories(api_handler/src/sapi_objs)
 include_directories(db_handler/src)
 include_directories(gui)
 include_directories(third_party)
+include_directories(tests)
 
 # Shared resources // FIXME: Import the local lib libsane++ the proper way.
 #find_library(libsane++)
@@ -85,9 +86,8 @@ target_link_libraries(SaneGUI -ldl)
 
 enable_testing()
 find_package(Catch2 REQUIRED)
-add_executable(tests test/src/test.cpp
-        test/src/test.cpp
-        test/src/cli/unit-test_cli.cpp
+add_executable(test_all tests/test_all.cpp
+        cli/test/unit-test_cli.cpp
         third_party/nlohmann/json.hpp
         api_handler/src/api_handler.cpp
         api_handler/src/api_handler.hpp
@@ -99,17 +99,17 @@ add_executable(tests test/src/test.cpp
         db_handler/src/db_handler.hpp
         third_party/sqlite/sqlite3.h
         third_party/sqlite/sqlite3.c
-        test/src/db_handler/unit-test_exec_sql_statement_default_callback.cpp)
+        db_handler/test/unit-test_exec_sql_statement_default_callback.cpp)
 
 # API Handler
-target_link_libraries(tests -lcurl)
+target_link_libraries(test_all -lcurl)
 # Testing suite.
-target_link_libraries(tests Catch2::Catch2)
+target_link_libraries(test_all Catch2::Catch2)
 # Database.
-target_link_libraries(tests -lpthread)
-target_link_libraries(tests -ldl)
+target_link_libraries(test_all -lpthread)
+target_link_libraries(test_all -ldl)
 
 include(CTest)
 include(Catch)
 
-catch_discover_tests(tests)
+catch_discover_tests(test_all)

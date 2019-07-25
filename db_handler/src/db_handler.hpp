@@ -21,6 +21,7 @@ namespace sane {
     // sqlite_exec called with default callback function
     int execSqlStatement(const std::string &t_dbName, const std::string &t_sqlStatement);
 
+    int execSqlStatementNoCallback(const std::string &t_dbName, const std::string &t_sqlStatement);
 
     // A way to store the callback results.
     void addCallbackResult(const std::string &result);

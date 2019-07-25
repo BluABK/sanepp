@@ -4,7 +4,7 @@
 #include <entities/youtube_channel.hpp>
 
 #include "db_handler.hpp"
-#include "youtube_channels.hpp"
+#include "db_youtube_channels.hpp"
 
 namespace sane {
     /**

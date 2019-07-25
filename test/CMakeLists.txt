@@ -16,8 +16,6 @@
 ##add_executable(SaneCLI
 ##        src/cli/main.cpp
 ##        src/third_party/nlohmann/json.hpp
-##        src/api_handler/sapi_objs/sapi_test_static_json.cpp
-##        src/api_handler/sapi_objs/sapi_test_static_json.hpp
 ##        src/api_handler/api_handler.cpp
 ##        src/api_handler/api_handler.hpp
 ##        src/api_handler/youtube_subscription.cpp

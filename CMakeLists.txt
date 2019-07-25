@@ -33,8 +33,6 @@ include_directories(third_party)
 add_executable(SaneCLI
         cli/src/main.cpp
         third_party/nlohmann/json.hpp
-        api_handler/src/sapi_objs/sapi_test_static_json.cpp
-        api_handler/src/sapi_objs/sapi_test_static_json.hpp
         api_handler/src/api_handler.cpp
         api_handler/src/api_handler.hpp
         libsane++/src/entities/youtube_channel.cpp
@@ -91,8 +89,6 @@ add_executable(tests test/src/test.cpp
         test/src/test.cpp
         test/src/cli/unit-test_cli.cpp
         third_party/nlohmann/json.hpp
-        api_handler/src/sapi_objs/sapi_test_static_json.cpp
-        api_handler/src/sapi_objs/sapi_test_static_json.hpp
         api_handler/src/api_handler.cpp
         api_handler/src/api_handler.hpp
         libsane++/src/entities/youtube_channel.cpp

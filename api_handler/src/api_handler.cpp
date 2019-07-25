@@ -12,7 +12,6 @@
 #include <nlohmann/json.hpp>
 
 // Project specific libraries.
-#include <src/sapi_objs/sapi_test_static_json.hpp>
 #include "api_handler.hpp"
 #include <entities/youtube_channel.hpp>
 
@@ -69,23 +68,6 @@ namespace sane {
         return jsonData;
     }
 
-    /**
-     * SaneAPI mock route to test if client handles a basic JSON response.
-     *
-     * @return SapiTestStaticJson   With parsed JSON.
-     */
-    SapiTestStaticJson sapiTestStaticJsonResponse() {
-        // Instantiate the SapiTestStaticJson class.
-        SapiTestStaticJson staticJsonResponse;
-
-        // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse("http://127.0.0.1:5002/api/v1/test/static/json");
-        staticJsonResponse.parse(jsonData);
-
-        // Return the parsed SapiTestStaticJson object.
-        return staticJsonResponse;
-    }
-
     std::list <std::shared_ptr<YoutubeChannel>> sapiGetSubscriptions() {
         std::list <std::shared_ptr<YoutubeChannel>> subscriptions;
 
@@ -132,7 +114,7 @@ namespace sane {
             reportedProblems = " with " + std::to_string(errors) + " errors";
         }
 
-        // Return the parsed SapiTestStaticJson object.
+        // Return the parsed subscriptions.
         std::cout << "Processing completed" << reportedProblems << "." << std::endl;
         return subscriptions;
     }

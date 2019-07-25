@@ -51,7 +51,7 @@ namespace sane {
         return compiledString;
     }
 
-    int addChannelsToDB(std::list <std::shared_ptr<YoutubeChannel>> &subscriptions) {
+    int addChannelsToDB(std::list <std::shared_ptr<YoutubeChannel>> &channels) {
         // Setup
         const std::string databaseFilename = "sane_db_handler_test.db";
         std::string sqlStatement;
@@ -82,33 +82,35 @@ namespace sane {
 
         // Iterate through the subscription objects and add relevant fields to DB.
         int counter = 0;
-        for (auto & subscription : subscriptions) {
+        for (auto & channel : channels) {
             // Figure out and sanitize the values.
-            std::string id = validateSQLiteInput(subscription->getId());
-            std::string title = validateSQLiteInput(subscription->getTitle());
-            std::string description = validateSQLiteInput(subscription->getDescription());
+            std::string id = validateSQLiteInput(channel->getId());
+            std::string hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? "TRUE" : "FALSE";
+            std::string hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? "TRUE" : "FALSE";
+            std::string hasLikesPlaylist = channel->hasLikesPlaylist() ? "TRUE" : "FALSE";
+            std::string title = validateSQLiteInput(channel->getTitle());
+            std::string description = validateSQLiteInput(channel->getDescription());
 
-            std::map<std::string, std::string> thumbnails_ = subscription->getThumbnails();
+            std::map<std::string, std::string> thumbnails_ = channel->getThumbnails();
             std::string thumbnailDefault = validateSQLiteInput(thumbnails_["default"]);
             std::string thumbnailHigh = validateSQLiteInput(thumbnails_["high"]);
             std::string thumbnailMedium = validateSQLiteInput(thumbnails_["medium"]);
 
-            std::string subscribedOnYouTube = "TRUE";
-            std::string subscribedLocalOverride = "FALSE";
+            std::string subscribedOnYouTube = "TRUE";       // FIXME: Hardcoded True
+            std::string subscribedLocalOverride = "FALSE";  // FIXME: Harcoded False
 
-            // Strip out non-unique prefix from ID (2 chars)
-            id = id.substr(1);
-
-            const std::list<std::string> valuesToCompile = {id, title, description, thumbnailDefault, thumbnailHigh,
-                                                            thumbnailMedium, subscribedOnYouTube,
+            const std::list<std::string> valuesToCompile = {id, hasUploadsPlaylist, hasFavouritesPlaylist,
+                                                            hasLikesPlaylist, title, description, thumbnailDefault,
+                                                            thumbnailHigh, thumbnailMedium, subscribedOnYouTube,
                                                             subscribedLocalOverride};
 
             const std::string insertValues = compileValues(valuesToCompile) ;
 
             // Construct the SQL statement.
             sqlStatement = std::string("INSERT INTO youtube_channels ("
-                           "ID, Title, Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, "
-                           "SubscribedOnYouTube, SubscribedLocalOverride"
+                           "ID, hasUploadsPlaylist, hasFavouritesPlaylist, hasLikesPlaylist, Title, Description, "
+                           "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
+                           "SubscribedLocalOverride"
                            ") VALUES (") + insertValues + std::string(");");
 
             std::cout << "Sub #" << counter << ": " << sqlStatement << std::endl;

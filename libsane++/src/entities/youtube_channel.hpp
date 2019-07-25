@@ -34,6 +34,8 @@ namespace sane {
 
         const std::string getUploadsPlaylist();
 
+        const std::string getLikesPlaylist();
+
         const std::string getFavouritesPlaylist();
 
         const std::string getId();
@@ -54,6 +56,11 @@ namespace sane {
 
         const std::string getTitle();
 
+        bool hasFavouritesPlaylist();
+
+        bool hasUploadsPlaylist();
+
+        bool hasLikesPlaylist();
     private:
         const std::string MISSING_VALUE = "N/A";
         // Relevant JSON response values.
@@ -61,6 +68,11 @@ namespace sane {
         // The value that YouTube uses to uniquely identify the channel that the user subscribed to.
         // NB: Grab the one inside resourceId, the outer one is *yours*.
         std::string id;
+
+        // Playlists (only need bool as they are supersets of ID)
+        bool m_hasFavouritesPlaylist = false;
+        bool m_hasUploadsPlaylist = false;
+        bool m_hasLikesPlaylist = false;
 
         // The subscription's details.
         std::string description;

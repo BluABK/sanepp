@@ -12,11 +12,9 @@
 #include <nlohmann/json.hpp>
 
 // Project specific libraries.
-#include "api_handler.hpp"
+#include <api_handler/api_handler.hpp>
 #include <entities/youtube_channel.hpp>
 #include <db_youtube_channels.hpp>
-
-const std::string SAPI_URL_GET_SUBSCRIPTIONS = "http://127.0.0.1:5002/api/v1/remote/subscriptions";
 
 namespace sane {
     /**

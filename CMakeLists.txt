@@ -15,12 +15,11 @@ option(SanePP_BuildTests "Build the unit tests when BUILD_TESTING is enabled." O
 
 
 # DEBUG Flags, TODO: Figure out some RELEASE flags.
-set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -Wno-unknown-pragmas")
 
 include_directories(libsane++/src)
+include_directories(libsane++/include)
 include_directories(cli)
-include_directories(api_handler)
-include_directories(api_handler/src/sapi_objs)
 include_directories(db_handler/src)
 include_directories(gui)
 include_directories(third_party)
@@ -34,8 +33,8 @@ include_directories(tests)
 add_executable(SaneCLI
         cli/src/main.cpp
         third_party/nlohmann/json.hpp
-        api_handler/src/api_handler.cpp
-        api_handler/src/api_handler.hpp
+        libsane++/src/api_handler/api_handler.cpp
+        libsane++/include/api_handler/api_handler.hpp
         libsane++/src/entities/youtube_channel.cpp
         libsane++/src/entities/youtube_channel.hpp
         cli/src/cli.cpp
@@ -93,8 +92,8 @@ find_package(Catch2 REQUIRED)
 add_executable(test_all tests/test_all.cpp
         cli/test/unit-test_cli.cpp
         third_party/nlohmann/json.hpp
-        api_handler/src/api_handler.cpp
-        api_handler/src/api_handler.hpp
+        libsane++/src/api_handler/api_handler.cpp
+        libsane++/include/api_handler/api_handler.hpp
         libsane++/src/entities/youtube_channel.cpp
         libsane++/src/entities/youtube_channel.hpp
         cli/src/cli.cpp

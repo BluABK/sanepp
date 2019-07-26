@@ -2,7 +2,7 @@
 #include <list>
 
 #include <entities/youtube_channel.hpp>
-#include <src/api_handler.hpp>
+#include <api_handler/api_handler.hpp>
 #include "cli.hpp"
 
 namespace sane {

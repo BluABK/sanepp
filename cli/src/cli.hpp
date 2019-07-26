@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include <entities/youtube_channel.hpp>
-#include <src/api_handler.hpp>
+#include <api_handler/api_handler.hpp>
 
 namespace sane {
     class CLI {

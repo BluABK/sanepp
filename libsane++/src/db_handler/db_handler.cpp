@@ -250,4 +250,65 @@ namespace sane {
 
         return SQLITE_OK;
     }
+
+    ///////////////////
+
+    /**
+    * NB: This function seemingly can't CREATE TABLE, for that please use doRawSqlite3ExecStatement.
+    *
+    * Perform an SQLite3 statement using sqlite3_prepare_v2()/sqlite3_step()/sqlite3_column_*()/sqlite3_finalize()
+    * calls so that you can read the data in the same place where you actually need to handle it.
+    *
+    * Based on https://stackoverflow.com/a/31168999
+    *
+    * @param t_callbackFunction    Function to be called with prepared SQLite3 statement as parameter.
+    *                              This is to let the function step through the statement and perform
+    *                              its own set of code. This function *MUST* return SQLITE_DONE if successful.
+    *
+    *                              Suggested step-method:
+    *                                  while ((rc = sqlite3_step(t_sqlite3PreparedStatment)) == SQLITE_ROW) { //code }
+    *
+    * @param t_dbName              Filename of database.
+    * @param t_sql                 An SQL statement.
+    * @return
+    */
+    int prepareAndRunSqlStatement(std::function<int(sqlite3_stmt *sqlite3PreparedStatement)> t_callbackFunction,
+                                  const std::string &t_dbName, const std::string &t_sql) {
+        sqlite3 *db;
+        sqlite3_stmt *sqlite3PreparedStatement;
+
+        int rc;
+
+        // Open the database file.
+        rc = sqlite3_open(t_dbName.c_str(), &db);
+        std::cout << "sqlite3_open: " << rc << std::endl;
+        if (rc != SQLITE_OK) {
+            std::cerr << "Error opening database '" << t_dbName << "': " << sqlite3_errmsg(db) << std::endl;
+            sqlite3_close(db);
+            return (SQLITE_CANTOPEN);
+        }
+
+        rc = sqlite3_prepare_v2(db, t_sql.c_str(), -1, &sqlite3PreparedStatement, nullptr);
+        std::cout << "sqlite3_prepare_v2: " << rc << std::endl;
+        if (rc != SQLITE_OK) {
+            std::cerr << "Error preparing SQLite3 statement: " << sqlite3_errmsg(db) << std::endl;
+            sqlite3_close(db);
+            return SQLITE_ERROR;
+        }
+        // Send the prepared statement to the callback function to let it step through the statements and run own code.
+        rc = t_callbackFunction(sqlite3PreparedStatement);
+        std::cout << "t_callbackFunction: " << rc << std::endl;
+        if (rc != SQLITE_DONE) {
+            std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(db) <<
+                      std::endl;
+        }
+
+        // Destroy the prepared statement object.
+        sqlite3_finalize(sqlite3PreparedStatement);
+
+        // Close db handle
+        sqlite3_close(db);
+
+        return SQLITE_OK;
+    }
 } // namespace sane

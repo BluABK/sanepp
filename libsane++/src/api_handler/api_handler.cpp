@@ -81,23 +81,19 @@ namespace sane {
         std::cout << "Got response from SaneAPI, processing " << jsonData.size() << " channels..." << std::endl;
 
         // iterate the JSON array of multiple channels and append a YoutubeChannel.
-        int warnings = 0;
-        int errors = 0;
+        size_t warningsCount = 0;
+        size_t errorsCount = 0;
         for (auto & subscriptionJson : jsonData) {
             // Create a new YoutubeChannel object for each channel.
-            std::shared_ptr<YoutubeChannel> channel = std::make_shared<YoutubeChannel>();
-    //        // Report warnings (errors are on by default).
-    //        channel->enableWarnings(true);
-            channel->addFromJson(subscriptionJson);
-
+            std::shared_ptr<YoutubeChannel> channel = std::make_shared<YoutubeChannel>(subscriptionJson);
             if (channel->wasAborted()) {
                 // Explicitly delete the broken channel object now instead of waiting for smart ptr deallocation.
                 channel.reset();
                 std::cerr << "\tERROR: Creation of the following channel was aborted:" << std::endl;
                 std::cerr << jsonData.dump(4);
             } else {
-                warnings += channel->getWarningCount();
-                errors += channel->getErrorCount();
+                warningsCount = channel->getWarnings().size();
+                errorsCount = channel->getErrors().size();
 
                 // Append channels list with the new YoutubeChannel object.
                 channels.push_back(channel);
@@ -105,25 +101,31 @@ namespace sane {
         }
 
         std::string reportedProblems;
-        if (warnings > 0 and errors > 0) {
-            reportedProblems = " with " + std::to_string(warnings) + " warnings and "
-                    + std::to_string(errors) + " errors";
+        if (warningsCount > 0 and errorsCount > 0) {
+            reportedProblems = " with " + std::to_string(warningsCount) + " warnings and "
+                    + std::to_string(errorsCount) + " errors";
         }
-        else if (warnings > 0) {
-            reportedProblems = " with " + std::to_string(warnings) + " warnings";
+        else if (warningsCount > 0) {
+            reportedProblems = " with " + std::to_string(warningsCount) + " warnings";
         }
-        else if (errors > 0) {
-            reportedProblems = " with " + std::to_string(errors) + " errors";
+        else if (errorsCount > 0) {
+            reportedProblems = " with " + std::to_string(errorsCount) + " errors";
         }
 
-        // Return the parsed channels.
+        // Return the parsed channels (and report possible issues).
         std::cout << "Processing completed" << reportedProblems << "." << std::endl;
+
+        // Clear the warnings and errors in the channel objects
+        for (auto & channel : channels) {
+            channel->clearErrorsAndWarnings();
+        }
 
         // Store to Database
         std::cout << "Storing to database..." << std::endl;
         addChannelsToDB(channels);
         std::cout << "Storing to database successful!" << std::endl;
 
+        // FIXME: Once DB works, change this function to void and delete the channel objects instead of returning them.
         return channels;
     }
 } // namespace sane.

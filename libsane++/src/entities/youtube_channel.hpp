@@ -2,9 +2,12 @@
 #define SANE_YOUTUBE_CHANNEL_HPP
 
 #include <map>
+#include <list>
 
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
+
+#define MISSING_VALUE "N/A"
 
 namespace sane {
     /**
@@ -15,20 +18,49 @@ namespace sane {
      */
     class YoutubeChannel {
     public:
-        void assignJsonStringValue(std::string &stringToAssignValue,
-                                   const nlohmann::json &unknownJsonTypeValue, const nlohmann::json &fullJson);
+        // Create an empty instance, to be populated later.
+        explicit YoutubeChannel();
 
-        void addFromJson(nlohmann::json t_data);
+        // Create an instance and feed it values through a JSON.
+        explicit YoutubeChannel(nlohmann::json &t_data) {
+            addFromJson(t_data);
+        }
+
+        // Create an instance and feed it values through a list of strings.
+        explicit YoutubeChannel(std::list<std::string> &t_values) {
+            addFromStringList(t_values);
+        }
+
+        // Create an instance and feed it values through a map of strings.
+        explicit YoutubeChannel(std::map<std::string, std::string> &t_map) {
+            addFromMap(t_map);
+        }
+
+        void assignJsonStringValue(std::string &stringToAssignValue,
+                                   nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
+
+        void addFromJson(nlohmann::json t_json);
+
+        void addFromStringList(const std::list<std::string>& t_values);
+
+        void addFromMap(const std::map<std::string, std::string>& t_map);
 
         void print(int indentationSpacing);
 
-        int getErrorCount();
+        // Each error/warning map consists of ["error"] and ["json"]
+        void addError(const std::string &t_errorMsg, nlohmann::json &t_json);
 
-        int getWarningCount();
+        void addWarning(const std::string &t_warningMsg, nlohmann::json &t_json);
 
-        void enableWarnings(bool b);
+        std::list<std::map<std::string, nlohmann::json>> getErrors();
 
-        void enableErrors(bool b);
+        std::list<std::map<std::string, nlohmann::json>> getWarnings();
+
+        void clearWarnings();
+
+        void clearErrors();
+
+        void clearErrorsAndWarnings();
 
         bool wasAborted();
 
@@ -62,12 +94,11 @@ namespace sane {
 
         bool hasLikesPlaylist();
     private:
-        const std::string MISSING_VALUE = "N/A";
         // Relevant JSON response values.
 
         // The value that YouTube uses to uniquely identify the channel that the user subscribed to.
         // NB: Grab the one inside resourceId, the outer one is *yours*.
-        std::string id;
+        std::string m_id;
 
         // Playlists (only need bool as they are supersets of ID)
         bool m_hasFavouritesPlaylist = false;
@@ -75,33 +106,27 @@ namespace sane {
         bool m_hasLikesPlaylist = false;
 
         // The subscription's details.
-        std::string description;
+        std::string m_description;
 
         // The date and time that the subscription was created.
         // The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format.
-        std::string publishedAt;
+        std::string m_publishedAt;
 
         // A map of thumbnail images associated with the subscription.
         // Should in most cases contain keys: "default", "high" and "medium".
-        std::map<std::string, std::string> thumbnails;
+        std::map<std::string, std::string> m_thumbnails;
 
         // Subscription/Channel title.
-        std::string title;
+        std::string m_title;
 
-        // Track amount of errors that occur
-        int errorCount;
+        // Track errors that occur
+        std::list<std::map<std::string, nlohmann::json>> m_errors;
 
-        // Track amount of warnings that occur
-        int warningCount;
-
-        // Whether or not to print warnings
-        bool reportWarnings = false;
-
-        // Whether or not to print warnings
-        bool reportErrors = true;
+        // Track warnings that occur
+        std::list<std::map<std::string, nlohmann::json>> m_warnings;
 
         // Indicate whether the operation was aborted
-        bool aborted = false;
+        bool m_aborted = false;
 
     };
 

@@ -16,6 +16,7 @@
 #include <entities/youtube_channel.hpp>
 #include <db_youtube_channels.hpp>
 
+
 namespace sane {
     /**
      * Callback function to be called when receiving the http response from the server.
@@ -76,7 +77,7 @@ namespace sane {
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_URL_GET_SUBSCRIPTIONS);
+        nlohmann::json jsonData = getSapiResponse(SAPI_GET_SUBSCRIPTIONS);
         std::cout << "Got response from SaneAPI, processing " << jsonData.size() << " channels..." << std::endl;
 
         // iterate the JSON array of multiple channels and append a YoutubeChannel.

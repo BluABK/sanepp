@@ -14,7 +14,7 @@
 // Project specific libraries.
 #include <api_handler/api_handler.hpp>
 #include <entities/youtube_channel.hpp>
-#include <db_youtube_channels.hpp>
+#include <db_handler/db_youtube_channels.hpp>
 
 
 namespace sane {

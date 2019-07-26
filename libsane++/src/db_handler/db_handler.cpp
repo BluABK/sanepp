@@ -5,7 +5,7 @@
 #include <functional>
 #include <type_traits>
 
-#include "db_handler.hpp"
+#include <db_handler/db_handler.hpp>
 namespace sane {
     // A way to store the callback results. // TODO: Make a callback object with an incrementing ID to avoid copypasta
     std::vector<std::string> callbackResults;

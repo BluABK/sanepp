@@ -8,7 +8,7 @@
 
 // Sane++ Project specific
 #include <api_handler/api_handler.hpp>
-#include <db_handler.hpp>
+#include <db_handler/db_handler.hpp>
 #include "cli.hpp"
 
 int main() {

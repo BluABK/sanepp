@@ -5,7 +5,7 @@
 
 #include <catch2/catch.hpp>
 
-#include <db_handler.hpp>
+#include <db_handler/db_handler.hpp>
 
 TEST_CASE ("1: Testing sane::DBHandler.execSqlStatement: CREATE TABLE test_db_functionality") {
     // Setup

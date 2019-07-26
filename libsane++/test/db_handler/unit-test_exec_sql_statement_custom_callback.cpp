@@ -6,7 +6,7 @@
 
 #include <catch2/catch.hpp>
 
-#include <db_handler.hpp>
+#include <db_handler/db_handler.hpp>
 
 /**
  * Callback function for sqlite3_exec() to call for every result row that it finds.

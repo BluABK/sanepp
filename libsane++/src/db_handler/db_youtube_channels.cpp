@@ -3,8 +3,8 @@
 #include <list>
 #include <entities/youtube_channel.hpp>
 
-#include "db_handler.hpp"
-#include "db_youtube_channels.hpp"
+#include <db_handler/db_handler.hpp>
+#include <db_handler/db_youtube_channels.hpp>
 
 namespace sane {
     /**

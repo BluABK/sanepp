@@ -6,7 +6,7 @@
 #include <list>
 
 #include <entities/youtube_channel.hpp>
-#include "db_handler.hpp"
+#include <db_handler/db_handler.hpp>
 
 namespace sane {
     int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels);

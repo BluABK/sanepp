@@ -3,7 +3,7 @@
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
 
-#include "youtube_channel.hpp"
+#include <entities/youtube_channel.hpp>
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 

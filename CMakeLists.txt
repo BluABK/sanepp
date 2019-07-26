@@ -15,12 +15,11 @@ option(SanePP_BuildTests "Build the unit tests when BUILD_TESTING is enabled." O
 
 
 # DEBUG Flags, TODO: Figure out some RELEASE flags.
-set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -Wno-unknown-pragmas")
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
 
 include_directories(libsane++/src)
 include_directories(libsane++/include)
 include_directories(cli)
-include_directories(db_handler/src)
 include_directories(gui)
 include_directories(third_party)
 include_directories(tests)
@@ -30,20 +29,20 @@ include_directories(tests)
 #add_library(libsane++ PATHS libsane++)
 
 # CLI
-add_executable(SaneCLI
-        cli/src/main.cpp
-        third_party/nlohmann/json.hpp
+add_executable(SaneCLI cli/src/main.cpp
+        cli/src/cli.cpp
+        cli/src/cli.hpp
         libsane++/src/api_handler/api_handler.cpp
         libsane++/include/api_handler/api_handler.hpp
         libsane++/src/entities/youtube_channel.cpp
-        libsane++/src/entities/youtube_channel.hpp
-        cli/src/cli.cpp
-        cli/src/cli.hpp db_handler/src/db_handler.cpp
-        db_handler/src/db_handler.hpp
-        third_party/sqlite/sqlite3.h
+        libsane++/include/entities/youtube_channel.hpp
+        libsane++/src/db_handler/db_handler.cpp
+        libsane++/include/db_handler/db_handler.hpp
+        libsane++/src/db_handler/db_youtube_channels.cpp
+        libsane++/include/db_handler/db_youtube_channels.hpp
         third_party/sqlite/sqlite3.c
-        db_handler/src/db_youtube_channels.cpp
-        db_handler/src/db_youtube_channels.hpp)
+        third_party/sqlite/sqlite3.h
+        third_party/nlohmann/json.hpp)
 
 # API Handler
 target_link_libraries (SaneCLI -lcurl)
@@ -53,16 +52,15 @@ target_link_libraries(SaneCLI -ldl)
 
 
 # GUI
-add_executable(SaneGUI
-        gui/src/main.cpp
+add_executable(SaneGUI gui/src/main.cpp
         libsane++/src/entities/youtube_channel.cpp
-        libsane++/src/entities/youtube_channel.hpp
-        db_handler/src/db_handler.cpp
-        db_handler/src/db_handler.hpp
-        third_party/sqlite/sqlite3.h
+        libsane++/include/entities/youtube_channel.hpp
+        libsane++/src/db_handler/db_handler.cpp
+        libsane++/include/db_handler/db_handler.hpp
+        libsane++/src/db_handler/db_youtube_channels.cpp
+        libsane++/include/db_handler/db_youtube_channels.hpp
         third_party/sqlite/sqlite3.c
-        db_handler/src/db_youtube_channels.cpp
-        db_handler/src/db_youtube_channels.hpp)
+        third_party/sqlite/sqlite3.h)
 
 # API Handler
 target_link_libraries (SaneGUI -lcurl)
@@ -90,21 +88,21 @@ target_link_libraries(SaneGUI -ldl)
 enable_testing()
 find_package(Catch2 REQUIRED)
 add_executable(test_all tests/test_all.cpp
+        cli/src/cli.cpp
+        cli/src/cli.hpp
         cli/test/unit-test_cli.cpp
-        third_party/nlohmann/json.hpp
         libsane++/src/api_handler/api_handler.cpp
         libsane++/include/api_handler/api_handler.hpp
         libsane++/src/entities/youtube_channel.cpp
-        libsane++/src/entities/youtube_channel.hpp
-        cli/src/cli.cpp
-        cli/src/cli.hpp
-        db_handler/src/db_handler.cpp
-        db_handler/src/db_handler.hpp
+        libsane++/include/entities/youtube_channel.hpp
+        libsane++/src/db_handler/db_handler.cpp
+        libsane++/include/db_handler/db_handler.hpp
+        libsane++/test/db_handler/unit-test_exec_sql_statement_default_callback.cpp
+        libsane++/src/db_handler/db_youtube_channels.cpp
+        libsane++/include/db_handler/db_youtube_channels.hpp
         third_party/sqlite/sqlite3.h
         third_party/sqlite/sqlite3.c
-        db_handler/test/unit-test_exec_sql_statement_default_callback.cpp
-        db_handler/src/db_youtube_channels.cpp
-        db_handler/src/db_youtube_channels.hpp)
+        third_party/nlohmann/json.hpp)
 
 # API Handler
 target_link_libraries(test_all -lcurl)

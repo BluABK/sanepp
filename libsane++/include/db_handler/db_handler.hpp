@@ -8,30 +8,69 @@
 #include <type_traits>
 
 #include <sqlite3.h>
-const std::string DATABASE_FILENAME = "sane.db";
+#include <mutex>
+
+// Custom SQLite3 error messages, counting downwards to not clash with official.
+#define SQLITE_NEVER_RUN -1
+#define SQLITE_NOT_DONE -2
+
+static std::mutex m_mutex;
+static int m_usageCounter;
 
 namespace sane {
-    // sqlite_exec called with custom callback function provided by parameter.
-    // FIXME: **DISABLED**: Works for one single query and then SQLite throws "query aborted"
-    #if generic_false_statement
-    typedef int (*sqlite3_callback_)(void*,int,char**, char**);
-    int execSqlStatementCustom(sqlite3_callback_ t_callbackFunction, const std::string &t_dbName,
-            const std::string &t_sqlStatement);
-    #endif
+    class DBHandler {
+    public:
+        DBHandler() {
+            m_usageCounter++;
+            std::lock_guard<std::mutex> guard(m_mutex);
+            openDB();
+        }
 
-    // sqlite_exec called with default callback function
-    int execSqlStatement(const std::string &t_dbName, const std::string &t_sqlStatement);
+        sqlite3_stmt * prepareSqlStatement(const std::string &t_sql);
 
-    int execSqlStatementNoCallback(const std::string &t_dbName, const std::string &t_sqlStatement);
+        int finalizePreparedSqlStatement (int t_rcStatusCode, sqlite3_stmt *t_sqlite3PreparedStatement);
 
-    // A way to store the callback results.
-    void addCallbackResult(const std::string &result);
+        std::string getDBFilename() {
+            return m_dbFilename;
+        }
 
-    std::vector<std::string> getCallbackResults();
+        sqlite3 * getDB();
 
-    void clearCallbackResults();
+        int openDB() {
+            // Open the database file.
+            int rc = sqlite3_open(getDBFilename().c_str(), &m_db);
 
-//    const std::string DATABASE_FILENAME = "sane.db";
-}
+            if (rc != SQLITE_OK) {
+                std::cerr << "Error opening database '" << getDBFilename() << "': " << sqlite3_errmsg(getDB()) << std::endl;
+                sqlite3_close(m_db);
+                updateStatus(SQLITE_CANTOPEN);
+                return SQLITE_CANTOPEN;
+            }
+            return rc;
+        }
+
+        void updateStatus(int newStatus) {
+            m_lastStatus = newStatus;
+        }
+
+        int lastStatus() {
+            return m_lastStatus;
+        }
+
+        ~DBHandler() {
+            // Close db handle
+            sqlite3_close(m_db);
+
+            m_usageCounter--;
+        }
+    private:
+        std::string m_dbFilename = "sane.db";
+
+        sqlite3 *m_db = nullptr;
+
+
+        int m_lastStatus = SQLITE_NEVER_RUN;
+    };
+} // namespace sane
 
 #endif //SANE_DB_HANDLER_HPP

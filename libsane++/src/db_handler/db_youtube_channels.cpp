@@ -54,11 +54,21 @@ namespace sane {
         return compiledString;
     }
 
-    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels) {
+    int createTable(const std::shared_ptr<DBHandler> &t_db = nullptr) {
         // Setup
-        const std::string databaseFilename = DATABASE_FILENAME;
+        std::shared_ptr<DBHandler> db;
+        sqlite3_stmt *preparedStatement = nullptr;
         std::string sqlStatement;
-        int returnStatus;
+        int rc;
+
+        if (t_db == nullptr) {
+            // Acquire database handle.
+            std::cout << "Acquiring DB handle..." << std::endl;
+            db = std::make_shared<DBHandler>();
+            std::cout << "Acquired DB handle." << std::endl;
+        } else {
+            db = t_db;
+        }
 
         // Notes:
         // channel id and uploads playlist id are identical if you remove their static prefixes:
@@ -79,15 +89,37 @@ namespace sane {
                        "ThumbnailMedium TEXT"
                        ");";
 
-        returnStatus = sane::execSqlStatementNoCallback(databaseFilename, sqlStatement);
-        if (returnStatus != SQLITE_OK) {
-            std::cerr << "sane::execSqlStatement(" << databaseFilename << ", " <<
-            sqlStatement << ") ERROR: returned non-zero status: " << returnStatus << std::endl;
-            return returnStatus;
+        // 1/3: Create a prepared statement
+        preparedStatement = db->prepareSqlStatement(sqlStatement);
+        if (db->lastStatus() != SQLITE_OK) {
+            std::cerr << "sane::execSqlStatement(" << db->getDBFilename() << ", " <<
+                      sqlStatement << ") ERROR: returned non-zero status: " << db->lastStatus()  << std::endl;
+            return db->lastStatus();
         }
 
-        // Iterate through the subscription objects and add relevant fields to DB.
+        // 2/3: Step through, and do nothing because this is a CREATE statement.
+        while ((rc = sqlite3_step(preparedStatement)) == SQLITE_ROW) {}
+
+        // 3/3: Finalize prepared statement
+        db->finalizePreparedSqlStatement(rc, preparedStatement);
+    }
+
+    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels) {
+        // Setup
+        sqlite3_stmt *preparedStatement = nullptr;
+        std::string sqlStatement;
+        int rc;
         int counter = 0;
+
+        // Acquire database handle.
+        std::cout << "Acquiring DB handle..." << std::endl;
+        std::shared_ptr<DBHandler> db = std::make_shared<DBHandler>();
+        std::cout << "Acquired DB handle." << std::endl;
+
+        // Creates the table if it does not already exist.
+        createTable(db);
+
+        // Iterate through the subscription objects and add relevant fields to DB.
         for (auto & channel : t_channels) {
             // Figure out and sanitize the values.
             std::string id = validateSQLiteInput(channel->getId());
@@ -121,12 +153,19 @@ namespace sane {
 
             std::cout << "Sub #" << counter << ": " << sqlStatement << std::endl;
 
-            returnStatus = sane::execSqlStatementNoCallback(databaseFilename, sqlStatement);
-            if (returnStatus != SQLITE_OK) {
-                std::cerr << "sane::execSqlStatement(" << databaseFilename << ", " <<
-                          sqlStatement << ") ERROR: returned non-zero status: " << returnStatus << std::endl;
-                return returnStatus;
+            // 1/3: Create a prepared statement
+            preparedStatement = db->prepareSqlStatement(sqlStatement);
+            if (db->lastStatus()  != SQLITE_OK) {
+                std::cerr << "sane::execSqlStatement(" << db->getDBFilename() << ", " <<
+                          sqlStatement << ") ERROR: returned non-zero status: " << db->lastStatus() << std::endl;
+                return db->lastStatus();
             }
+
+            // 2/3: Step through, and do nothing because this is an INSERT statement.
+            while ((rc = sqlite3_step(preparedStatement)) == SQLITE_ROW) {}
+
+            // 3/3: Finalize prepared statement
+            db->finalizePreparedSqlStatement(rc, preparedStatement);
 
             counter++;
         }

@@ -61,7 +61,8 @@ namespace sane {
             std::lock_guard<std::mutex> lock(m_mutex);
             if (m_usageCounter == 0) {
                 // Close db handle
-                sqlite3_close(m_db);
+                int rc = sqlite3_close(m_db);
+                std::cout << "DB closed with status: " << rc << std::endl;
             } else {
                 m_usageCounter--;
             }

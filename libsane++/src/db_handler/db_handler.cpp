@@ -7,6 +7,8 @@
 
 #include <db_handler/db_handler.hpp>
 namespace sane {
+    sqlite3 *DBHandler::m_db = nullptr;
+
     /**
     * Prepare an sqlStatement
     *
@@ -22,11 +24,11 @@ namespace sane {
 
         int rc;
 
-        rc = sqlite3_prepare_v2(getDB(), t_sql.c_str(), -1, &sqlite3PreparedStatement, nullptr);
+        rc = sqlite3_prepare_v2(m_db, t_sql.c_str(), -1, &sqlite3PreparedStatement, nullptr);
         std::cout << "sqlite3_prepare_v2: " << rc << std::endl;
         if (rc != SQLITE_OK) {
-            std::cerr << "Error preparing SQLite3 statement: " << sqlite3_errmsg(getDB()) << std::endl;
-            sqlite3_close(getDB());
+            std::cerr << "Error preparing SQLite3 statement: " << sqlite3_errmsg(m_db) << std::endl;
+            sqlite3_close(m_db);
             updateStatus(SQLITE_ERROR);
             return sqlite3PreparedStatement;
         }
@@ -39,7 +41,7 @@ namespace sane {
 
     int DBHandler::finalizePreparedSqlStatement (int t_rcStatusCode, sqlite3_stmt *t_sqlite3PreparedStatement) {
         if (t_rcStatusCode != SQLITE_DONE) {
-            std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(getDB()) <<
+            std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(m_db) <<
                       std::endl;
             updateStatus(SQLITE_NOT_DONE);
             return t_rcStatusCode;
@@ -50,9 +52,5 @@ namespace sane {
 
         updateStatus(SQLITE_OK);
         return SQLITE_OK;
-    }
-
-    sqlite3 *DBHandler::getDB() {
-        return m_db;
     }
 } // namespace sane

@@ -15,15 +15,17 @@
 #define SQLITE_NOT_DONE -2
 
 static std::mutex m_mutex;
-static int m_usageCounter;
+static int m_usageCounter = 0;
 
 namespace sane {
     class DBHandler {
     public:
         DBHandler() {
-            m_usageCounter++;
-            std::lock_guard<std::mutex> guard(m_mutex);
-            openDB();
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (m_usageCounter == 0) {
+                openDB();
+                m_usageCounter++;
+            }
         }
 
         sqlite3_stmt * prepareSqlStatement(const std::string &t_sql);
@@ -34,14 +36,12 @@ namespace sane {
             return m_dbFilename;
         }
 
-        sqlite3 * getDB();
-
         int openDB() {
             // Open the database file.
             int rc = sqlite3_open(getDBFilename().c_str(), &m_db);
 
             if (rc != SQLITE_OK) {
-                std::cerr << "Error opening database '" << getDBFilename() << "': " << sqlite3_errmsg(getDB()) << std::endl;
+                std::cerr << "Error opening database '" << getDBFilename() << "': " << sqlite3_errmsg(m_db) << std::endl;
                 sqlite3_close(m_db);
                 updateStatus(SQLITE_CANTOPEN);
                 return SQLITE_CANTOPEN;
@@ -58,15 +58,18 @@ namespace sane {
         }
 
         ~DBHandler() {
-            // Close db handle
-            sqlite3_close(m_db);
-
-            m_usageCounter--;
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (m_usageCounter == 0) {
+                // Close db handle
+                sqlite3_close(m_db);
+            } else {
+                m_usageCounter--;
+            }
         }
     private:
         std::string m_dbFilename = "sane.db";
 
-        sqlite3 *m_db = nullptr;
+        static sqlite3 *m_db;
 
 
         int m_lastStatus = SQLITE_NEVER_RUN;

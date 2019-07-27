@@ -102,6 +102,8 @@ namespace sane {
 
         // 3/3: Finalize prepared statement
         db->finalizePreparedSqlStatement(rc, preparedStatement);
+
+        return SQLITE_OK;
     }
 
     int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels) {

@@ -85,7 +85,7 @@ namespace sane {
         createTable(db);
 
         // Iterate through the subscription objects and add relevant fields to DB.
-        for (auto & channel : t_channels) {
+        for (auto &channel : t_channels) {
             // Figure out and sanitize the values.
             const char* id = validateSQLiteInput(channel->getId());
             int hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
@@ -119,15 +119,15 @@ namespace sane {
             }
 
             //  Bind-parameter indexing is 1-based.
-            rc = sqlite3_bind_text(preparedStatement, 1, id, sizeof(id), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 1, id, strlen(id), nullptr);
             rc = sqlite3_bind_int(preparedStatement, 2, hasUploadsPlaylist);
             rc = sqlite3_bind_int(preparedStatement, 3, hasFavouritesPlaylist);
             rc = sqlite3_bind_int(preparedStatement, 4, hasLikesPlaylist);
-            rc = sqlite3_bind_text(preparedStatement, 5, title, sizeof(title), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 6, description, sizeof(description), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 7, thumbnailDefault, sizeof(thumbnailDefault), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 8, thumbnailHigh, sizeof(thumbnailHigh), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 9, thumbnailMedium, sizeof(thumbnailMedium), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 5, title, strlen(title), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 6, description, strlen(description), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 7, thumbnailDefault, strlen(thumbnailDefault), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 8, thumbnailHigh, strlen(thumbnailHigh), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 9, thumbnailMedium, strlen(thumbnailMedium), nullptr);
             rc = sqlite3_bind_int(preparedStatement, 10, subscribedOnYouTube);
             rc = sqlite3_bind_int(preparedStatement, 11, subscribedLocalOverride);
 

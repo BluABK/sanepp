@@ -87,6 +87,17 @@ namespace sane {
         }
     }
 
+//    const char* YoutubeChannel::getFavouritesPlaylistAsCString() {
+//        if (getId() != MISSING_VALUE and hasFavouritesPlaylist()) {
+//            char buf[100];
+//            strcpy(buf, "FL");
+//            strcat(buf, getIdAsCString());
+//            return buf;
+//        } else {
+//            return MISSING_VALUE;
+//        }
+//    }
+
     const std::string YoutubeChannel::getLikesPlaylist() {
         if (getId() != MISSING_VALUE and hasLikesPlaylist()) {
             return std::string("LL" + getId());
@@ -115,12 +126,24 @@ namespace sane {
         return m_id;
     }
 
+    const char* YoutubeChannel::getIdAsCString() {
+        return m_id.c_str();
+    }
+
     const std::string YoutubeChannel::getDescription() {
         return m_description;
     }
 
+    const char* YoutubeChannel::getDescriptionAsCString() {
+        return m_description.c_str();
+    }
+
     const std::string YoutubeChannel::getPublishedAt() {
         return m_publishedAt;
+    }
+
+    const char* YoutubeChannel::getPublishedAtAsCString() {
+        return m_publishedAt.c_str();
     }
 
     const std::map<std::string, std::string> YoutubeChannel::getThumbnails() {
@@ -131,18 +154,33 @@ namespace sane {
         return m_thumbnails["default"];
     }
 
+    const char*YoutubeChannel::getThumbnailDefaultAsCString()  {
+        return m_thumbnails["default"].c_str();
+    }
+
     const std::string YoutubeChannel::getThumbnailHigh() {
         return m_thumbnails["high"];
+    }
+
+    const char* YoutubeChannel::getThumbnailHighAsCString() {
+        return m_thumbnails["high"].c_str();
     }
 
     const std::string YoutubeChannel::getThumbnailMedium() {
         return m_thumbnails["medium"];
     }
 
+    const char* YoutubeChannel::getThumbnailMediumAsCString() {
+        return m_thumbnails["medium"].c_str();
+    }
+
     const std::string YoutubeChannel::getTitle() {
         return m_title;
     }
 
+    const char* YoutubeChannel::getTitleAsCString() {
+        return m_title.c_str();
+    }
 
     void YoutubeChannel::print(int indentationSpacing = 0) {
         std::string indentation(indentationSpacing, ' ');

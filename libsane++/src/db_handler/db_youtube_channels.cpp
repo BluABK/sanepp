@@ -13,12 +13,13 @@ namespace sane {
      * @param t_string  String to be validated.
      * @return          Input string or "NULL" converted to SQLite compatible C-String.
      */
-    const char* validateSQLiteInput(const std::string &t_string) {
-        if (t_string == "N/A" or t_string.empty()) {
+    const char* validateSQLiteInput(const char *t_cString) {
+        // If t_cString is an empty string, nullptr or equals MISSING_VALUE
+        if (strcmp(t_cString, MISSING_VALUE) == 0 or (t_cString && !t_cString[0])) {
             return "NULL";
         } else {
             // Convert the std::string to SQLite3 compatible C-String.
-            return t_string.c_str();
+            return t_cString;
         }
     }
     int createTable(const std::shared_ptr<DBHandler> &t_db = nullptr) {
@@ -87,16 +88,16 @@ namespace sane {
         // Iterate through the subscription objects and add relevant fields to DB.
         for (auto &channel : t_channels) {
             // Figure out and sanitize the values.
-            const char* id = validateSQLiteInput(channel->getId());
+            const char* id = channel->getIdAsCString();
             int hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasLikesPlaylist = channel->hasLikesPlaylist() ? 1 : 0;
-            const char* title = validateSQLiteInput(channel->getTitle());
-            const char* description = validateSQLiteInput(channel->getDescription());
+            const char* title = validateSQLiteInput(channel->getTitleAsCString());
+            const char* description = validateSQLiteInput(channel->getDescriptionAsCString());
 
-            const char* thumbnailDefault = validateSQLiteInput(channel->getThumbnailDefault());
-            const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHigh());
-            const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMedium());
+            const char* thumbnailDefault = validateSQLiteInput(channel->getThumbnailDefaultAsCString());
+            const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHighAsCString());
+            const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMediumAsCString());
 
             // Bool, int? Potato, Potáto to SQLite.
             int subscribedOnYouTube = 1;       // FIXME: Hardcoded True
@@ -108,7 +109,15 @@ namespace sane {
                            "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
                            "SubscribedLocalOverride) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            std::cout << "Sub #" << counter << " " << channel->getTitle() << ": " << sqlStatement << std::endl;
+//            std::cout << "Sub #" << counter << " " << channel->getTitle() << ": " << sqlStatement << std::endl;
+            std::cout << "Sub #" << counter << " " << channel->getTitle() << ": " <<  // FIXME: Remove debug print
+              "INSERT INTO youtube_channels ("
+              "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
+              "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
+              "SubscribedLocalOverride) VALUES (" << id << ", " << hasUploadsPlaylist << ", " << hasFavouritesPlaylist
+              << ", " << hasLikesPlaylist << ", " << title << ", " << "<desc>" << ", " << thumbnailDefault
+              << ", " << thumbnailHigh << ", " << thumbnailMedium << ", " << subscribedOnYouTube << ", " <<
+              subscribedLocalOverride << ")" << std::endl;
 
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);

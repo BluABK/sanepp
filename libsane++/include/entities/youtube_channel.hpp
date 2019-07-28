@@ -72,21 +72,35 @@ namespace sane {
 
         const std::string getId();
 
+        const char *getIdAsCString();
+
         const std::string getChannelId();
 
         const std::string getDescription();
 
+        const char* getDescriptionAsCString();
+
         const std::string getPublishedAt();
+
+        const char* getPublishedAtAsCString();
 
         const std::map<std::string, std::string> getThumbnails();
 
         const std::string getThumbnailDefault();
 
+        const char* getThumbnailDefaultAsCString();
+
         const std::string getThumbnailHigh();
+
+        const char* getThumbnailHighAsCString();
 
         const std::string getThumbnailMedium();
 
+        const char* getThumbnailMediumAsCString();
+
         const std::string getTitle();
+
+        const char* getTitleAsCString();
 
         bool hasFavouritesPlaylist();
 

@@ -25,29 +25,46 @@ namespace sane {
         int rc;
 
         rc = sqlite3_prepare_v2(m_db, t_sql.c_str(), -1, &sqlite3PreparedStatement, nullptr);
-        std::cout << "sqlite3_prepare_v2: " << rc << std::endl;
         if (rc != SQLITE_OK) {
             std::cerr << "Error preparing SQLite3 statement: " << sqlite3_errmsg(m_db) << std::endl;
             sqlite3_close(m_db);
-            updateStatus(SQLITE_ERROR);
+            updateStatus(rc);
             return sqlite3PreparedStatement;
         }
-
-        // Return the prepared statement to be stepped through and run custom code on.
         updateStatus(SQLITE_OK);
 
+        //  Optional, but will most likely increase performance.
+        rc = sqlite3_exec(m_db, "BEGIN TRANSACTION", nullptr, nullptr, nullptr);
+        updateStatus(rc);
+
+        // Return the prepared statement to be stepped through and run custom code on.
         return sqlite3PreparedStatement;
     }
 
+    int DBHandler::executeSqlStatement(const std::string &t_sql) {
+//        sqlite3_exec(m_db, t_sql, );
+        return 0;
+    }
+
     int DBHandler::finalizePreparedSqlStatement (int t_rcStatusCode, sqlite3_stmt *t_sqlite3PreparedStatement) {
-        if (t_rcStatusCode != SQLITE_DONE) {
-            std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(m_db) <<
-                      std::endl;
-            updateStatus(SQLITE_NOT_DONE);
-            return t_rcStatusCode;
+        // FIXME: Check triggers false positive "not an error" rc status.
+//        if (t_rcStatusCode != SQLITE_DONE) {
+//            std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(m_db) <<
+//                      std::endl;
+//            updateStatus(SQLITE_NOT_DONE);
+//            return t_rcStatusCode;
+//        }
+        char * zErrMsg;
+        int rc = sqlite3_exec(m_db, "END TRANSACTION", nullptr, nullptr, &zErrMsg );   //  End the transaction.
+
+        if (rc != SQLITE_OK) {
+            std::cerr << zErrMsg << std::endl;
+            return rc;
         }
 
-        // Destroy the prepared statement object.
+        updateStatus(rc);
+
+        // Finalize the prepared statement object.
         sqlite3_finalize(t_sqlite3PreparedStatement);
 
         updateStatus(SQLITE_OK);

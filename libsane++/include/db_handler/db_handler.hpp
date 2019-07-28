@@ -30,6 +30,8 @@ namespace sane {
 
         sqlite3_stmt * prepareSqlStatement(const std::string &t_sql);
 
+        int executeSqlStatement(const std::string &t_sql);
+
         int finalizePreparedSqlStatement (int t_rcStatusCode, sqlite3_stmt *t_sqlite3PreparedStatement);
 
         std::string getDBFilename() {

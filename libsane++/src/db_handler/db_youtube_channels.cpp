@@ -144,7 +144,6 @@ namespace sane {
             while (sqlite3_step(preparedStatement) == SQLITE_ROW) {} // While query has result-rows.
 
             // Step, Clear and Reset the statement after each bind.
-            rc = sqlite3_step(preparedStatement);
             rc = sqlite3_clear_bindings(preparedStatement);
             rc = sqlite3_reset(preparedStatement);
 

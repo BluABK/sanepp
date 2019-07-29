@@ -22,6 +22,7 @@ namespace sane {
             return t_cString;
         }
     }
+
     int createTable(const std::shared_ptr<DBHandler> &t_db = nullptr) {
         // Setup
         std::shared_ptr<DBHandler> db;
@@ -70,6 +71,14 @@ namespace sane {
         return SQLITE_OK;
     }
 
+    /**
+     * Adds a list of YoutubeChannel objects to an SQLite3 Database.
+     *
+     * Conflict handling: If an entry already exists it will be overwritten with the new values.
+     *
+     * @param t_channels
+     * @return
+     */
     int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels) {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
@@ -103,11 +112,29 @@ namespace sane {
             int subscribedOnYouTube = 1;       // FIXME: Hardcoded True
             int subscribedLocalOverride = 0;  // FIXME: Harcoded False
 
-            // Construct the SQL statement.
+            // Construct the UPSERT SQL statement which updates an already existing row or inserts a new one.
+            //
+            // The "excluded." prefix causes the <VALUE> to refer to the value for <VALUE> that *would have* been
+            // inserted had there been no conflict.
+            //
+            // Hence, the effect of the *upsert* is to insert a <value> if none exists, OR to overwrite any prior
+            // <VALUE> with the new one.
             sqlStatement = std::string("INSERT INTO youtube_channels ("
                            "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
                            "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
-                           "SubscribedLocalOverride) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                           "SubscribedLocalOverride) "
+                               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                               "ON CONFLICT(ID) DO UPDATE SET "
+                                   "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
+                                   "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
+                                   "HasLikesPlaylist=excluded.HasLikesPlaylist, "
+                                   "Title=excluded.Title, "
+                                   "Description=excluded.Description, "
+                                   "ThumbnailDefault=excluded.ThumbnailDefault, "
+                                   "ThumbnailHigh=excluded.ThumbnailHigh, "
+                                   "ThumbnailMedium=excluded.ThumbnailMedium, "
+                                   "SubscribedOnYouTube=excluded.SubscribedOnYouTube, "
+                                   "SubscribedLocalOverride=excluded.SubscribedLocalOverride");
 
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);
@@ -117,7 +144,7 @@ namespace sane {
                 return db->lastStatus();
             }
 
-            //  Bind-parameter indexing is 1-based.
+            //  Bind-parameter for VALUES (indexing is 1-based).
             rc = sqlite3_bind_text(preparedStatement, 1, id, strlen(id), nullptr);
             rc = sqlite3_bind_int(preparedStatement, 2, hasUploadsPlaylist);
             rc = sqlite3_bind_int(preparedStatement, 3, hasFavouritesPlaylist);

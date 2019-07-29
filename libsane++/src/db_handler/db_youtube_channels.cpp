@@ -109,16 +109,6 @@ namespace sane {
                            "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
                            "SubscribedLocalOverride) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-//            std::cout << "Sub #" << counter << " " << channel->getTitle() << ": " << sqlStatement << std::endl;
-            std::cout << "Sub #" << counter << " " << channel->getTitle() << ": " <<  // FIXME: Remove debug print
-              "INSERT INTO youtube_channels ("
-              "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
-              "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
-              "SubscribedLocalOverride) VALUES (" << id << ", " << hasUploadsPlaylist << ", " << hasFavouritesPlaylist
-              << ", " << hasLikesPlaylist << ", " << title << ", " << "<desc>" << ", " << thumbnailDefault
-              << ", " << thumbnailHigh << ", " << thumbnailMedium << ", " << subscribedOnYouTube << ", " <<
-              subscribedLocalOverride << ")" << std::endl;
-
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);
             if (db->lastStatus()  != SQLITE_OK) {

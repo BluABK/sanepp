@@ -40,7 +40,7 @@ namespace sane {
 
         // Create the table, if it doesn't already exist.
         sqlStatement = "CREATE TABLE IF NOT EXISTS youtube_channels ("
-                       "ID TEXT, "
+                       "ID TEXT PRIMARY KEY, "
                        "Title TEXT, "
                        "HasUploadsPlaylist BOOLEAN, "
                        "HasFavouritesPlaylist BOOLEAN, "

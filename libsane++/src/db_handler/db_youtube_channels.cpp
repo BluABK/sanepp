@@ -170,6 +170,6 @@ namespace sane {
             counter++;
         }
 
-        return 0;
+        return SQLITE_OK;
     }
 } // namespace sane

@@ -43,7 +43,7 @@ namespace sane {
 
         void addFromStringList(const std::list<std::string>& t_values);
 
-        void addFromMap(const std::map<std::string, std::string>& t_map);
+        void addFromMap(std::map<std::string, std::string>& t_map);
 
         void print(int indentationSpacing);
 

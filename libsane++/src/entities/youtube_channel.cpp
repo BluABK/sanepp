@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
@@ -75,8 +76,25 @@ namespace sane {
         std::cerr << "YoutubeChannel::addFromStringList NOT IMPLEMENTED!" << std::endl;
     }
 
-    void YoutubeChannel::addFromMap(const std::map<std::string, std::string> &t_map) {  // FIXME: IMPLEMENT
-        std::cerr << "YoutubeChannel::addFromMap NOT IMPLEMENTED!" << std::endl;
+    /**
+     * Populates properties based on a given map of values.
+     *
+     * Map keys: ID, Title, UploadsPlaylist, FavouritesPlaylist, LikesPlaylist,
+     *           Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium.
+     *
+     * @param t_map
+     */
+    void YoutubeChannel::addFromMap(std::map<std::string, std::string> &t_map) {
+        // Add values from given value map.
+        m_id                        = t_map["ID"];
+        m_title                     = t_map["Title"];
+        m_hasUploadsPlaylist        = !t_map["UploadsPlaylist"].empty();
+        m_hasFavouritesPlaylist     = !t_map["FavouritesPlaylist"].empty();
+        m_hasLikesPlaylist          = !t_map["LikesPlaylist"].empty();
+        m_description               = t_map["Description"];
+        m_thumbnails["default"]     = t_map["ThumbnailDefault"];
+        m_thumbnails["high"]        = t_map["ThumbnailHigh"];
+        m_thumbnails["medium"]      = t_map["ThumbnailMedium"];
     }
 
     const std::string YoutubeChannel::getFavouritesPlaylist() {

@@ -66,7 +66,7 @@ namespace sane {
         while ((rc = sqlite3_step(preparedStatement)) == SQLITE_ROW) {}
 
         // 3/3: Finalize prepared statement
-        db->finalizePreparedSqlStatement(rc, preparedStatement);
+        db->finalizePreparedSqlStatement(preparedStatement);
 
         return SQLITE_OK;
     }
@@ -165,7 +165,7 @@ namespace sane {
             rc = sqlite3_reset(preparedStatement);
 
             // Finalize prepared statement
-            db->finalizePreparedSqlStatement(rc, preparedStatement);
+            db->finalizePreparedSqlStatement(preparedStatement);
 
             counter++;
         }

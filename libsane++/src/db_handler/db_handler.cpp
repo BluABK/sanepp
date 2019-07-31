@@ -41,12 +41,12 @@ namespace sane {
         return sqlite3PreparedStatement;
     }
 
-    int DBHandler::executeSqlStatement(const std::string &t_sql) {
+//    int DBHandler::executeSqlStatement(const std::string &t_sql) { // FIXME: Bring back for use on unbound stmts?
 //        sqlite3_exec(m_db, t_sql, );
-        return 0;
-    }
+//        return 0;
+//    }
 
-    int DBHandler::finalizePreparedSqlStatement (int t_rcStatusCode, sqlite3_stmt *t_sqlite3PreparedStatement) {
+    int DBHandler::finalizePreparedSqlStatement (sqlite3_stmt *t_sqlite3PreparedStatement) {
         // FIXME: Check triggers false positive "not an error" rc status.
 //        if (t_rcStatusCode != SQLITE_DONE) {
 //            std::cerr << "Error sqlite3_step ended but does not have status SQLITE_DONE: " << sqlite3_errmsg(m_db) <<
@@ -68,6 +68,36 @@ namespace sane {
         sqlite3_finalize(t_sqlite3PreparedStatement);
 
         updateStatus(SQLITE_OK);
+        return SQLITE_OK;
+    }
+    
+    /**
+     * Runs/Executes an SQLite statement without binding any values.
+     *
+     * Prefixed 'run' instead of 'execute' in order to disambiguate from sqlite3_exec.
+     *
+     * @param t_sql An SQLite statement on string form.
+     * @return      Execution status.
+     */
+    int DBHandler::runSqlStatement(const std::string &t_sql) {
+        // Setup
+        sqlite3_stmt *preparedStatement = nullptr;
+        int rc = SQLITE_NEVER_RUN;
+        
+        // 1/3: Create a prepared statement
+        preparedStatement = prepareSqlStatement(t_sql);
+        if (lastStatus() != SQLITE_OK) {
+            std::cerr << "create_table(" << getDBFilename() << ", " << t_sql << 
+            ") ERROR: returned non-zero status: " << lastStatus()  << std::endl;
+            return lastStatus();
+        }
+
+        // 2/3: Step through, and do nothing because this is a CREATE statement with no VALUE bindings.
+        while ((rc = sqlite3_step(preparedStatement)) == SQLITE_ROW) {}
+
+        // 3/3: Finalize prepared statement
+        finalizePreparedSqlStatement(preparedStatement);
+
         return SQLITE_OK;
     }
 } // namespace sane

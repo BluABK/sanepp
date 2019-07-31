@@ -73,7 +73,9 @@ namespace sane {
     /**
      * Adds a list of YoutubeChannel objects to an SQLite3 Database.
      *
-     * Conflict handling: If an entry already exists it will be overwritten with the new values.
+     * Conflict policy:     Overwrite existing.
+     *
+     * Conflict handling:   If an entry already exists it will be overwritten with the new values.
      *
      * @param t_channels    A list of smart (shared) pointers to instantiated YoutubeChannel entities.
      * @param t_errors      Pointer to a string list to put errors in, send in nullptr to disable.
@@ -109,9 +111,9 @@ namespace sane {
             const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHighAsCString());
             const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMediumAsCString());
 
-            // Bool, int? Potato, Potáto to SQLite.
-            int subscribedOnYouTube = 1;       // FIXME: Hardcoded True
-            int subscribedLocalOverride = 0;  // FIXME: Harcoded False
+            // Set default values.
+            // Bools and ints are the same to SQLite, but the C API only has bind for ints.
+            int subscribedOnYouTube = 1;
 
             // Construct the UPSERT SQL statement which updates an already existing row or inserts a new one.
             //
@@ -120,22 +122,23 @@ namespace sane {
             //
             // Hence, the effect of the *upsert* is to insert a <value> if none exists, OR to overwrite any prior
             // <VALUE> with the new one.
+            //
+            // SubscribedLocalOverride is not set because that is a local override which isn't part of remote properties.
+            //
             sqlStatement = std::string("INSERT INTO youtube_channels ("
-                           "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
-                           "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
-                           "SubscribedLocalOverride) "
-                               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
-                               "ON CONFLICT(ID) DO UPDATE SET "
-                                   "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
-                                   "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
-                                   "HasLikesPlaylist=excluded.HasLikesPlaylist, "
-                                   "Title=excluded.Title, "
-                                   "Description=excluded.Description, "
-                                   "ThumbnailDefault=excluded.ThumbnailDefault, "
-                                   "ThumbnailHigh=excluded.ThumbnailHigh, "
-                                   "ThumbnailMedium=excluded.ThumbnailMedium, "
-                                   "SubscribedOnYouTube=excluded.SubscribedOnYouTube, "
-                                   "SubscribedLocalOverride=excluded.SubscribedLocalOverride");
+                                       "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
+                                       "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube) "
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                                       "ON CONFLICT(ID) DO UPDATE SET "
+                                           "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
+                                           "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
+                                           "HasLikesPlaylist=excluded.HasLikesPlaylist, "
+                                           "Title=excluded.Title, "
+                                           "Description=excluded.Description, "
+                                           "ThumbnailDefault=excluded.ThumbnailDefault, "
+                                           "ThumbnailHigh=excluded.ThumbnailHigh, "
+                                           "ThumbnailMedium=excluded.ThumbnailMedium, "
+                                           "SubscribedOnYouTube=excluded.SubscribedOnYouTube");
 
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);
@@ -158,12 +161,11 @@ namespace sane {
             rc = sqlite3_bind_text(preparedStatement, 8, thumbnailHigh, strlen(thumbnailHigh), nullptr);
             rc = sqlite3_bind_text(preparedStatement, 9, thumbnailMedium, strlen(thumbnailMedium), nullptr);
             rc = sqlite3_bind_int(preparedStatement, 10, subscribedOnYouTube);
-            rc = sqlite3_bind_int(preparedStatement, 11, subscribedLocalOverride);
 
             // Step through, and do nothing, because this is an INSERT statement.
             while (sqlite3_step(preparedStatement) == SQLITE_ROW) {} // While query has result-rows.
 
-            // Step, Clear and Reset the statement after each bind.
+            // Clear and Reset the statement after each bind.
             rc = sqlite3_clear_bindings(preparedStatement);
             rc = sqlite3_reset(preparedStatement);
 

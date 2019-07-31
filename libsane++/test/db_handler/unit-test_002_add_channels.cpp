@@ -66,7 +66,12 @@ TEST_CASE ("2: Testing sane::DBHandler: Add YouTube channels to DB") {
     }
 
     // Add the test entities to DB.
-    rc = sane::addChannelsToDB(channels);
+    std::list<std::string> t_errors;
+    rc = sane::addChannelsToDB(channels, &t_errors);
+
+    for (const auto& error : t_errors) {
+        std::cout << error << std::endl;
+    }
 
     REQUIRE(rc == SQLITE_OK);
 }

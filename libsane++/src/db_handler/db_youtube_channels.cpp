@@ -1,11 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <entities/youtube_channel.hpp>
 
 #include <db_handler/db_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
-
+#include <entities/youtube_channel.hpp>
 namespace sane {
     /**
      * Checks if a given string is valid for SQLite3 query, if not return "NULL".
@@ -79,7 +78,8 @@ namespace sane {
      * @param t_channels
      * @return
      */
-    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels) {
+    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>> &t_channels,
+                        std::list<std::string> *t_errors) {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
         std::string sqlStatement;
@@ -140,7 +140,10 @@ namespace sane {
             preparedStatement = db->prepareSqlStatement(sqlStatement);
             if (db->lastStatus()  != SQLITE_OK) {
                 std::cerr << "sane::execSqlStatement(" << db->getDBFilename() << ", " <<
-                          sqlStatement << ") ERROR: returned non-zero status: " << db->lastStatus() << std::endl;
+                          sqlStatement << ") ERROR: returned non-zero status: " << std::to_string( db->lastStatus() )
+                          << std::endl;
+                t_errors->push_back("sane::execSqlStatement(" + db->getDBFilename() + ", " + sqlStatement
+                                   + ") ERROR: returned non-zero status: " + std::to_string( db->lastStatus() ));
                 return db->lastStatus();
             }
 

@@ -8,6 +8,8 @@
 #include <entities/youtube_channel.hpp>
 #include <db_handler/db_handler.hpp>
 
+#define NO_ERROR_LOG nullptr
+
 namespace sane {
     /**
      * Adds a list of YoutubeChannel objects to an SQLite3 Database.
@@ -17,7 +19,8 @@ namespace sane {
      * @param t_channels
      * @return
      */
-    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels);
+    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels,
+                        std::list<std::string> *t_errors);
 } // namespace sane
 
 #endif //SANE_DB_YOUTUBE_CHANNELS_HPP

@@ -62,6 +62,8 @@ install:
   - cd ${TRAVIS_BUILD_DIR}
 
 before_script:
+  # Check sqlite version
+  - sqlite3 --version
   # create a build folder for the out-of-source build
   - mkdir sane-test-build
   # switch to build directory

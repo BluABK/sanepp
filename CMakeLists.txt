@@ -90,35 +90,74 @@ target_include_directories(SaneGUI PRIVATE ${INCLUDE_DIRS})
 #    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 #endif()
 
-
 enable_testing()
 find_package(Catch2 REQUIRED)
-add_executable(test_all tests/test_all.cpp
-        cli/src/cli.cpp
-        cli/src/cli.hpp
-        cli/test/unit-test_cli.cpp
-        libsane++/src/api_handler/api_handler.cpp
-        libsane++/include/api_handler/api_handler.hpp
-        libsane++/src/entities/youtube_channel.cpp
-        libsane++/include/entities/youtube_channel.hpp
-        libsane++/src/db_handler/db_handler.cpp
-        libsane++/include/db_handler/db_handler.hpp
-        libsane++/test/db_handler/unit-test_exec_sql_statement_default_callback.cpp
-        libsane++/src/db_handler/db_youtube_channels.cpp
-        libsane++/include/db_handler/db_youtube_channels.hpp
-        third_party/nlohmann/json.hpp)
 
-# API Handler
-target_link_libraries(test_all -lcurl)
-# Testing suite.
-target_link_libraries(test_all Catch2::Catch2)
-# Database.
-target_link_libraries(test_all -lpthread)
-target_link_libraries(test_all -ldl)
-target_link_libraries(test_all sqlite3)
-target_include_directories(test_all PRIVATE ${INCLUDE_DIRS})
+if(DEFINED ENV{THIS_IS_TRAVIS})
+    message("Building tests for Travis CI env...")
 
-include(CTest)
-include(Catch)
+    add_executable(travis_test_all tests/test_all.cpp
+            cli/src/cli.cpp
+            cli/src/cli.hpp
+            cli/test/unit-test_cli.cpp
+            libsane++/src/api_handler/api_handler.cpp
+            libsane++/include/api_handler/api_handler.hpp
+            libsane++/src/entities/youtube_channel.cpp
+            libsane++/include/entities/youtube_channel.hpp
+            libsane++/src/db_handler/db_handler.cpp
+            libsane++/include/db_handler/db_handler.hpp
+            libsane++/test/db_handler/unit-test_exec_sql_statement_default_callback.cpp
+            libsane++/src/db_handler/db_youtube_channels.cpp
+            libsane++/include/db_handler/db_youtube_channels.hpp
+            third_party/nlohmann/json.hpp
+            libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp)
 
-catch_discover_tests(test_all)
+    # API Handler
+    target_link_libraries(travis_test_all -lcurl)
+    # Testing suite.
+    target_link_libraries(travis_test_all Catch2::Catch2)
+    # Database.
+    target_link_libraries(travis_test_all -lpthread)
+    target_link_libraries(travis_test_all -ldl)
+    target_link_libraries(travis_test_all sqlite3)
+    target_include_directories(travis_test_all PRIVATE ${INCLUDE_DIRS})
+
+    include(CTest)
+    include(Catch)
+
+    catch_discover_tests(travis_test_all)
+else()
+    message("Building tests for normal env...")
+
+    add_executable(test_all tests/test_all.cpp
+            cli/src/cli.cpp
+            cli/src/cli.hpp
+            cli/test/unit-test_cli.cpp
+            libsane++/src/api_handler/api_handler.cpp
+            libsane++/include/api_handler/api_handler.hpp
+            libsane++/src/entities/youtube_channel.cpp
+            libsane++/include/entities/youtube_channel.hpp
+            libsane++/src/db_handler/db_handler.cpp
+            libsane++/include/db_handler/db_handler.hpp
+            libsane++/test/db_handler/unit-test_exec_sql_statement_default_callback.cpp
+            libsane++/src/db_handler/db_youtube_channels.cpp
+            libsane++/include/db_handler/db_youtube_channels.hpp
+            third_party/nlohmann/json.hpp
+            libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp
+            libsane++/test/db_handler/unit-test_002_add_channels.cpp)
+
+    # API Handler
+    target_link_libraries(test_all -lcurl)
+    # Testing suite.
+    target_link_libraries(test_all Catch2::Catch2)
+    # Database.
+    target_link_libraries(test_all -lpthread)
+    target_link_libraries(test_all -ldl)
+    target_link_libraries(test_all sqlite3)
+    target_include_directories(test_all PRIVATE ${INCLUDE_DIRS})
+
+    include(CTest)
+    include(Catch)
+
+    catch_discover_tests(test_all)
+endif()

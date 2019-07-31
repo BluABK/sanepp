@@ -16,7 +16,6 @@
 #include <entities/youtube_channel.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 
-
 namespace sane {
     /**
      * Callback function to be called when receiving the http response from the server.
@@ -122,7 +121,7 @@ namespace sane {
 
         // Store to Database
         std::cout << "Storing to database..." << std::endl;
-        addChannelsToDB(channels);
+        addChannelsToDB(channels, NO_ERROR_LOG);
         std::cout << "Storing to database successful!" << std::endl;
 
         // FIXME: Once DB works, change this function to void and delete the channel objects instead of returning them.

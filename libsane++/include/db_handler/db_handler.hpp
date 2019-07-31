@@ -10,6 +10,8 @@
 #include <sqlite3.h>
 #include <mutex>
 
+#define DATABASE_NAME "sane.db"
+
 // Custom SQLite3 error messages, counting downwards to not clash with official.
 #define SQLITE_NEVER_RUN -1
 #define SQLITE_NOT_DONE -2
@@ -20,7 +22,8 @@ static int m_usageCounter = 0;
 namespace sane {
     class DBHandler {
     public:
-        DBHandler() {
+        explicit DBHandler(const std::string &t_dbFilename = DATABASE_NAME) {
+            m_dbFilename = t_dbFilename;
             std::lock_guard<std::mutex> lock(m_mutex);
             if (m_usageCounter == 0) {
                 openDB();
@@ -30,9 +33,9 @@ namespace sane {
 
         sqlite3_stmt * prepareSqlStatement(const std::string &t_sql);
 
-        int executeSqlStatement(const std::string &t_sql);
+//        int executeSqlStatement(const std::string &t_sql);
 
-        int finalizePreparedSqlStatement (int t_rcStatusCode, sqlite3_stmt *t_sqlite3PreparedStatement);
+        int finalizePreparedSqlStatement (sqlite3_stmt *t_sqlite3PreparedStatement);
 
         std::string getDBFilename() {
             return m_dbFilename;
@@ -59,6 +62,16 @@ namespace sane {
             return m_lastStatus;
         }
 
+        /**
+         * Runs/Executes an SQLite statement without binding any values.
+         *
+         * Prefixed 'run' instead of 'execute' in order to disambiguate from sqlite3_exec.
+         *
+         * @param t_sql An SQLite statement on string form.
+         * @return      Execution status.
+         */
+        int runSqlStatement(const std::string &t_sql);
+
         ~DBHandler() {
             std::lock_guard<std::mutex> lock(m_mutex);
             if (m_usageCounter == 0) {
@@ -70,13 +83,14 @@ namespace sane {
             }
         }
     private:
-        std::string m_dbFilename = "sane.db";
+        std::string m_dbFilename;
 
-        static sqlite3 *m_db;
+static sqlite3 *m_db;
 
 
-        int m_lastStatus = SQLITE_NEVER_RUN;
-    };
+int m_lastStatus = SQLITE_NEVER_RUN;
+
+};
 } // namespace sane
 
 #endif //SANE_DB_HANDLER_HPP

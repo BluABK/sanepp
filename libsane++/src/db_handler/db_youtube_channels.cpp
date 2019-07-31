@@ -1,11 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <entities/youtube_channel.hpp>
 
 #include <db_handler/db_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
-
+#include <entities/youtube_channel.hpp>
 namespace sane {
     /**
      * Checks if a given string is valid for SQLite3 query, if not return "NULL".
@@ -66,7 +65,7 @@ namespace sane {
         while ((rc = sqlite3_step(preparedStatement)) == SQLITE_ROW) {}
 
         // 3/3: Finalize prepared statement
-        db->finalizePreparedSqlStatement(rc, preparedStatement);
+        db->finalizePreparedSqlStatement(preparedStatement);
 
         return SQLITE_OK;
     }
@@ -78,10 +77,12 @@ namespace sane {
      *
      * Conflict handling: If an entry already exists it will be overwritten with the new values.
      *
-     * @param t_channels
+     * @param t_channels    A list of smart (shared) pointers to instantiated YoutubeChannel entities.
+     * @param t_errors      Pointer to a string list to put errors in, send in nullptr to disable.
      * @return
      */
-    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels) {
+    int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>> &t_channels,
+                        std::list<std::string> *t_errors) {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
         std::string sqlStatement;
@@ -126,8 +127,9 @@ namespace sane {
             //
             sqlStatement = std::string("INSERT INTO youtube_channels ("
                            "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
-                           "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube) "
-                               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                           "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
+                           "SubscribedLocalOverride) "
+                               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
                                "ON CONFLICT(ID) DO UPDATE SET "
                                    "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
                                    "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
@@ -142,8 +144,10 @@ namespace sane {
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);
             if (db->lastStatus()  != SQLITE_OK) {
-                std::cerr << "sane::execSqlStatement(" << db->getDBFilename() << ", " <<
-                          sqlStatement << ") ERROR: returned non-zero status: " << db->lastStatus() << std::endl;
+                std::cerr << "sane::prepareSqlStatement(" << sqlStatement << ") ERROR: returned non-zero status: "
+                          << std::to_string( db->lastStatus() ) << std::endl;
+                t_errors->push_back("sane::prepareSqlStatement(" + sqlStatement + ") ERROR: returned non-zero status: "
+                                    + std::to_string( db->lastStatus() ));
                 return db->lastStatus();
             }
 
@@ -167,11 +171,11 @@ namespace sane {
             rc = sqlite3_reset(preparedStatement);
 
             // Finalize prepared statement
-            db->finalizePreparedSqlStatement(rc, preparedStatement);
+            db->finalizePreparedSqlStatement(preparedStatement);
 
             counter++;
         }
 
-        return 0;
+        return SQLITE_OK;
     }
 } // namespace sane

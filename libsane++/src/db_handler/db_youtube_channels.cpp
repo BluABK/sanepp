@@ -175,4 +175,101 @@ namespace sane {
 
         return SQLITE_OK;
     }
+
+
+    /////////////////////////////////////
+    /**
+     * Adds a list of YoutubeChannel objects to an SQLite3 Database.
+     *
+     * Conflict handling: If an entry already exists it will be overwritten with the new values.
+     *
+     * @param t_channels    A list of smart (shared) pointers to instantiated YoutubeChannel entities.
+     * @param t_errors      Pointer to a string list to put errors in, send in nullptr to disable.
+     * @return
+     */
+    int addChannelsToDBTravisEdition(const std::list <std::shared_ptr<YoutubeChannel>> &t_channels,
+                        std::list<std::string> *t_errors) {
+        // Setup
+        sqlite3_stmt *preparedStatement = nullptr;
+        std::string sqlStatement;
+        int rc = -1;
+        int counter = 0;
+
+        // Acquire database handle.
+        std::cout << "Acquiring DB handle..." << std::endl;
+        std::shared_ptr<DBHandler> db = std::make_shared<DBHandler>();
+        std::cout << "Acquired DB handle." << std::endl;
+
+        // Creates the table if it does not already exist.
+        createTable(db);
+
+        // Iterate through the subscription objects and add relevant fields to DB.
+        for (auto &channel : t_channels) {
+            // Figure out and sanitize the values.
+            const char* id = channel->getIdAsCString();
+            int hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
+            int hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
+            int hasLikesPlaylist = channel->hasLikesPlaylist() ? 1 : 0;
+            const char* title = validateSQLiteInput(channel->getTitleAsCString());
+            const char* description = validateSQLiteInput(channel->getDescriptionAsCString());
+
+            const char* thumbnailDefault = validateSQLiteInput(channel->getThumbnailDefaultAsCString());
+            const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHighAsCString());
+            const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMediumAsCString());
+
+            // Bool, int? Potato, Potáto to SQLite.
+            int subscribedOnYouTube = 1;       // FIXME: Hardcoded True
+            int subscribedLocalOverride = 0;  // FIXME: Harcoded False
+
+            // Construct the UPSERT SQL statement which updates an already existing row or inserts a new one.
+            //
+            // The "excluded." prefix causes the <VALUE> to refer to the value for <VALUE> that *would have* been
+            // inserted had there been no conflict.
+            //
+            // Hence, the effect of the *upsert* is to insert a <value> if none exists, OR to overwrite any prior
+            // <VALUE> with the new one.
+            sqlStatement = std::string("INSERT INTO youtube_channels ("
+                                       "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
+                                       "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
+                                       "SubscribedLocalOverride) "
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+            // Create a prepared statement
+            preparedStatement = db->prepareSqlStatement(sqlStatement);
+            if (db->lastStatus()  != SQLITE_OK) {
+                std::cerr << "sane::prepareSqlStatement(" << sqlStatement << ") ERROR: returned non-zero status: "
+                          << std::to_string( db->lastStatus() ) << std::endl;
+                t_errors->push_back("sane::prepareSqlStatement(" + sqlStatement + ") ERROR: returned non-zero status: "
+                                    + std::to_string( db->lastStatus() ));
+                return db->lastStatus();
+            }
+
+            //  Bind-parameter for VALUES (indexing is 1-based).
+            rc = sqlite3_bind_text(preparedStatement, 1, id, strlen(id), nullptr);
+            rc = sqlite3_bind_int(preparedStatement, 2, hasUploadsPlaylist);
+            rc = sqlite3_bind_int(preparedStatement, 3, hasFavouritesPlaylist);
+            rc = sqlite3_bind_int(preparedStatement, 4, hasLikesPlaylist);
+            rc = sqlite3_bind_text(preparedStatement, 5, title, strlen(title), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 6, description, strlen(description), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 7, thumbnailDefault, strlen(thumbnailDefault), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 8, thumbnailHigh, strlen(thumbnailHigh), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 9, thumbnailMedium, strlen(thumbnailMedium), nullptr);
+            rc = sqlite3_bind_int(preparedStatement, 10, subscribedOnYouTube);
+            rc = sqlite3_bind_int(preparedStatement, 11, subscribedLocalOverride);
+
+            // Step through, and do nothing, because this is an INSERT statement.
+            while (sqlite3_step(preparedStatement) == SQLITE_ROW) {} // While query has result-rows.
+
+            // Step, Clear and Reset the statement after each bind.
+            rc = sqlite3_clear_bindings(preparedStatement);
+            rc = sqlite3_reset(preparedStatement);
+
+            // Finalize prepared statement
+            db->finalizePreparedSqlStatement(preparedStatement);
+
+            counter++;
+        }
+
+        return SQLITE_OK;
+    }
 } // namespace sane

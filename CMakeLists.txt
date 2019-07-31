@@ -35,7 +35,7 @@ find_library(sqlite3 NAMES sqlite3 PATHS ${LIB_DIR_LOCATION})
 set(INCLUDE_DIRS ${NAME}/include)
 
 # CLI
-add_executable(SaneCLI cli/src/main.cpp
+add_executable(sane++_cli cli/src/main.cpp
         cli/src/cli.cpp
         cli/src/cli.hpp
         libsane++/src/api_handler/api_handler.cpp
@@ -49,15 +49,15 @@ add_executable(SaneCLI cli/src/main.cpp
         third_party/nlohmann/json.hpp)
 
 # API Handler
-target_link_libraries (SaneCLI -lcurl)
+target_link_libraries (sane++_cli -lcurl)
 # Database
-target_link_libraries(SaneCLI -lpthread)
-target_link_libraries(SaneCLI -ldl)
-target_link_libraries(SaneCLI sqlite3)
-target_include_directories(SaneCLI PRIVATE ${INCLUDE_DIRS})
+target_link_libraries(sane++_cli -lpthread)
+target_link_libraries(sane++_cli -ldl)
+target_link_libraries(sane++_cli sqlite3)
+target_include_directories(sane++_cli PRIVATE ${INCLUDE_DIRS})
 
 # GUI
-add_executable(SaneGUI gui/src/main.cpp
+add_executable(sane++_gui gui/src/main.cpp
         libsane++/src/entities/youtube_channel.cpp
         libsane++/include/entities/youtube_channel.hpp
         libsane++/src/db_handler/db_handler.cpp
@@ -66,13 +66,13 @@ add_executable(SaneGUI gui/src/main.cpp
         libsane++/include/db_handler/db_youtube_channels.hpp)
 
 # API Handler
-target_link_libraries (SaneGUI -lcurl)
+target_link_libraries (sane++_gui -lcurl)
 # Database
-target_link_libraries(SaneGUI -lpthread)
-target_link_libraries(SaneGUI -ldl)
+target_link_libraries(sane++_gui -lpthread)
+target_link_libraries(sane++_gui -ldl)
 #target_link_libraries (SaneGUI ${SQLITE3_LIBRARIES})
-target_link_libraries(SaneGUI sqlite3)
-target_include_directories(SaneGUI PRIVATE ${INCLUDE_DIRS})
+target_link_libraries(sane++_gui sqlite3)
+target_include_directories(sane++_gui PRIVATE ${INCLUDE_DIRS})
 
 ##
 ## TESTS

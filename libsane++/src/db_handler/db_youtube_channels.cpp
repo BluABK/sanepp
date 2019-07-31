@@ -126,19 +126,20 @@ namespace sane {
             // SubscribedLocalOverride is not set because that is a local override which isn't part of remote properties.
             //
             sqlStatement = std::string("INSERT INTO youtube_channels ("
-                                       "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
-                                       "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube) "
-                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                                       "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, "
+                                       "Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, "
+                                       "SubscribedOnYouTube) "
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
                                        "ON CONFLICT(ID) DO UPDATE SET "
-                                           "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
-                                           "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
-                                           "HasLikesPlaylist=excluded.HasLikesPlaylist, "
-                                           "Title=excluded.Title, "
-                                           "Description=excluded.Description, "
-                                           "ThumbnailDefault=excluded.ThumbnailDefault, "
-                                           "ThumbnailHigh=excluded.ThumbnailHigh, "
-                                           "ThumbnailMedium=excluded.ThumbnailMedium, "
-                                           "SubscribedOnYouTube=excluded.SubscribedOnYouTube");
+                                       "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
+                                       "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
+                                       "HasLikesPlaylist=excluded.HasLikesPlaylist, "
+                                       "Title=excluded.Title, "
+                                       "Description=excluded.Description, "
+                                       "ThumbnailDefault=excluded.ThumbnailDefault, "
+                                       "ThumbnailHigh=excluded.ThumbnailHigh, "
+                                       "ThumbnailMedium=excluded.ThumbnailMedium, "
+                                       "SubscribedOnYouTube=excluded.SubscribedOnYouTube");
 
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);
@@ -151,16 +152,16 @@ namespace sane {
             }
 
             //  Bind-parameter for VALUES (indexing is 1-based).
-            rc = sqlite3_bind_text(preparedStatement, 1, id, strlen(id), nullptr);
-            rc = sqlite3_bind_int(preparedStatement, 2, hasUploadsPlaylist);
-            rc = sqlite3_bind_int(preparedStatement, 3, hasFavouritesPlaylist);
-            rc = sqlite3_bind_int(preparedStatement, 4, hasLikesPlaylist);
-            rc = sqlite3_bind_text(preparedStatement, 5, title, strlen(title), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 6, description, strlen(description), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 7, thumbnailDefault, strlen(thumbnailDefault), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 8, thumbnailHigh, strlen(thumbnailHigh), nullptr);
-            rc = sqlite3_bind_text(preparedStatement, 9, thumbnailMedium, strlen(thumbnailMedium), nullptr);
-            rc = sqlite3_bind_int(preparedStatement, 10, subscribedOnYouTube);
+            rc = sqlite3_bind_text(preparedStatement, 1,  id, strlen(id), nullptr);
+            rc = sqlite3_bind_int(preparedStatement,  2,  hasUploadsPlaylist);
+            rc = sqlite3_bind_int(preparedStatement,  3,  hasFavouritesPlaylist);
+            rc = sqlite3_bind_int(preparedStatement,  4,  hasLikesPlaylist);
+            rc = sqlite3_bind_text(preparedStatement, 5,  title, strlen(title), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 6,  description, strlen(description), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 7,  thumbnailDefault, strlen(thumbnailDefault), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 8,  thumbnailHigh, strlen(thumbnailHigh), nullptr);
+            rc = sqlite3_bind_text(preparedStatement, 9,  thumbnailMedium, strlen(thumbnailMedium), nullptr);
+            rc = sqlite3_bind_int(preparedStatement,  10, subscribedOnYouTube);
 
             // Step through, and do nothing, because this is an INSERT statement.
             while (sqlite3_step(preparedStatement) == SQLITE_ROW) {} // While query has result-rows.

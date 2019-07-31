@@ -85,4 +85,5 @@ script:
   ## - make
   - cmake --build . --config Release
   # Execute unit tests
-  - ctest -C Release -V -j
+#  - ctest -C Release -V -j
+  - ctest -C travis_test_all -VV --output-on-failure

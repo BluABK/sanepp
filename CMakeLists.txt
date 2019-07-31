@@ -106,7 +106,9 @@ add_executable(test_all tests/test_all.cpp
         libsane++/test/db_handler/unit-test_exec_sql_statement_default_callback.cpp
         libsane++/src/db_handler/db_youtube_channels.cpp
         libsane++/include/db_handler/db_youtube_channels.hpp
-        third_party/nlohmann/json.hpp libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp libsane++/test/db_handler/unit-test_002_add_channels.cpp)
+        third_party/nlohmann/json.hpp
+        libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp
+        libsane++/test/db_handler/unit-test_002_add_channels.cpp)
 
 # API Handler
 target_link_libraries(test_all -lcurl)
@@ -122,3 +124,31 @@ include(CTest)
 include(Catch)
 
 catch_discover_tests(test_all)
+
+add_executable(travis_test_all tests/test_all.cpp
+        cli/src/cli.cpp
+        cli/src/cli.hpp
+        cli/test/unit-test_cli.cpp
+        libsane++/src/api_handler/api_handler.cpp
+        libsane++/include/api_handler/api_handler.hpp
+        libsane++/src/entities/youtube_channel.cpp
+        libsane++/include/entities/youtube_channel.hpp
+        libsane++/src/db_handler/db_handler.cpp
+        libsane++/include/db_handler/db_handler.hpp
+        libsane++/test/db_handler/unit-test_exec_sql_statement_default_callback.cpp
+        libsane++/src/db_handler/db_youtube_channels.cpp
+        libsane++/include/db_handler/db_youtube_channels.hpp
+        third_party/nlohmann/json.hpp
+        libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp)
+
+# API Handler
+target_link_libraries(travis_test_all -lcurl)
+# Testing suite.
+target_link_libraries(travis_test_all Catch2::Catch2)
+# Database.
+target_link_libraries(travis_test_all -lpthread)
+target_link_libraries(travis_test_all -ldl)
+target_link_libraries(travis_test_all sqlite3)
+target_include_directories(travis_test_all PRIVATE ${INCLUDE_DIRS})
+
+catch_discover_tests(travis_test_all)

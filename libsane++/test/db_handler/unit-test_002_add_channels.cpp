@@ -68,7 +68,7 @@ TEST_CASE ("2: Testing sane::DBHandler: Add YouTube channels to DB") {
     // Add the test entities to DB.
     std::list<std::string> t_errors;
     // Travis Edition; without the 'ON' part (UPSERT).
-    rc = sane::addChannelsToDBTravisEdition(channels, &t_errors);
+    rc = sane::addChannelsToDB(channels, &t_errors);
 
     for (const auto& error : t_errors) {
         std::cout << error << std::endl;

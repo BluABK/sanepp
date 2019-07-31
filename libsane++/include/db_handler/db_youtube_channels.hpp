@@ -9,6 +9,14 @@
 #include <db_handler/db_handler.hpp>
 
 namespace sane {
+    /**
+     * Adds a list of YoutubeChannel objects to an SQLite3 Database.
+     *
+     * Conflict handling: If an entry already exists it will be overwritten with the new values.
+     *
+     * @param t_channels
+     * @return
+     */
     int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels);
 } // namespace sane
 

@@ -73,9 +73,9 @@ namespace sane {
     /**
      * Adds a list of YoutubeChannel objects to an SQLite3 Database.
      *
-     * Conflict policy: Overwrite existing.
+     * Conflict policy:     Overwrite existing.
      *
-     * Conflict handling: If an entry already exists it will be overwritten with the new values.
+     * Conflict handling:   If an entry already exists it will be overwritten with the new values.
      *
      * @param t_channels    A list of smart (shared) pointers to instantiated YoutubeChannel entities.
      * @param t_errors      Pointer to a string list to put errors in, send in nullptr to disable.

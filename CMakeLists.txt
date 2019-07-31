@@ -106,7 +106,7 @@ add_executable(test_all tests/test_all.cpp
         libsane++/test/db_handler/unit-test_exec_sql_statement_default_callback.cpp
         libsane++/src/db_handler/db_youtube_channels.cpp
         libsane++/include/db_handler/db_youtube_channels.hpp
-        third_party/nlohmann/json.hpp)
+        third_party/nlohmann/json.hpp libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp)
 
 # API Handler
 target_link_libraries(test_all -lcurl)

@@ -140,11 +140,10 @@ namespace sane {
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);
             if (db->lastStatus()  != SQLITE_OK) {
-                std::cerr << "sane::execSqlStatement(" << db->getDBFilename() << ", " <<
-                          sqlStatement << ") ERROR: returned non-zero status: " << std::to_string( db->lastStatus() )
-                          << std::endl;
-                t_errors->push_back("sane::execSqlStatement(" + db->getDBFilename() + ", " + sqlStatement
-                                   + ") ERROR: returned non-zero status: " + std::to_string( db->lastStatus() ));
+                std::cerr << "sane::prepareSqlStatement(" << sqlStatement << ") ERROR: returned non-zero status: "
+                          << std::to_string( db->lastStatus() ) << std::endl;
+                t_errors->push_back("sane::prepareSqlStatement(" + sqlStatement + ") ERROR: returned non-zero status: "
+                                    + std::to_string( db->lastStatus() ));
                 return db->lastStatus();
             }
 

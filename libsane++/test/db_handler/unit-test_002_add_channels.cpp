@@ -37,6 +37,9 @@ TEST_CASE ("2: Testing sane::DBHandler: Add YouTube channels to DB") {
         // Create a YoutubeChannel entity based on the above map.
         std::shared_ptr<sane::YoutubeChannel> channelEntity = std::make_shared<sane::YoutubeChannel>(channelMap);
 
+        // Check that the entity actually was created.
+        REQUIRE(channelEntity->getId() == "Lozjflf3i84bu_2jLTK2r" + std::to_string(i));
+
         // Append it to the channels list.
         channels.push_back(channelEntity);
 

@@ -72,6 +72,8 @@ install:
 before_script:
   # Check sqlite version
   - sqlite3 --version
+  # Set an env var to signal cmake that this is a Travis CI env (required for Travis specific build).
+  - export THIS_IS_TRAVIS="TRUE"
   # create a build folder for the out-of-source build
   - mkdir sane-test-build
   # switch to build directory

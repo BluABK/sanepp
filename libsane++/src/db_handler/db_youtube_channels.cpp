@@ -126,20 +126,20 @@ namespace sane {
             // SubscribedLocalOverride is not set because that is a local override which isn't part of remote properties.
             //
             sqlStatement = std::string("INSERT INTO youtube_channels ("
-                           "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, Description, "
-                           "ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, SubscribedOnYouTube, "
-                           "SubscribedLocalOverride) "
-                               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
-                               "ON CONFLICT(ID) DO UPDATE SET "
-                                   "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
-                                   "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
-                                   "HasLikesPlaylist=excluded.HasLikesPlaylist, "
-                                   "Title=excluded.Title, "
-                                   "Description=excluded.Description, "
-                                   "ThumbnailDefault=excluded.ThumbnailDefault, "
-                                   "ThumbnailHigh=excluded.ThumbnailHigh, "
-                                   "ThumbnailMedium=excluded.ThumbnailMedium, "
-                                   "SubscribedOnYouTube=excluded.SubscribedOnYouTube"); // FIXME: Hardcode TRUE?
+                                       "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, "
+                                       "Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, "
+                                       "SubscribedOnYouTube) "
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                                       "ON CONFLICT(ID) DO UPDATE SET "
+                                       "HasUploadsPlaylist=excluded.HasUploadsPlaylist, "
+                                       "HasFavouritesPlaylist=excluded.HasFavouritesPlaylist, "
+                                       "HasLikesPlaylist=excluded.HasLikesPlaylist, "
+                                       "Title=excluded.Title, "
+                                       "Description=excluded.Description, "
+                                       "ThumbnailDefault=excluded.ThumbnailDefault, "
+                                       "ThumbnailHigh=excluded.ThumbnailHigh, "
+                                       "ThumbnailMedium=excluded.ThumbnailMedium, "
+                                       "SubscribedOnYouTube=excluded.SubscribedOnYouTube");
 
             // Create a prepared statement
             preparedStatement = db->prepareSqlStatement(sqlStatement);

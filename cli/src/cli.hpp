@@ -55,6 +55,7 @@ namespace sane {
 
         void printSubscriptionsBasic();
 
+        void getSubscriptionsFromDB();
     };
 } // namespace sane
 #endif //SANE_CLI_HPP

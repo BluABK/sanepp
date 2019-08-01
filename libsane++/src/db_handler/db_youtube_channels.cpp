@@ -5,6 +5,7 @@
 #include <db_handler/db_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 #include <entities/youtube_channel.hpp>
+
 namespace sane {
     /**
      * Checks if a given string is valid for SQLite3 query, if not return "NULL".
@@ -177,5 +178,82 @@ namespace sane {
         }
 
         return SQLITE_OK;
+    }
+
+    int getChannelsFromDB(std::list<std::string> *t_errors, int limit) {
+        // Setup
+        sqlite3_stmt *preparedStatement = nullptr;
+        std::string sqlStatement;
+        int rc = -1;
+        int counter = 0;
+
+        // Acquire database handle.
+        std::cout << "Acquiring DB handle..." << std::endl;
+        std::shared_ptr<DBHandler> db = std::make_shared<DBHandler>();
+        std::cout << "Acquired DB handle." << std::endl;
+
+        sqlStatement = std::string("SELECT "
+                                       "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, "
+                                       "Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, "
+                                       "SubscribedOnYouTube, SubscribedLocalOverride "
+                                   "FROM "
+                                       "youtube_channels ");
+
+        // Create a prepared statement
+        preparedStatement = db->prepareSqlStatement(sqlStatement);
+        if (db->lastStatus()  != SQLITE_OK) {
+            std::cerr << "sane::prepareSqlStatement(" << sqlStatement << ") ERROR: returned non-zero status: "
+                      << std::to_string( db->lastStatus() ) << std::endl;
+            t_errors->push_back("sane::prepareSqlStatement(" + sqlStatement + ") ERROR: returned non-zero status: "
+                                + std::to_string( db->lastStatus() ));
+            return db->lastStatus();
+        }
+
+//        for ( int bindIndex = 0; bindIndex < 10; bindIndex++ ) {
+//            std::cout << "for loop iteration: " << bindIndex << std::endl;
+            // Text values to bind
+            const char* id = "";
+            const char* title = "";
+            const char* description = "";
+
+            const char* thumbnailDefault = "";
+            const char* thumbnailHigh = "";
+            const char* thumbnailMedium = "";
+
+            // Boolean values to bind
+            // Bools and ints are the same to SQLite, but the C API only has bind for ints.
+            int hasUploadsPlaylist = 0;
+            int hasFavouritesPlaylist = 0;
+            int hasLikesPlaylist = 0;
+            int subscribedOnYouTube = 0;
+            int subscribedLocalOverride = 0;
+
+            // Step through, and do ...
+            while (sqlite3_step(preparedStatement) == SQLITE_ROW) { // While query has result-rows.
+                // NB: ColId indexing is 0-based
+                std::cout << "ID: " << sqlite3_column_text(preparedStatement, 0) << std::endl;
+                std::cout << "HasUploadsPlaylist: " << sqlite3_column_int(preparedStatement, 1) << std::endl;
+                std::cout << "HasFavouritesPlaylist: " << sqlite3_column_int(preparedStatement, 2) << std::endl;
+                std::cout << "HasLikesPlaylist: " << sqlite3_column_int(preparedStatement, 3) << std::endl;
+                std::cout << "Title: " << sqlite3_column_text(preparedStatement, 4) << std::endl;
+                std::cout << "Description: " << sqlite3_column_text(preparedStatement, 5) << std::endl;
+                std::cout << "ThumbnailDefault: " << sqlite3_column_text(preparedStatement, 6) << std::endl;
+                std::cout << "ThumbnailHigh: " << sqlite3_column_text(preparedStatement, 7) << std::endl;
+                std::cout << "ThumbnailMedium: " << sqlite3_column_text(preparedStatement, 8) << std::endl;
+                std::cout << "SubscribedOnYouTube: " << sqlite3_column_int(preparedStatement, 9) << std::endl;
+                std::cout << "SubscribedLocalOverride: " << sqlite3_column_int(preparedStatement, 10) << std::endl;
+                std::cout << "\n=====================================================================================\n" << std::endl;
+            }
+
+            // Step, Clear and Reset the statement after each bind.
+            rc = sqlite3_step(preparedStatement);
+            rc = sqlite3_clear_bindings(preparedStatement);
+            rc = sqlite3_reset(preparedStatement);
+//        }
+
+        // Finalize prepared statement
+        db->finalizePreparedSqlStatement(preparedStatement);
+
+        counter++;
     }
 } // namespace sane

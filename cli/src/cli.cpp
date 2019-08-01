@@ -3,6 +3,8 @@
 
 #include <entities/youtube_channel.hpp>
 #include <api_handler/api_handler.hpp>
+#include <db_handler/db_youtube_channels.hpp>
+
 #include "cli.hpp"
 
 namespace sane {
@@ -66,7 +68,7 @@ namespace sane {
         } else if (command == GET_SUBSCRIPTIONS_FROM_API) {
             getSubscriptionsFromApi();
         } else if (command == GET_SUBSCRIPTIONS_FROM_DB) {
-            std::cerr << "Error: NOT IMPLEMENTED" << std::endl;
+            getSubscriptionsFromDB();
         } else if (command == PRINT_SUBSCRIPTIONS_FULL) {
             printSubscriptionsFull();
         } else if (command == PRINT_SUBSCRIPTIONS_BASIC) {
@@ -158,5 +160,9 @@ namespace sane {
             }
             std::cout << COMMAND_PROMPT_STYLE;
         }
+    }
+
+    void CLI::getSubscriptionsFromDB() {
+        sane::getChannelsFromDB(nullptr);
     }
 } // namespace sane

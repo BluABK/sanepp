@@ -10,6 +10,19 @@
 #include <sqlite3.h>
 #include <mutex>
 
+// In those routines that have a fourth argument, its value is the number of bytes in the parameter.
+// To be clear: the value is the number of bytes in the value, not the number of characters.
+// If the fourth parameter to sqlite3_bind_text() or sqlite3_bind_text16() is negative, then
+// the length of the string is the number of bytes up to the first zero terminator.
+//
+// If the fourth parameter to sqlite3_bind_blob() is negative, then the behavior is undefined.
+// If a non-negative fourth parameter is provided to sqlite3_bind_text() or sqlite3_bind_text16() or
+// sqlite3_bind_text64() then that parameter must be the byte offset where the NUL terminator would occur
+// assuming the string were NUL terminated. If any NUL characters occur at byte offsets less than the value
+// of the fourth parameter then the resulting string value will contain embedded NULs.
+// The result of expressions involving strings with embedded NULs is undefined.
+#define SQLITE3_STRLEN_AUTO -1
+
 #define DATABASE_NAME "sane.db"
 
 // Custom SQLite3 error messages, counting downwards to not clash with official.

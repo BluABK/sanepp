@@ -180,12 +180,11 @@ namespace sane {
         return SQLITE_OK;
     }
 
-    int getChannelsFromDB(std::list<std::string> *t_errors, int limit) {
+    std::list <std::shared_ptr<YoutubeChannel>> getChannelsFromDB(std::list<std::string> *t_errors) {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
         std::string sqlStatement;
         int rc = -1;
-        int counter = 0;
 
         // Acquire database handle.
         std::cout << "Acquiring DB handle..." << std::endl;
@@ -206,54 +205,82 @@ namespace sane {
                       << std::to_string( db->lastStatus() ) << std::endl;
             t_errors->push_back("sane::prepareSqlStatement(" + sqlStatement + ") ERROR: returned non-zero status: "
                                 + std::to_string( db->lastStatus() ));
-            return db->lastStatus();
         }
 
-//        for ( int bindIndex = 0; bindIndex < 10; bindIndex++ ) {
-//            std::cout << "for loop iteration: " << bindIndex << std::endl;
-            // Text values to bind
-            const char* id = "";
-            const char* title = "";
-            const char* description = "";
+            // Simplification
+            const auto* true_ = reinterpret_cast<const unsigned char *>("true");
+            const auto* false_ = reinterpret_cast<const unsigned char *>("false");
+            const auto* uploadPrefix = reinterpret_cast<const unsigned char *>(YOUTUBE_UPLOADS_PLAYLIST_PREFIX);
 
-            const char* thumbnailDefault = "";
-            const char* thumbnailHigh = "";
-            const char* thumbnailMedium = "";
-
-            // Boolean values to bind
-            // Bools and ints are the same to SQLite, but the C API only has bind for ints.
-            int hasUploadsPlaylist = 0;
-            int hasFavouritesPlaylist = 0;
-            int hasLikesPlaylist = 0;
-            int subscribedOnYouTube = 0;
-            int subscribedLocalOverride = 0;
+            // Create list to hold YouTube channel entities.
+            std::list <std::shared_ptr<YoutubeChannel>> channels;
 
             // Step through, and do ...
             while (sqlite3_step(preparedStatement) == SQLITE_ROW) { // While query has result-rows.
+                // Create a map of YouTube channel properties.
+                std::map<std::string, const unsigned char*> channelMap;
                 // NB: ColId indexing is 0-based
-                std::cout << "ID: " << sqlite3_column_text(preparedStatement, 0) << std::endl;
-                std::cout << "HasUploadsPlaylist: " << sqlite3_column_int(preparedStatement, 1) << std::endl;
-                std::cout << "HasFavouritesPlaylist: " << sqlite3_column_int(preparedStatement, 2) << std::endl;
-                std::cout << "HasLikesPlaylist: " << sqlite3_column_int(preparedStatement, 3) << std::endl;
-                std::cout << "Title: " << sqlite3_column_text(preparedStatement, 4) << std::endl;
-                std::cout << "Description: " << sqlite3_column_text(preparedStatement, 5) << std::endl;
-                std::cout << "ThumbnailDefault: " << sqlite3_column_text(preparedStatement, 6) << std::endl;
-                std::cout << "ThumbnailHigh: " << sqlite3_column_text(preparedStatement, 7) << std::endl;
-                std::cout << "ThumbnailMedium: " << sqlite3_column_text(preparedStatement, 8) << std::endl;
-                std::cout << "SubscribedOnYouTube: " << sqlite3_column_int(preparedStatement, 9) << std::endl;
-                std::cout << "SubscribedLocalOverride: " << sqlite3_column_int(preparedStatement, 10) << std::endl;
-                std::cout << "\n=====================================================================================\n" << std::endl;
+
+//                const unsigned char* id                      = sqlite3_column_text(preparedStatement, 0);
+//                auto uploadsPlaylist         = sqlite3_column_int(preparedStatement,  1);
+//                auto favouritesPlaylist      = sqlite3_column_int(preparedStatement,  2);
+//                auto likesPlaylist           = sqlite3_column_int(preparedStatement,  3);
+//                auto title                   = sqlite3_column_text(preparedStatement, 4);
+//                auto description             = sqlite3_column_text(preparedStatement, 5);
+//                auto thumbnailDefault        = sqlite3_column_text(preparedStatement, 6);
+//                auto thumbnailHigh           = sqlite3_column_text(preparedStatement, 7);
+//                auto thumbnailMedium         = sqlite3_column_text(preparedStatement, 8);
+//                auto subscribedOnYouTube     = sqlite3_column_int(preparedStatement,  9);
+//                auto subscribedLocalOverride = sqlite3_column_int(preparedStatement, 10);
+
+//                char* buf[strlen(id)];
+//                std::strcpy( buf, reinterpret_cast<const char*> ((sqlite3_column_text(preparedStatement, 0))) );
+//                std::strcpy( channelMap["UploadsPlaylist"]);
+//                std::strcpy( channelMap["FavouritesPlaylist"]);
+//                std::strcpy( channelMap["LikesPlaylist"]);
+//                std::strcpy( channelMap["Title"]  );
+//                std::strcpy( channelMap["Description"] );
+//                std::strcpy( channelMap["ThumbnailDefault"]);
+//                std::strcpy( channelMap["ThumbnailHigh"] );
+//                std::strcpy( channelMap["ThumbnailMedium"] );
+//                std::strcpy( channelMap["SubscribedOnYouTube"]);
+//                std::strcpy( channelMap["SubscribedLocalOverride"]);
+//
+//                if (sqlite3_column_int(preparedStatement,  1) == 1) {
+//                    unsigned char allstrings[strlen(uploadPrefix) + sizeof(sqlite3_column_int(preparedStatement,  1))];
+//                    strcpy(allstrings,uploadPrefix);
+////                    memcpy(allstrings+strlen(first),second,sizeof(second));
+//
+//                    channelMap["UploadsPlaylist"] = YOUTUBE_UPLOADS_PLAYLIST_PREFIX channelMap["ID"];
+//                }
+
+                channelMap["ID"]                      = sqlite3_column_text(preparedStatement, 0);
+                channelMap["UploadsPlaylist"]         = sqlite3_column_int(preparedStatement,  1) == 1 ? true_ : false_;
+                channelMap["FavouritesPlaylist"]      = sqlite3_column_int(preparedStatement,  2) == 1 ? true_ : false_;
+                channelMap["LikesPlaylist"]           = sqlite3_column_int(preparedStatement,  3) == 1 ? true_ : false_;
+                channelMap["Title"]                   = sqlite3_column_text(preparedStatement, 4);
+                channelMap["Description"]             = sqlite3_column_text(preparedStatement, 5);
+                channelMap["ThumbnailDefault"]        = sqlite3_column_text(preparedStatement, 6);
+                channelMap["ThumbnailHigh"]           = sqlite3_column_text(preparedStatement, 7);
+                channelMap["ThumbnailMedium"]         = sqlite3_column_text(preparedStatement, 8);
+                channelMap["SubscribedOnYouTube"]     = sqlite3_column_int(preparedStatement,  9) == 1 ? true_ : false_;
+                channelMap["SubscribedLocalOverride"] = sqlite3_column_int(preparedStatement, 10) == 1 ? true_ : false_;
+
+                // Create a YoutubeChannel entity based on the above map.
+                std::shared_ptr<sane::YoutubeChannel> channelEntity = std::make_shared<sane::YoutubeChannel>(channelMap);
+
+                // Add the YoutubeChannel entity to the list of channels.
+                channels.push_back(channelEntity);
             }
 
             // Step, Clear and Reset the statement after each bind.
             rc = sqlite3_step(preparedStatement);
             rc = sqlite3_clear_bindings(preparedStatement);
             rc = sqlite3_reset(preparedStatement);
-//        }
 
         // Finalize prepared statement
         db->finalizePreparedSqlStatement(preparedStatement);
 
-        counter++;
+        return channels;
     }
 } // namespace sane

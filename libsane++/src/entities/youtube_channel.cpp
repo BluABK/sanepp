@@ -106,6 +106,19 @@ namespace sane {
         m_thumbnails["medium"]      = t_map["ThumbnailMedium"];
     }
 
+    void YoutubeChannel::addFromMap(std::map<std::string, const unsigned char*> &t_map) {
+        // Add values from given value map.
+        m_id                        = reinterpret_cast<const char *>(t_map["ID"]);
+        m_title                     = reinterpret_cast<const char *>(t_map["Title"]);
+        m_hasUploadsPlaylist        = !std::string(reinterpret_cast<const char *>(t_map["UploadsPlaylist"])).empty();
+        m_hasFavouritesPlaylist     = !std::string(reinterpret_cast<const char *>(t_map["FavouritesPlaylist"])).empty();
+        m_hasLikesPlaylist          = !std::string(reinterpret_cast<const char *>(t_map["LikesPlaylist"])).empty();
+        m_description               = reinterpret_cast<const char *>(t_map["Description"]);
+        m_thumbnails["default"]     = reinterpret_cast<const char *>(t_map["ThumbnailDefault"]);
+        m_thumbnails["high"]        = reinterpret_cast<const char *>(t_map["ThumbnailHigh"]);
+        m_thumbnails["medium"]      = reinterpret_cast<const char *>(t_map["ThumbnailMedium"]);
+    }
+
     const std::string YoutubeChannel::getFavouritesPlaylist() {
         if (getId() != MISSING_VALUE and hasFavouritesPlaylist()) {
             return std::string("FL" + getId());

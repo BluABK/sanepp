@@ -23,7 +23,7 @@ namespace sane {
     int addChannelsToDB(const std::list <std::shared_ptr<YoutubeChannel>>& t_channels,
                         std::list<std::string> *t_errors);
 
-    int getChannelsFromDB(std::list<std::string> *t_errors, int limit = 0);
+    std::list <std::shared_ptr<YoutubeChannel>> getChannelsFromDB(std::list<std::string> *t_errors);
 } // namespace sane
 
 #endif //SANE_DB_YOUTUBE_CHANNELS_HPP

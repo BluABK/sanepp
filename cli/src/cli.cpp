@@ -163,6 +163,12 @@ namespace sane {
     }
 
     void CLI::getSubscriptionsFromDB() {
-        sane::getChannelsFromDB(nullptr);
+        std::list <std::shared_ptr<YoutubeChannel>> channels;
+
+        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
+
+        for (auto &channel: channels) {
+            std::cout << channel->getTitle() << std::endl;
+        }
     }
 } // namespace sane

@@ -8,6 +8,10 @@
 #include <nlohmann/json.hpp>
 
 #define MISSING_VALUE "N/A"
+#define YOUTUBE_CHANNEL_PREFIX "UC"
+#define YOUTUBE_UPLOADS_PLAYLIST_PREFIX "UU"
+#define YOUTUBE_FAVOURITES_PLAYLIST_PREFIX "FL"
+#define YOUTUBE_LIKES_PLAYLIST_PREFIX "LL"
 
 namespace sane {
     /**
@@ -36,6 +40,11 @@ namespace sane {
             addFromMap(t_map);
         }
 
+        // Create an instance and feed it values through a map of unsigned chars.
+        explicit YoutubeChannel(std::map<std::string, const unsigned char*> &t_map) {
+            addFromMap(t_map);
+        }
+
         void assignJsonStringValue(std::string &stringToAssignValue,
                                    nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
 
@@ -44,6 +53,8 @@ namespace sane {
         void addFromStringList(const std::list<std::string>& t_values);
 
         void addFromMap(std::map<std::string, std::string>& t_map);
+
+        void addFromMap(std::map<std::string, const unsigned char*>& t_map);
 
         void print(int indentationSpacing);
 

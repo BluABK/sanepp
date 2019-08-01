@@ -44,9 +44,18 @@ namespace sane {
         try {
             // Relevant JSON response values. See header for explanations.
             assignJsonStringValue(m_id, t_json["snippet"]["resourceId"]["channelId"], t_json);
+
+            // If channel ID is missing, check if this is a Channel resource not a Subscription resource.
+            if (getId() == MISSING_VALUE) {
+                assignJsonStringValue(m_id, t_json["id"], t_json);
+            }
+
             // If channelId was valid, strip non-unique channel prefix from its head to produce the actual ID.
             if (getId() != MISSING_VALUE) {
                 m_id = getId().substr(2);
+            } else {
+                addError("Missing Channel ID!", t_json);
+                std::cerr << "Missing Channel ID!" << std::endl;
             }
 
             // Playlists

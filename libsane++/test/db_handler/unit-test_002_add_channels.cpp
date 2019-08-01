@@ -2,11 +2,12 @@
 
 #define CUSTOM_DATABASE_NAME "sane_test.db"
 
-#define TEST_STRING_PREFIX_TITLE "Test Channel #"
-#define TEST_STRING_PREFIX_DESCRIPTION "This is a test description for Test Channel #"
-#define TEST_STRING_PREFIX_THUMBNAIL_DEFAULT "http://example.com/default"
-#define TEST_STRING_PREFIX_THUMBNAIL_HIGH "http://example.com/high"
-#define TEST_STRING_PREFIX_THUMBNAIL_MEDIUM "http://example.com/medium"
+#define DB_YT_CHANS_TEST_002_STR_USER_ID              "Lozjflf3i84bu_2jLTK2rA"
+#define DB_YT_CHANS_TEST_002_STR_PREFIX_TITLE         "Test Channel #"
+#define DB_YT_CHANS_TEST_002_STR_PREFIX_DESC          "This is a test description for Test Channel #"
+#define DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_DEFAULT "http://example.com/default"
+#define DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_HIGH    "http://example.com/high"
+#define DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_MEDIUM  "http://example.com/medium"
 
 #include <db_handler/db_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
@@ -29,33 +30,36 @@ TEST_CASE ("2: Testing sane::DBHandler: Add YouTube channels to DB") {
 
     for (int i = 0; i <= channelAmount; ++i) {
         // Add some sample values required to generate a YoutubeChannel entity.
-        channelMap["ID"]                 = "Lozjflf3i84bu_2jLTK2r"              + std::to_string(i);
-        channelMap["Title"]              = TEST_STRING_PREFIX_TITLE             + std::to_string(i);
-        channelMap["UploadsPlaylist"]    = "UULozjflf3i84bu_2jLTK2r"            + std::to_string(i);
-        channelMap["FavouritesPlaylist"] = "FLLozjflf3i84bu_2jLTK2r"            + std::to_string(i);
-        channelMap["LikesPlaylist"]      = "LLLozjflf3i84bu_2jLTK2r"            + std::to_string(i);
-        channelMap["Description"]        = TEST_STRING_PREFIX_DESCRIPTION       + std::to_string(i);
-        channelMap["ThumbnailDefault"]   = TEST_STRING_PREFIX_THUMBNAIL_DEFAULT + std::to_string(i) + ".jpg";
-        channelMap["ThumbnailHigh"]      = TEST_STRING_PREFIX_THUMBNAIL_HIGH    + std::to_string(i) + ".jpg";
-        channelMap["ThumbnailMedium"]    = TEST_STRING_PREFIX_THUMBNAIL_MEDIUM  + std::to_string(i) + ".jpg";
+        channelMap["ID"]                 = DB_YT_CHANS_TEST_002_STR_USER_ID              + std::to_string(i);
+        channelMap["Title"]              = DB_YT_CHANS_TEST_002_STR_PREFIX_TITLE         + std::to_string(i);
+        channelMap["UploadsPlaylist"]    = "UU" DB_YT_CHANS_TEST_002_STR_USER_ID         + std::to_string(i);
+        channelMap["FavouritesPlaylist"] = "FL" DB_YT_CHANS_TEST_002_STR_USER_ID         + std::to_string(i);
+        channelMap["LikesPlaylist"]      = "LL" DB_YT_CHANS_TEST_002_STR_USER_ID         + std::to_string(i);
+        channelMap["Description"]        = DB_YT_CHANS_TEST_002_STR_PREFIX_DESC          + std::to_string(i);
+        channelMap["ThumbnailDefault"]   = DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_DEFAULT + std::to_string(i) + ".jpg";
+        channelMap["ThumbnailHigh"]      = DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_HIGH    + std::to_string(i) + ".jpg";
+        channelMap["ThumbnailMedium"]    = DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_MEDIUM  + std::to_string(i) + ".jpg";
 
         // Create a YoutubeChannel entity based on the above map.
         std::shared_ptr<sane::YoutubeChannel> channelEntity = std::make_shared<sane::YoutubeChannel>(channelMap);
 
         // Check that the entity actually was created.
-        REQUIRE( channelEntity->getId()                 == "Lozjflf3i84bu_2jLTK2r"   + std::to_string(i) );
-        REQUIRE( channelEntity->getTitle()              == TEST_STRING_PREFIX_TITLE  + std::to_string(i) );
-        REQUIRE( channelEntity->getUploadsPlaylist()    == "UULozjflf3i84bu_2jLTK2r" + std::to_string(i) );
-        REQUIRE( channelEntity->getFavouritesPlaylist() == "FLLozjflf3i84bu_2jLTK2r" + std::to_string(i) );
-        REQUIRE( channelEntity->getLikesPlaylist()      == "LLLozjflf3i84bu_2jLTK2r" + std::to_string(i) );
-        REQUIRE( channelEntity->getDescription()        == TEST_STRING_PREFIX_DESCRIPTION
-                                                                                     + std::to_string(i) );
-        REQUIRE( channelEntity->getThumbnailDefault()   == TEST_STRING_PREFIX_THUMBNAIL_DEFAULT
-                                                                                     + std::to_string(i) + ".jpg" );
-        REQUIRE( channelEntity->getThumbnailHigh()      == TEST_STRING_PREFIX_THUMBNAIL_HIGH
-                                                                                     + std::to_string(i) + ".jpg" );
-        REQUIRE( channelEntity->getThumbnailMedium()    == TEST_STRING_PREFIX_THUMBNAIL_MEDIUM
-                                                                                     + std::to_string(i) + ".jpg" );
+        REQUIRE( channelEntity->getId()                 == DB_YT_CHANS_TEST_002_STR_USER_ID      + std::to_string(i) );
+        REQUIRE( channelEntity->getTitle()              == DB_YT_CHANS_TEST_002_STR_PREFIX_TITLE + std::to_string(i) );
+        REQUIRE( channelEntity->getUploadsPlaylist()    == "UU" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
+        REQUIRE( channelEntity->getFavouritesPlaylist() == "FL" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
+        REQUIRE( channelEntity->getLikesPlaylist()      == "LL" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
+        REQUIRE( channelEntity->getDescription()        == DB_YT_CHANS_TEST_002_STR_PREFIX_DESC  + std::to_string(i) );
+
+        REQUIRE( channelEntity->getThumbnailDefault()   == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_DEFAULT
+                                                                                                 + std::to_string(i)
+                                                                                                 + ".jpg" );
+        REQUIRE( channelEntity->getThumbnailHigh()      == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_HIGH
+                                                                                                 + std::to_string(i)
+                                                                                                 + ".jpg" );
+        REQUIRE( channelEntity->getThumbnailMedium()    == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_MEDIUM
+                                                                                                 + std::to_string(i)
+                                                                                                 + ".jpg" );
 
 
         // Append it to the channels list.

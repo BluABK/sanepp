@@ -3,6 +3,7 @@
 
 #include <map>
 #include <list>
+#include <unicode/unistr.h>
 
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
@@ -48,6 +49,9 @@ namespace sane {
         void assignJsonStringValue(std::string &stringToAssignValue,
                                    nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
 
+        void assignJsonStringValue(icu_64::UnicodeString &stringToAssignValue,
+                                   nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
+
         void addFromJson(nlohmann::json t_json);
 
         void addFromStringList(const std::list<std::string>& t_values);
@@ -87,7 +91,9 @@ namespace sane {
 
         const std::string getChannelId();
 
-        const std::string getDescription();
+        const std::string getDescriptionAsString();
+
+        const icu_64::UnicodeString getDescriptionAsUnicode();
 
         const char* getDescriptionAsCString();
 
@@ -109,7 +115,9 @@ namespace sane {
 
         const char* getThumbnailMediumAsCString();
 
-        const std::string getTitle();
+        const std::string getTitleAsString();
+
+        const icu_64::UnicodeString getTitleAsUnicode();
 
         const char* getTitleAsCString();
 
@@ -131,7 +139,7 @@ namespace sane {
         bool m_hasLikesPlaylist = false;
 
         // The subscription's details.
-        std::string m_description;
+        icu_64::UnicodeString m_description;
 
         // The date and time that the subscription was created.
         // The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format.
@@ -142,7 +150,7 @@ namespace sane {
         std::map<std::string, std::string> m_thumbnails;
 
         // Subscription/Channel title.
-        std::string m_title;
+        icu_64::UnicodeString m_title;
 
         // Track errors that occur
         std::list<std::map<std::string, nlohmann::json>> m_errors;

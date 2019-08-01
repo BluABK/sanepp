@@ -110,7 +110,7 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
             libsane++/src/db_handler/db_youtube_channels.cpp
             libsane++/include/db_handler/db_youtube_channels.hpp
             third_party/nlohmann/json.hpp
-            libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp libsane++/test/entities/unit-test_001_create_youtube_channel_from_map.cpp)
+            libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp libsane++/test/entities/unit-test_001_create_youtube_channel_from_map.cpp libsane++/test/entities/unit-test_002_create_youtube_channel_from_json.cpp)
 
     # API Handler
     target_link_libraries(travis_test_all -lcurl)
@@ -144,7 +144,7 @@ else()
             libsane++/include/db_handler/db_youtube_channels.hpp
             third_party/nlohmann/json.hpp
             libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp
-            libsane++/test/db_handler/unit-test_002_add_channels.cpp libsane++/test/entities/unit-test_001_create_youtube_channel_from_map.cpp)
+            libsane++/test/db_handler/unit-test_002_add_channels.cpp libsane++/test/entities/unit-test_001_create_youtube_channel_from_map.cpp libsane++/test/entities/unit-test_002_create_youtube_channel_from_json.cpp)
 
     # API Handler
     target_link_libraries(test_all -lcurl)

@@ -13,7 +13,6 @@ namespace sane {
         commands[EXIT] = "Exit program";
         commands[HELP] = "Print help";
         commands[GET_SUBSCRIPTIONS_FROM_API] = "Retrieves a fresh list of subscriptions from the YouTube API.";
-        commands[GET_SUBSCRIPTIONS_FROM_DB] = "Loads a list of subscriptions from the database.";
         commands[PRINT_SUBSCRIPTIONS_FULL] = "Lists all subscriptions separately as fully detailed blocks of text";
         commands[PRINT_SUBSCRIPTIONS_BASIC] = "Lists all subscriptions in a compact line-by-line form.";
 
@@ -67,8 +66,6 @@ namespace sane {
             exit();
         } else if (command == GET_SUBSCRIPTIONS_FROM_API) {
             getSubscriptionsFromApi();
-        } else if (command == GET_SUBSCRIPTIONS_FROM_DB) {
-            getSubscriptionsFromDB();
         } else if (command == PRINT_SUBSCRIPTIONS_FULL) {
             printSubscriptionsFull();
         } else if (command == PRINT_SUBSCRIPTIONS_BASIC) {
@@ -79,17 +76,18 @@ namespace sane {
     /**
      * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
      */
-    std::list<std::shared_ptr<YoutubeChannel>> CLI::getSubscriptionsFromApi() {
-        subscriptions = sapiGetSubscriptions();
-
-        return subscriptions;
+    void CLI::getSubscriptionsFromApi() {
+        sapiGetSubscriptions();
     }
 
     void CLI::printSubscriptionsFull() {
+        // Fetch list of channels
+        std::list <std::shared_ptr<YoutubeChannel>> channels;
+        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
         int counter = 1;  // Humanized counting.
-        for (auto & subscription : subscriptions) {
+        for (auto & channel : channels) {
             std::cout << "Sub#" << counter << ":" << std::endl;
-            subscription->print(4);
+            channel->print(4);
             counter++;
         }
     }
@@ -110,10 +108,13 @@ namespace sane {
     }
 
     void CLI::printSubscriptionsBasic() {
+        // Fetch list of channels
+        std::list <std::shared_ptr<YoutubeChannel>> channels;
+        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
         // Spacing between each column item.
         const std::string columnSpacing(4, ' ');
         // Pad subscription counter based on the amount of digits in the sum total.
-        const std::size_t maxCounterDigitAmount = std::to_string(subscriptions.size()).length();
+        const std::size_t maxCounterDigitAmount = std::to_string(channels.size()).length();
         // Max length of IDs, used to calculate padding.
         const std::size_t idItemMaxLength = 24;
         // Humanized counting.
@@ -125,16 +126,16 @@ namespace sane {
         padStringValue("Uploads playlist ID", idItemMaxLength) <<
         columnSpacing << "Channel title" <<  std::endl;
 
-        for (auto & subscription : subscriptions) {
+        for (auto & channel : channels) {
             // Pad item columns with spaces to ensure a uniform indentation.
-            const std::string paddedChannelId = padStringValue(subscription->getId(), idItemMaxLength);
+            const std::string paddedChannelId = padStringValue(channel->getId(), idItemMaxLength);
             const std::string paddedUploadsPlaylistId = padStringValue(
-                    subscription->getUploadsPlaylist(), idItemMaxLength);
+                    channel->getUploadsPlaylist(), idItemMaxLength);
             const std::string paddedNumbering = padStringValue(std::to_string(counter), maxCounterDigitAmount);
 
             std::cout << paddedNumbering << columnSpacing <<
-            paddedChannelId << columnSpacing << paddedUploadsPlaylistId << columnSpacing <<
-                                                                                         subscription->getTitle() << std::endl;
+            paddedChannelId << columnSpacing << paddedUploadsPlaylistId << columnSpacing << channel->getTitle()
+            << std::endl;
 
             counter++;
         }
@@ -159,16 +160,6 @@ namespace sane {
                 return;
             }
             std::cout << COMMAND_PROMPT_STYLE;
-        }
-    }
-
-    void CLI::getSubscriptionsFromDB() {
-        std::list <std::shared_ptr<YoutubeChannel>> channels;
-
-        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
-
-        for (auto &channel: channels) {
-            std::cout << channel->getTitle() << std::endl;
         }
     }
 } // namespace sane

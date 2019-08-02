@@ -41,24 +41,26 @@ namespace sane {
         }
     }
 
-    void YoutubeChannel::assignJsonStringValue(icu_64::UnicodeString &stringToAssignValue,
+    void YoutubeChannel::assignJsonStringValue(icu::UnicodeString &stringToAssignValue,
                                                nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json) {
         if (unknownJsonTypeValue.is_null()) {
             addWarning("WARNING: YoutubeChannel::addFromJson." + std::string(GET_VARIABLE_NAME(stringToAssignValue))
                        + " is NULL not string, setting '" + MISSING_VALUE + "' string in its stead!", t_json);
-            stringToAssignValue = "N/A";
+            std::string missingValue = std::string(MISSING_VALUE);
+            stringToAssignValue = icu::UnicodeString(missingValue.c_str());
         }
         else if (!unknownJsonTypeValue.is_string()) {
             addWarning("WARNING: YoutubeChannel::addFromJson.favouritesPlaylist is " +
                        std::string(unknownJsonTypeValue.type_name()) + " not string, setting'" +
                        MISSING_VALUE + "' string in its stead!", t_json);
-            stringToAssignValue = icu_64::UnicodeString::fromUTF8(icu::StringPiece(MISSING_VALUE));
+            std::string missingValue = std::string(MISSING_VALUE);
+            stringToAssignValue = icu::UnicodeString(missingValue.c_str());
         } else {
             // If it actually is a string, then explicitly cast it.
             std::string jsonStr = unknownJsonTypeValue.get<std::string>();
 
             // Convert the std::string to unicode.
-            stringToAssignValue = icu_64::UnicodeString::fromUTF8(icu::StringPiece(jsonStr.c_str()));
+            stringToAssignValue = icu::UnicodeString::fromUTF8(icu::StringPiece(jsonStr.c_str()));
         }
     }
 
@@ -118,11 +120,11 @@ namespace sane {
     void YoutubeChannel::addFromMap(std::map<std::string, std::string> &t_map) {
         // Add values from given value map.
         m_id                        = t_map["ID"];
-        m_title                     = icu_64::UnicodeString::fromUTF8(icu::StringPiece(t_map["Title"].c_str()));
+        m_title                     = icu::UnicodeString::fromUTF8(icu::StringPiece(t_map["Title"].c_str()));
         m_hasUploadsPlaylist        = !t_map["UploadsPlaylist"].empty();
         m_hasFavouritesPlaylist     = !t_map["FavouritesPlaylist"].empty();
         m_hasLikesPlaylist          = !t_map["LikesPlaylist"].empty();
-        m_description               = icu_64::UnicodeString::fromUTF8(icu::StringPiece(t_map["Description"].c_str()));
+        m_description               = icu::UnicodeString::fromUTF8(icu::StringPiece(t_map["Description"].c_str()));
         m_thumbnails["default"]     = t_map["ThumbnailDefault"];
         m_thumbnails["high"]        = t_map["ThumbnailHigh"];
         m_thumbnails["medium"]      = t_map["ThumbnailMedium"];
@@ -200,7 +202,7 @@ namespace sane {
         return m_id.c_str();
     }
 
-    const icu_64::UnicodeString YoutubeChannel::getDescriptionAsUnicode() {
+    const icu::UnicodeString YoutubeChannel::getDescriptionAsUnicode() {
         return m_description;
     }
 
@@ -253,7 +255,7 @@ namespace sane {
         return m_thumbnails["medium"].c_str();
     }
 
-    const icu_64::UnicodeString YoutubeChannel::getTitleAsUnicode() {
+    const icu::UnicodeString YoutubeChannel::getTitleAsUnicode() {
         return m_title;
     }
 

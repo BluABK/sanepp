@@ -45,11 +45,11 @@ TEST_CASE ("2: Testing sane::DBHandler: Add YouTube channels to DB") {
 
         // Check that the entity actually was created.
         REQUIRE( channelEntity->getId()                 == DB_YT_CHANS_TEST_002_STR_USER_ID      + std::to_string(i) );
-        REQUIRE( channelEntity->getTitle()              == DB_YT_CHANS_TEST_002_STR_PREFIX_TITLE + std::to_string(i) );
+        REQUIRE(channelEntity->getTitle()              == DB_YT_CHANS_TEST_002_STR_PREFIX_TITLE + std::to_string(i) );
         REQUIRE( channelEntity->getUploadsPlaylist()    == "UU" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
         REQUIRE( channelEntity->getFavouritesPlaylist() == "FL" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
         REQUIRE( channelEntity->getLikesPlaylist()      == "LL" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
-        REQUIRE( channelEntity->getDescription()        == DB_YT_CHANS_TEST_002_STR_PREFIX_DESC  + std::to_string(i) );
+        REQUIRE(channelEntity->getDescription()        == DB_YT_CHANS_TEST_002_STR_PREFIX_DESC  + std::to_string(i) );
 
         REQUIRE( channelEntity->getThumbnailDefault()   == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_DEFAULT
                                                                                                  + std::to_string(i)

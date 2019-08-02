@@ -16,20 +16,15 @@ namespace sane {
         
         void interactive();
 
-        const std::string padStringValue(const std::string &string_t, std::size_t maxLength);
+        static const std::string padStringValue(const std::string &string_t, std::size_t maxLength);
     private:
         // Internal
         bool manuallyExit = false;
 
-        // YouTube
-        std::list<std::shared_ptr<YoutubeChannel>> subscriptions;
-
         // Define Command names.
         const std::string EXIT = "exit";
         const std::string HELP = "help";
-        const std::string GET_SUBSCRIPTIONS_PREFIX = "get-subscriptions-";
-        const std::string GET_SUBSCRIPTIONS_FROM_API = GET_SUBSCRIPTIONS_PREFIX + "from-remote";
-        const std::string GET_SUBSCRIPTIONS_FROM_DB = GET_SUBSCRIPTIONS_PREFIX + "from-database";
+        const std::string GET_SUBSCRIPTIONS_FROM_API = "get-subscriptions";
         const std::string PRINT_SUBSCRIPTIONS_PREFIX = "list-subscriptions-";
         const std::string PRINT_SUBSCRIPTIONS_FULL = PRINT_SUBSCRIPTIONS_PREFIX + "full";
         const std::string PRINT_SUBSCRIPTIONS_BASIC = PRINT_SUBSCRIPTIONS_PREFIX + "basic";
@@ -48,13 +43,11 @@ namespace sane {
 
         void executeCommand(const std::string &command);
 
-        std::list<std::shared_ptr<YoutubeChannel>> getSubscriptionsFromApi();
+        static void getSubscriptionsFromApi();
 
+        static void printSubscriptionsFull();
 
-        void printSubscriptionsFull();
-
-        void printSubscriptionsBasic();
-
+        static void printSubscriptionsBasic();
     };
 } // namespace sane
 #endif //SANE_CLI_HPP

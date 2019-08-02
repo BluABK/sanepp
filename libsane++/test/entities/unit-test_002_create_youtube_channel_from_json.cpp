@@ -62,11 +62,11 @@ TEST_CASE ("2: Testing sane::entities: Create and instantiate a YoutubeChannel e
     // Check that the entity actually was created.
     REQUIRE( channelEntity->getId()                 == ENTITY_TEST_002_STRING_USER_ID           );
     REQUIRE( channelEntity->getChannelId()          == "UC" ENTITY_TEST_002_STRING_USER_ID      );
-    REQUIRE( channelEntity->getTitle()              == "BluABK~"                                );
+    REQUIRE(channelEntity->getTitle()              == "BluABK~"                                );
     REQUIRE( channelEntity->getUploadsPlaylist()    == "UU" ENTITY_TEST_002_STRING_USER_ID      );
     REQUIRE( channelEntity->getFavouritesPlaylist() == "FL" ENTITY_TEST_002_STRING_USER_ID      );
     REQUIRE( channelEntity->getLikesPlaylist()      == "LL" ENTITY_TEST_002_STRING_USER_ID      );
-    REQUIRE( channelEntity->getDescription()        == ENTITY_TEST_002_STRING_DESCRIPTION       );
+    REQUIRE(channelEntity->getDescription()        == ENTITY_TEST_002_STRING_DESCRIPTION       );
     REQUIRE( channelEntity->getThumbnailDefault()   == ENTITY_TEST_002_STRING_THUMBNAIL_DEFAULT );
     REQUIRE( channelEntity->getThumbnailHigh()      == ENTITY_TEST_002_STRING_THUMBNAIL_HIGH    );
     REQUIRE( channelEntity->getThumbnailMedium()    == ENTITY_TEST_002_STRING_THUMBNAIL_MEDIUM  );

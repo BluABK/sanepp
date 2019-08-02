@@ -69,7 +69,7 @@ namespace sane {
         return jsonData;
     }
 
-    std::list <std::shared_ptr<YoutubeChannel>> sapiGetSubscriptions() {
+    void sapiGetSubscriptions() {
         std::list <std::shared_ptr<YoutubeChannel>> channels;
 
         std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
@@ -123,8 +123,5 @@ namespace sane {
         std::cout << "Storing to database..." << std::endl;
         addChannelsToDB(channels, NO_ERROR_LOG);
         std::cout << "Storing to database successful!" << std::endl;
-
-        // FIXME: Once DB works, change this function to void and delete the channel objects instead of returning them.
-        return channels;
     }
 } // namespace sane.

@@ -81,12 +81,50 @@ namespace sane {
         }
     }
 
-    void YoutubeChannel::addFromStringList(const std::list<std::string> &t_values) {  // FIXME: IMPLEMENT
-        std::cerr << "YoutubeChannel::addFromStringList NOT IMPLEMENTED!" << std::endl;
+    void YoutubeChannel::addFromPureStringList(const std::list<std::string> &t_values) {  // FIXME: IMPLEMENT
+        std::cerr << "YoutubeChannel::addFromPureStringList NOT IMPLEMENTED!" << std::endl;
+    }
+
+    void YoutubeChannel::addFromValues(const char* t_id, const char* t_uploadsPlaylist,
+                                       const char* t_favouritesPlaylist, const char* t_likesPlaylist,
+                                       const char* t_title, const char* t_description,
+                                       const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                                       const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                                       bool t_subscribedLocalOverride) {
+
+        m_id                        = t_id;
+        m_title                     = t_title;
+        m_hasUploadsPlaylist        = *t_uploadsPlaylist != 0;
+        m_hasFavouritesPlaylist     = *t_favouritesPlaylist != 0;
+        m_hasLikesPlaylist          = *t_likesPlaylist != 0;
+        m_description               = t_description;
+        m_thumbnails["default"]     = t_thumbnailDefault;
+        m_thumbnails["high"]        = t_thumbnailHigh;
+        m_thumbnails["medium"]      = t_thumbnailMedium;
+        m_subscribedOnYoutube       = t_subscribedOnYoutube;
+        m_subscribedLocalOverride   = t_subscribedLocalOverride;
+    }
+
+    void YoutubeChannel::addFromValues(const char* t_id, bool t_hasUploadsPlaylist, bool t_hasFavouritesPlaylist,
+                                       bool t_hasLikesPlaylist, const char* t_title,
+                                       const char* t_description, const char* t_thumbnailDefault,
+                                       const char* t_thumbnailHigh, const char* t_thumbnailMedium,
+                                       bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
+        m_id                        = t_id;
+        m_title                     = t_title;
+        m_hasUploadsPlaylist        = t_hasUploadsPlaylist;
+        m_hasFavouritesPlaylist     = t_hasFavouritesPlaylist;
+        m_hasLikesPlaylist          = t_hasLikesPlaylist;
+        m_description               = t_description;
+        m_thumbnails["default"]     = t_thumbnailDefault;
+        m_thumbnails["high"]        = t_thumbnailHigh;
+        m_thumbnails["medium"]      = t_thumbnailMedium;
+        m_subscribedOnYoutube       = t_subscribedOnYoutube;
+        m_subscribedLocalOverride   = t_subscribedLocalOverride;
     }
 
     /**
-     * Populates properties based on a given map of values.
+     * Populates properties based on a std::string map of values.
      *
      * Map keys: ID, Title, UploadsPlaylist, FavouritesPlaylist, LikesPlaylist,
      *           Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium.
@@ -104,6 +142,29 @@ namespace sane {
         m_thumbnails["default"]     = t_map["ThumbnailDefault"];
         m_thumbnails["high"]        = t_map["ThumbnailHigh"];
         m_thumbnails["medium"]      = t_map["ThumbnailMedium"];
+        m_subscribedOnYoutube       = t_map["SubscribedOnYouTube"] == "true";
+        m_subscribedLocalOverride   = t_map["SubscribedLocalOverride"] == "true";
+    }
+
+    /**
+     * Populates properties based on a SQLite UTF-8 map of values.
+     *
+     * Map keys: ID, Title, UploadsPlaylist, FavouritesPlaylist, LikesPlaylist,
+     *           Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium.
+     *
+     * @param t_map
+     */
+    void YoutubeChannel::addFromMap(std::map<std::string, const unsigned char*> &t_map) {
+        // Add values from given value map.
+        m_id                        = reinterpret_cast<const char *>(t_map["ID"]);
+        m_title                     = (const char *)t_map["Title"];
+        m_hasUploadsPlaylist        = !std::string(reinterpret_cast<const char *>(t_map["UploadsPlaylist"])).empty();
+        m_hasFavouritesPlaylist     = !std::string(reinterpret_cast<const char *>(t_map["FavouritesPlaylist"])).empty();
+        m_hasLikesPlaylist          = !std::string(reinterpret_cast<const char *>(t_map["LikesPlaylist"])).empty();
+        m_description               = (const char *)t_map["Description"];
+        m_thumbnails["default"]     = reinterpret_cast<const char *>(t_map["ThumbnailDefault"]);
+        m_thumbnails["high"]        = reinterpret_cast<const char *>(t_map["ThumbnailHigh"]);
+        m_thumbnails["medium"]      = reinterpret_cast<const char *>(t_map["ThumbnailMedium"]);
     }
 
     const std::string YoutubeChannel::getFavouritesPlaylist() {
@@ -276,6 +337,4 @@ namespace sane {
     bool YoutubeChannel::hasLikesPlaylist() {
         return m_hasLikesPlaylist;
     }
-
-
 } // namespace sane

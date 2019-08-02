@@ -8,6 +8,10 @@
 #include <nlohmann/json.hpp>
 
 #define MISSING_VALUE "N/A"
+#define YOUTUBE_CHANNEL_PREFIX "UC"
+#define YOUTUBE_UPLOADS_PLAYLIST_PREFIX "UU"
+#define YOUTUBE_FAVOURITES_PLAYLIST_PREFIX "FL"
+#define YOUTUBE_LIKES_PLAYLIST_PREFIX "LL"
 
 namespace sane {
     /**
@@ -28,7 +32,7 @@ namespace sane {
 
         // Create an instance and feed it values through a list of strings.
         explicit YoutubeChannel(std::list<std::string> &t_values) {
-            addFromStringList(t_values);
+            addFromPureStringList(t_values);
         }
 
         // Create an instance and feed it values through a map of strings.
@@ -36,14 +40,56 @@ namespace sane {
             addFromMap(t_map);
         }
 
+        // Create an instance and feed it values through a map of unsigned chars.
+        explicit YoutubeChannel(std::map<std::string, const unsigned char*> &t_map) {
+            addFromMap(t_map);
+        }
+
+        YoutubeChannel(const char* t_id, const char* t_uploadsPlaylist, const char* t_favouritesPlaylist,
+                       const char* t_likesPlaylist, const char* t_title,
+                       const char* t_description,
+                       const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                       const char* t_thumbnailMedium, bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
+
+            addFromValues(t_id, t_uploadsPlaylist, t_favouritesPlaylist, t_likesPlaylist, t_title, t_description,
+                          t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
+                          t_subscribedLocalOverride);
+        }
+
+        YoutubeChannel(const char* t_id, bool t_hasUploadsPlaylist, bool t_hasFavouritesPlaylist,
+                       bool t_hasLikesPlaylist, const char* t_title,
+                       const char* t_description, const char* t_thumbnailDefault,
+                       const char* t_thumbnailHigh, const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                       bool t_subscribedLocalOverride) {
+
+            addFromValues(t_id, t_hasUploadsPlaylist, t_hasFavouritesPlaylist, t_hasLikesPlaylist, t_title,
+                          t_description, t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
+                          t_subscribedLocalOverride);
+        }
+
         void assignJsonStringValue(std::string &stringToAssignValue,
                                    nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
 
         void addFromJson(nlohmann::json t_json);
 
-        void addFromStringList(const std::list<std::string>& t_values);
+        void addFromPureStringList(const std::list<std::string> &t_values);
+
+        void addFromValues(const char* t_id, const char* t_uploadsPlaylist,
+                           const char* t_favouritesPlaylist, const char* t_likesPlaylist,
+                           const char* t_title, const char* t_description,
+                           const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                           const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                           bool t_subscribedLocalOverride);
+
+        void addFromValues(const char* t_id, bool t_hasUploadsPlaylist, bool t_hasFavouritesPlaylist,
+                           bool t_hasLikesPlaylist, const char* t_title,
+                           const char* t_description, const char* t_thumbnailDefault,
+                           const char* t_thumbnailHigh, const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                           bool t_subscribedLocalOverride);
 
         void addFromMap(std::map<std::string, std::string>& t_map);
+
+        void addFromMap(std::map<std::string, const unsigned char*>& t_map);
 
         void print(int indentationSpacing);
 
@@ -118,6 +164,10 @@ namespace sane {
         bool m_hasFavouritesPlaylist = false;
         bool m_hasUploadsPlaylist = false;
         bool m_hasLikesPlaylist = false;
+
+        // Other bools
+        bool m_subscribedOnYoutube = false;
+        bool m_subscribedLocalOverride = false;
 
         // The subscription's details.
         std::string m_description;

@@ -5,6 +5,7 @@
 #include <db_handler/db_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 #include <entities/youtube_channel.hpp>
+
 namespace sane {
     /**
      * Checks if a given string is valid for SQLite3 query, if not return "NULL".
@@ -86,7 +87,6 @@ namespace sane {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
         std::string sqlStatement;
-        int rc = -1;
         int counter = 0;
 
         // Acquire database handle.
@@ -99,14 +99,15 @@ namespace sane {
 
         // Iterate through the subscription objects and add relevant fields to DB.
         for (auto &channel : t_channels) {
+            int rc = SQLITE_NEVER_RUN;
+
             // Figure out and sanitize the values.
             const char* id = channel->getIdAsCString();
-            int hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
+            int hasUploadsPlaylist = channel->hasUploadsPlaylist() ? 1 : 0;
             int hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasLikesPlaylist = channel->hasLikesPlaylist() ? 1 : 0;
             const char* title = validateSQLiteInput(channel->getTitleAsCString());
             const char* description = validateSQLiteInput(channel->getDescriptionAsCString());
-
             const char* thumbnailDefault = validateSQLiteInput(channel->getThumbnailDefaultAsCString());
             const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHighAsCString());
             const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMediumAsCString());
@@ -177,5 +178,74 @@ namespace sane {
         }
 
         return SQLITE_OK;
+    }
+
+    std::list <std::shared_ptr<YoutubeChannel>> getChannelsFromDB(std::list<std::string> *t_errors) {
+        // Setup
+        sqlite3_stmt *preparedStatement = nullptr;
+        std::string sqlStatement;
+        int rc = SQLITE_NEVER_RUN;
+
+        // Acquire database handle.
+        std::cout << "Acquiring DB handle..." << std::endl;
+        std::shared_ptr<DBHandler> db = std::make_shared<DBHandler>();
+        std::cout << "Acquired DB handle." << std::endl;
+
+        sqlStatement = std::string("SELECT "
+                                       "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, "
+                                       "Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium, "
+                                       "SubscribedOnYouTube, SubscribedLocalOverride "
+                                   "FROM "
+                                       "youtube_channels ");
+
+        // Create a prepared statement
+        preparedStatement = db->prepareSqlStatement(sqlStatement);
+        if (db->lastStatus()  != SQLITE_OK) {
+            std::cerr << "sane::prepareSqlStatement(" << sqlStatement << ") ERROR: returned non-zero status: "
+                      << std::to_string( db->lastStatus() ) << std::endl;
+            t_errors->push_back("sane::prepareSqlStatement(" + sqlStatement + ") ERROR: returned non-zero status: "
+                                + std::to_string( db->lastStatus() ));
+        }
+
+            // Create list to hold YouTube channel entities.
+            std::list <std::shared_ptr<YoutubeChannel>> channels;
+
+            // Step through, and do ...
+            while (sqlite3_step(preparedStatement) == SQLITE_ROW) { // While query has result-rows.
+                // Create a map of YouTube channel properties.
+                std::map<std::string, const unsigned char*> channelMap;
+
+                // NB: ColId indexing is 0-based
+                const char* id                       = (char*) sqlite3_column_text(preparedStatement, 0);
+                bool hasUploadsPlaylist              = sqlite3_column_int(preparedStatement, 1) == 1;
+                bool hasFavouritesPlaylist           = sqlite3_column_int(preparedStatement, 2) == 1;
+                bool hasLikesPlaylist                = sqlite3_column_int(preparedStatement, 3) == 1;
+                const char* title                    = (char*) sqlite3_column_text(preparedStatement, 4);
+                const char* description              = (char*) sqlite3_column_text(preparedStatement, 5);
+                const char* thumbnailDefault         = (char*) sqlite3_column_text(preparedStatement, 6);
+                const char* thumbnailHigh            = (char*) sqlite3_column_text(preparedStatement, 7);
+                const char* thumbnailMedium          = (char*) sqlite3_column_text(preparedStatement, 8);
+                bool subscribedOnYouTube             = sqlite3_column_int(preparedStatement, 9) == 1;
+                bool subscribedLocalOverride         = sqlite3_column_int(preparedStatement, 10) == 1;
+
+                // Create a YoutubeChannel entity based on the above values
+                std::shared_ptr<sane::YoutubeChannel> channelEntity;
+                channelEntity = std::make_shared<sane::YoutubeChannel>(id, hasUploadsPlaylist, hasFavouritesPlaylist,
+                        hasLikesPlaylist, title, description, thumbnailDefault, thumbnailHigh, thumbnailMedium,
+                        subscribedOnYouTube, subscribedLocalOverride);
+
+                // Add the YoutubeChannel entity to the list of channels.
+                channels.push_back(channelEntity);
+            }
+
+            // Step, Clear and Reset the statement after each bind.
+            rc = sqlite3_step(preparedStatement);
+            rc = sqlite3_clear_bindings(preparedStatement);
+            rc = sqlite3_reset(preparedStatement);
+
+        // Finalize prepared statement
+        db->finalizePreparedSqlStatement(preparedStatement);
+
+        return channels;
     }
 } // namespace sane

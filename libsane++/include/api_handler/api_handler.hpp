@@ -72,5 +72,8 @@
 namespace sane {
     void sapiGetSubscriptions();
 
+    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username);
+
+    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_id);
 } // namespace sane.
 #endif // Header guards.

@@ -103,7 +103,7 @@ namespace sane {
 
             // Figure out and sanitize the values.
             const char* id = channel->getIdAsCString();
-            int hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
+            int hasUploadsPlaylist = channel->hasUploadsPlaylist() ? 1 : 0;
             int hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasLikesPlaylist = channel->hasLikesPlaylist() ? 1 : 0;
             const char* title = validateSQLiteInput(channel->getTitleAsCString());

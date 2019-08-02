@@ -32,7 +32,7 @@ include_directories(tests)
 # ICU Components Reference:
 # https://cmake.org/cmake/help/latest/module/FindICU.html
 # ICU components = data, i18n, io, le, lx, test, tu and uc.
-find_package(ICU COMPONENTS uc REQUIRED)
+#find_package(ICU COMPONENTS uc REQUIRED)
 
 # Command find_package in cmake doesn’t support SQLite.
 # So, to link SQLite you have to go about it in a roundabout way...
@@ -60,7 +60,7 @@ target_link_libraries (sane++_cli -lcurl)
 target_link_libraries(sane++_cli -lpthread)
 target_link_libraries(sane++_cli -ldl)
 target_link_libraries(sane++_cli sqlite3)
-target_link_libraries(sane++_cli ICU::uc)
+#target_link_libraries(sane++_cli ICU::uc)
 target_include_directories(sane++_cli PRIVATE ${INCLUDE_DIRS})
 
 # GUI
@@ -79,7 +79,7 @@ target_link_libraries(sane++_gui -lpthread)
 target_link_libraries(sane++_gui -ldl)
 #target_link_libraries (SaneGUI ${SQLITE3_LIBRARIES})
 target_link_libraries(sane++_gui sqlite3)
-target_link_libraries(sane++_gui ICU::uc)
+#target_link_libraries(sane++_gui ICU::uc)
 target_include_directories(sane++_gui PRIVATE ${INCLUDE_DIRS})
 
 ##
@@ -128,7 +128,7 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
     target_link_libraries(travis_test_all -lpthread)
     target_link_libraries(travis_test_all -ldl)
     target_link_libraries(travis_test_all sqlite3)
-    target_link_libraries(travis_test_all ICU::uc)
+#    target_link_libraries(travis_test_all ICU::uc)
     target_include_directories(travis_test_all PRIVATE ${INCLUDE_DIRS})
 
     include(CTest)
@@ -163,7 +163,7 @@ else()
     target_link_libraries(test_all -lpthread)
     target_link_libraries(test_all -ldl)
     target_link_libraries(test_all sqlite3)
-    target_link_libraries(test_all ICU::uc)
+#    target_link_libraries(test_all ICU::uc)
     target_include_directories(test_all PRIVATE ${INCLUDE_DIRS})
 
     include(CTest)

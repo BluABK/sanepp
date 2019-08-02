@@ -2,13 +2,9 @@
 #include <vector>
 #include <list>
 
-#include <unicode/unistr.h>
 #include <db_handler/db_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 #include <entities/youtube_channel.hpp>
-
-#define DEFAULT_CODEPAGE NULL
-#define UTF8_CODEPAGE "UTF-8"
 
 namespace sane {
     /**
@@ -110,19 +106,8 @@ namespace sane {
             int hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasLikesPlaylist = channel->hasLikesPlaylist() ? 1 : 0;
-
-            // Convert the UnicodeStrings to UTF-8 and append the result to a standard string,
-            // and then convert that to a C-String and store that in a const char*.
-            std::string m_titleAsString;
-            channel->getTitle().toUTF8String(m_titleAsString);
-            const char* m_titleAsCString = m_titleAsString.c_str();
-
-            std::string m_descriptionAsString;
-            channel->getDescription().toUTF8String(m_descriptionAsString);
-            const char* m_descriptionAsCString = m_descriptionAsString.c_str();
-
-            const char* title = validateSQLiteInput(m_titleAsCString);
-            const char* description = validateSQLiteInput(m_descriptionAsCString);
+            const char* title = validateSQLiteInput(channel->getTitleAsCString());
+            const char* description = validateSQLiteInput(channel->getDescriptionAsCString());
             const char* thumbnailDefault = validateSQLiteInput(channel->getThumbnailDefaultAsCString());
             const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHighAsCString());
             const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMediumAsCString());
@@ -199,7 +184,7 @@ namespace sane {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
         std::string sqlStatement;
-        int rc = -1;
+        int rc = SQLITE_NEVER_RUN;
 
         // Acquire database handle.
         std::cout << "Acquiring DB handle..." << std::endl;
@@ -235,8 +220,8 @@ namespace sane {
                 bool hasUploadsPlaylist              = sqlite3_column_int(preparedStatement, 1) == 1;
                 bool hasFavouritesPlaylist           = sqlite3_column_int(preparedStatement, 2) == 1;
                 bool hasLikesPlaylist                = sqlite3_column_int(preparedStatement, 3) == 1;
-                const icu::UnicodeString title       = (char*) sqlite3_column_text(preparedStatement, 4);
-                const icu::UnicodeString description = (char*) sqlite3_column_text(preparedStatement, 5);
+                const char* title                    = (char*) sqlite3_column_text(preparedStatement, 4);
+                const char* description              = (char*) sqlite3_column_text(preparedStatement, 5);
                 const char* thumbnailDefault         = (char*) sqlite3_column_text(preparedStatement, 6);
                 const char* thumbnailHigh            = (char*) sqlite3_column_text(preparedStatement, 7);
                 const char* thumbnailMedium          = (char*) sqlite3_column_text(preparedStatement, 8);

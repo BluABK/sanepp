@@ -1,6 +1,5 @@
 #include <iostream>
 #include <map>
-#include <unicode/unistr.h>
 
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
@@ -38,27 +37,6 @@ namespace sane {
         } else {
             // If it actually is a string, then explicitly cast it.
             stringToAssignValue = unknownJsonTypeValue.get<std::string>();
-        }
-    }
-
-    void YoutubeChannel::assignJsonStringValue(icu::UnicodeString &stringToAssignValue,
-                                               nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json) {
-        if (unknownJsonTypeValue.is_null()) {
-            addWarning("WARNING: YoutubeChannel::addFromJson." + std::string(GET_VARIABLE_NAME(stringToAssignValue))
-                       + " is NULL not string, setting '" + MISSING_VALUE + "' string in its stead!", t_json);
-            stringToAssignValue = icu::UnicodeString(MISSING_VALUE);
-        }
-        else if (!unknownJsonTypeValue.is_string()) {
-            addWarning("WARNING: YoutubeChannel::addFromJson.favouritesPlaylist is " +
-                       std::string(unknownJsonTypeValue.type_name()) + " not string, setting'" +
-                       MISSING_VALUE + "' string in its stead!", t_json);
-            stringToAssignValue = icu::UnicodeString(MISSING_VALUE);
-        } else {
-            // If it actually is a string, then explicitly cast it.
-            std::string jsonStr = unknownJsonTypeValue.get<std::string>();
-
-            // Convert the std::string to unicode.
-            stringToAssignValue = icu::UnicodeString::fromUTF8(icu::StringPiece(jsonStr.c_str()));
         }
     }
 
@@ -109,7 +87,7 @@ namespace sane {
 
     void YoutubeChannel::addFromValues(const char* t_id, const char* t_uploadsPlaylist,
                                        const char* t_favouritesPlaylist, const char* t_likesPlaylist,
-                                       const icu::UnicodeString &t_title, const icu::UnicodeString &t_description,
+                                       const char* t_title, const char* t_description,
                                        const char* t_thumbnailDefault, const char* t_thumbnailHigh,
                                        const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
                                        bool t_subscribedLocalOverride) {
@@ -128,8 +106,8 @@ namespace sane {
     }
 
     void YoutubeChannel::addFromValues(const char* t_id, bool t_hasUploadsPlaylist, bool t_hasFavouritesPlaylist,
-                                       bool t_hasLikesPlaylist, const icu::UnicodeString &t_title,
-                                       const icu::UnicodeString &t_description, const char* t_thumbnailDefault,
+                                       bool t_hasLikesPlaylist, const char* t_title,
+                                       const char* t_description, const char* t_thumbnailDefault,
                                        const char* t_thumbnailHigh, const char* t_thumbnailMedium,
                                        bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
         m_id                        = t_id;
@@ -138,26 +116,6 @@ namespace sane {
         m_hasFavouritesPlaylist     = t_hasFavouritesPlaylist;
         m_hasLikesPlaylist          = t_hasLikesPlaylist;
         m_description               = t_description;
-        m_thumbnails["default"]     = t_thumbnailDefault;
-        m_thumbnails["high"]        = t_thumbnailHigh;
-        m_thumbnails["medium"]      = t_thumbnailMedium;
-        m_subscribedOnYoutube       = t_subscribedOnYoutube;
-        m_subscribedLocalOverride   = t_subscribedLocalOverride;
-    }
-
-    void YoutubeChannel::addFromMixedValues(const char* t_id, const char* t_uploadsPlaylist,
-            const char* t_favouritesPlaylist, const char* t_likesPlaylist, void const * t_title,
-            void const * t_description, const char* t_thumbnailDefault, const char* t_thumbnailHigh,
-            const char* t_thumbnailMedium, bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
-
-        m_id                        = t_id;
-        m_title                     = icu::UnicodeString::fromUTF8(icu::StringPiece(
-                static_cast<const char *>(t_title)));
-        m_hasUploadsPlaylist        = t_uploadsPlaylist;
-        m_hasFavouritesPlaylist     = t_favouritesPlaylist;
-        m_hasLikesPlaylist          = t_likesPlaylist;
-        m_description               = icu::UnicodeString::fromUTF8(icu::StringPiece(
-                static_cast<const char *>(t_description)));
         m_thumbnails["default"]     = t_thumbnailDefault;
         m_thumbnails["high"]        = t_thumbnailHigh;
         m_thumbnails["medium"]      = t_thumbnailMedium;
@@ -176,11 +134,11 @@ namespace sane {
     void YoutubeChannel::addFromMap(std::map<std::string, std::string> &t_map) {
         // Add values from given value map.
         m_id                        = t_map["ID"];
-        m_title                     = icu::UnicodeString::fromUTF8(icu::StringPiece(t_map["Title"].c_str()));
+        m_title                     = t_map["Title"];
         m_hasUploadsPlaylist        = !t_map["UploadsPlaylist"].empty();
         m_hasFavouritesPlaylist     = !t_map["FavouritesPlaylist"].empty();
         m_hasLikesPlaylist          = !t_map["LikesPlaylist"].empty();
-        m_description               = icu::UnicodeString::fromUTF8(icu::StringPiece(t_map["Description"].c_str()));
+        m_description               = t_map["Description"];
         m_thumbnails["default"]     = t_map["ThumbnailDefault"];
         m_thumbnails["high"]        = t_map["ThumbnailHigh"];
         m_thumbnails["medium"]      = t_map["ThumbnailMedium"];
@@ -260,23 +218,12 @@ namespace sane {
         return m_id.c_str();
     }
 
-    const icu::UnicodeString YoutubeChannel::getDescription() {
+    const std::string YoutubeChannel::getDescription() {
         return m_description;
     }
 
-    /**
-     * Converts the UTF-8 value to std::string.
-     * BEWARE: Can cause out of scope issues.
-     *
-     * @return std::string m_titleAsString
-     */
-    const std::string YoutubeChannel::getDescriptionAsString() {
-        std::string descriptionAsString;
-
-        // Convert the UnicodeString to UTF-8 and append the result to a standard string.
-        getDescription().toUTF8String(descriptionAsString);
-
-        return descriptionAsString;
+    const char* YoutubeChannel::getDescriptionAsCString() {
+        return m_description.c_str();
     }
 
     const std::string YoutubeChannel::getPublishedAt() {
@@ -315,33 +262,22 @@ namespace sane {
         return m_thumbnails["medium"].c_str();
     }
 
-    const icu::UnicodeString YoutubeChannel::getTitle() {
+    const std::string YoutubeChannel::getTitle() {
         return m_title;
     }
 
-    /**
-     * Converts the UTF-8 value to std::string.
-     * BEWARE: Can cause out of scope issues.
-     *
-     * @return std::string m_titleAsString
-     */
-    const std::string YoutubeChannel::getTitleAsString() {
-        std::string titleAsString;
-
-        // Convert the UnicodeString to UTF-8 and append the result to a standard string.
-        getTitle().toUTF8String(titleAsString);
-
-        return titleAsString;
+    const char* YoutubeChannel::getTitleAsCString() {
+        return m_title.c_str();
     }
 
     void YoutubeChannel::print(int indentationSpacing = 0) {
         std::string indentation(indentationSpacing, ' ');
 
-        std::cout << indentation << "Title: " << getTitleAsString() << std::endl;
+        std::cout << indentation << "Title: " << getTitle() << std::endl;
         std::cout << indentation << "ID: " << getId() << std::endl;
         std::cout << indentation << "Channel ID: " << getChannelId() << std::endl;
         std::cout << indentation << "Published: " << getPublishedAt() << std::endl;
-        std::cout << indentation << "Description: " << getDescriptionAsString() << std::endl;
+        std::cout << indentation << "Description: " << getDescription() << std::endl;
         std::cout << indentation << "Favourites Playlist: " << getFavouritesPlaylist() << std::endl;
         std::cout << indentation << "Uploads Playlist: " << getUploadsPlaylist() << std::endl;
         std::cout << indentation << "Thumbnail URL (default): " << getThumbnailDefault()<< std::endl;
@@ -401,6 +337,4 @@ namespace sane {
     bool YoutubeChannel::hasLikesPlaylist() {
         return m_hasLikesPlaylist;
     }
-
-
 } // namespace sane

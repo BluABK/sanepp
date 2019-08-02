@@ -134,7 +134,7 @@ namespace sane {
 
             std::cout << paddedNumbering << columnSpacing <<
             paddedChannelId << columnSpacing << paddedUploadsPlaylistId << columnSpacing <<
-                                                                                         subscription->getTitleAsString() << std::endl;
+                                                                                         subscription->getTitle() << std::endl;
 
             counter++;
         }
@@ -168,7 +168,7 @@ namespace sane {
         channels = sane::getChannelsFromDB(NO_ERROR_LOG);
 
         for (auto &channel: channels) {
-            std::cout << channel->getTitleAsString() << std::endl;
+            std::cout << channel->getTitle() << std::endl;
         }
     }
 } // namespace sane

@@ -105,8 +105,66 @@ namespace sane {
         }
     }
 
-    void YoutubeChannel::addFromStringList(const std::list<std::string> &t_values) {  // FIXME: IMPLEMENT
-        std::cerr << "YoutubeChannel::addFromStringList NOT IMPLEMENTED!" << std::endl;
+    void YoutubeChannel::addFromPureStringList(const std::list<std::string> &t_values) {  // FIXME: IMPLEMENT
+        std::cerr << "YoutubeChannel::addFromPureStringList NOT IMPLEMENTED!" << std::endl;
+    }
+
+    void YoutubeChannel::addFromValues(const char* t_id, const char* t_uploadsPlaylist,
+                                       const char* t_favouritesPlaylist, const char* t_likesPlaylist,
+                                       const icu::UnicodeString &t_title, const icu::UnicodeString &t_description,
+                                       const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                                       const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                                       bool t_subscribedLocalOverride) {
+
+        m_id                        = t_id;
+        m_title                     = t_title;
+        m_hasUploadsPlaylist        = *t_uploadsPlaylist != 0;
+        m_hasFavouritesPlaylist     = *t_favouritesPlaylist != 0;
+        m_hasLikesPlaylist          = *t_likesPlaylist != 0;
+        m_description               = t_description;
+        m_thumbnails["default"]     = t_thumbnailDefault;
+        m_thumbnails["high"]        = t_thumbnailHigh;
+        m_thumbnails["medium"]      = t_thumbnailMedium;
+        m_subscribedOnYoutube       = t_subscribedOnYoutube;
+        m_subscribedLocalOverride   = t_subscribedLocalOverride;
+    }
+
+    void YoutubeChannel::addFromValues(const char* t_id, bool t_hasUploadsPlaylist, bool t_hasFavouritesPlaylist,
+                                       bool t_hasLikesPlaylist, const icu::UnicodeString &t_title,
+                                       const icu::UnicodeString &t_description, const char* t_thumbnailDefault,
+                                       const char* t_thumbnailHigh, const char* t_thumbnailMedium,
+                                       bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
+        m_id                        = t_id;
+        m_title                     = t_title;
+        m_hasUploadsPlaylist        = t_hasUploadsPlaylist;
+        m_hasFavouritesPlaylist     = t_hasFavouritesPlaylist;
+        m_hasLikesPlaylist          = t_hasLikesPlaylist;
+        m_description               = t_description;
+        m_thumbnails["default"]     = t_thumbnailDefault;
+        m_thumbnails["high"]        = t_thumbnailHigh;
+        m_thumbnails["medium"]      = t_thumbnailMedium;
+        m_subscribedOnYoutube       = t_subscribedOnYoutube;
+        m_subscribedLocalOverride   = t_subscribedLocalOverride;
+    }
+
+    void YoutubeChannel::addFromMixedValues(const char* t_id, const char* t_uploadsPlaylist,
+            const char* t_favouritesPlaylist, const char* t_likesPlaylist, void const * t_title,
+            void const * t_description, const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+            const char* t_thumbnailMedium, bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
+
+        m_id                        = t_id;
+        m_title                     = icu::UnicodeString::fromUTF8(icu::StringPiece(
+                static_cast<const char *>(t_title)));
+        m_hasUploadsPlaylist        = t_uploadsPlaylist;
+        m_hasFavouritesPlaylist     = t_favouritesPlaylist;
+        m_hasLikesPlaylist          = t_likesPlaylist;
+        m_description               = icu::UnicodeString::fromUTF8(icu::StringPiece(
+                static_cast<const char *>(t_description)));
+        m_thumbnails["default"]     = t_thumbnailDefault;
+        m_thumbnails["high"]        = t_thumbnailHigh;
+        m_thumbnails["medium"]      = t_thumbnailMedium;
+        m_subscribedOnYoutube       = t_subscribedOnYoutube;
+        m_subscribedLocalOverride   = t_subscribedLocalOverride;
     }
 
     /**
@@ -128,10 +186,12 @@ namespace sane {
         m_thumbnails["default"]     = t_map["ThumbnailDefault"];
         m_thumbnails["high"]        = t_map["ThumbnailHigh"];
         m_thumbnails["medium"]      = t_map["ThumbnailMedium"];
+        m_subscribedOnYoutube       = t_map["SubscribedOnYouTube"] == "true";
+        m_subscribedLocalOverride   = t_map["SubscribedLocalOverride"] == "true";
     }
 
     /**
-     * Populates properties based on a UTF-8 map of values.
+     * Populates properties based on a SQLite UTF-8 map of values.
      *
      * Map keys: ID, Title, UploadsPlaylist, FavouritesPlaylist, LikesPlaylist,
      *           Description, ThumbnailDefault, ThumbnailHigh, ThumbnailMedium.

@@ -33,7 +33,7 @@ namespace sane {
 
         // Create an instance and feed it values through a list of strings.
         explicit YoutubeChannel(std::list<std::string> &t_values) {
-            addFromStringList(t_values);
+            addFromPureStringList(t_values);
         }
 
         // Create an instance and feed it values through a map of strings.
@@ -46,6 +46,38 @@ namespace sane {
             addFromMap(t_map);
         }
 
+        YoutubeChannel(const char* t_id, const char* t_uploadsPlaylist, const char* t_favouritesPlaylist,
+                       const char* t_likesPlaylist, void const * t_title, void const * t_description,
+                       const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                       const char* t_thumbnailMedium, bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
+
+            addFromMixedValues(t_id, t_uploadsPlaylist, t_favouritesPlaylist, t_likesPlaylist, t_title, t_description,
+                               t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
+                               t_subscribedLocalOverride);
+        }
+
+        YoutubeChannel(const char* t_id, const char* t_uploadsPlaylist, const char* t_favouritesPlaylist,
+                       const char* t_likesPlaylist, const icu::UnicodeString &t_title,
+                       const icu::UnicodeString &t_description,
+                       const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                       const char* t_thumbnailMedium, bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
+
+            addFromValues(t_id, t_uploadsPlaylist, t_favouritesPlaylist, t_likesPlaylist, t_title, t_description,
+                          t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
+                          t_subscribedLocalOverride);
+        }
+
+        YoutubeChannel(const char* t_id, bool t_hasUploadsPlaylist, bool t_hasFavouritesPlaylist,
+                       bool t_hasLikesPlaylist, const icu::UnicodeString &t_title,
+                       const icu::UnicodeString &t_description, const char* t_thumbnailDefault,
+                       const char* t_thumbnailHigh, const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                       bool t_subscribedLocalOverride) {
+
+            addFromValues(t_id, t_hasUploadsPlaylist, t_hasFavouritesPlaylist, t_hasLikesPlaylist, t_title,
+                          t_description, t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
+                          t_subscribedLocalOverride);
+        }
+
         void assignJsonStringValue(std::string &stringToAssignValue,
                                    nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
 
@@ -54,7 +86,25 @@ namespace sane {
 
         void addFromJson(nlohmann::json t_json);
 
-        void addFromStringList(const std::list<std::string>& t_values);
+        void addFromPureStringList(const std::list<std::string> &t_values);
+
+        void addFromValues(const char* t_id, const char* t_uploadsPlaylist,
+                           const char* t_favouritesPlaylist, const char* t_likesPlaylist,
+                           const icu::UnicodeString &t_title, const icu::UnicodeString &t_description,
+                           const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                           const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                           bool t_subscribedLocalOverride);
+
+        void addFromValues(const char* t_id, bool t_hasUploadsPlaylist, bool t_hasFavouritesPlaylist,
+                           bool t_hasLikesPlaylist, const icu::UnicodeString &t_title,
+                           const icu::UnicodeString &t_description, const char* t_thumbnailDefault,
+                           const char* t_thumbnailHigh, const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
+                           bool t_subscribedLocalOverride);
+
+        void addFromMixedValues(const char* t_id, const char* t_uploadsPlaylist,
+                           const char* t_favouritesPlaylist, const char* t_likesPlaylist, void const * t_title,
+                           void const * t_description, const char* t_thumbnailDefault, const char* t_thumbnailHigh,
+                           const char* t_thumbnailMedium, bool t_subscribedOnYoutube, bool t_subscribedLocalOverride);
 
         void addFromMap(std::map<std::string, std::string>& t_map);
 
@@ -137,6 +187,10 @@ namespace sane {
         bool m_hasFavouritesPlaylist = false;
         bool m_hasUploadsPlaylist = false;
         bool m_hasLikesPlaylist = false;
+
+        // Other bools
+        bool m_subscribedOnYoutube = false;
+        bool m_subscribedLocalOverride = false;
 
         // The subscription's details.
         icu::UnicodeString m_description;

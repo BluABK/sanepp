@@ -70,6 +70,10 @@
 #define SAPI_YT_WATERMARKS_UNSET                "http://127.0.0.1:5002/api/v1/youtube/watermarks/unset"
 
 namespace sane {
+    void printReport(int t_warningsCount, int t_errorsCount);
+
+    void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
+
     void sapiGetSubscriptions();
 
     std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username);

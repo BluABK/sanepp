@@ -17,6 +17,31 @@
 #include <db_handler/db_youtube_channels.hpp>
 
 namespace sane {
+    void printReport(int t_warningsCount, int t_errorsCount) {
+        std::string reportedProblems;
+
+        if (t_warningsCount > 0 and t_errorsCount > 0) {
+            reportedProblems = " with " + std::to_string(t_warningsCount) + " warnings and "
+                               + std::to_string(t_errorsCount) + " errors";
+        }
+        else if (t_warningsCount > 0) {
+            reportedProblems = " with " + std::to_string(t_warningsCount) + " warnings";
+        }
+        else if (t_errorsCount > 0) {
+            reportedProblems = " with " + std::to_string(t_errorsCount) + " errors";
+        }
+
+        // Return the parsed channels (and report possible issues).
+        std::cout << "Processing completed" << reportedProblems << "." << std::endl;
+    }
+
+    void printReport(std::shared_ptr<YoutubeChannel> &t_channel) {
+        int warningsCount = t_channel->getWarnings().size();
+        int errorsCount = t_channel->getErrors().size();
+
+        printReport(warningsCount, errorsCount);
+    }
+
     /**
      * Callback function to be called when receiving the http response from the server.
      *
@@ -91,28 +116,15 @@ namespace sane {
                 std::cerr << "\tERROR: Creation of the following channel was aborted:" << std::endl;
                 std::cerr << jsonData.dump(4);
             } else {
-                warningsCount = channel->getWarnings().size();
-                errorsCount = channel->getErrors().size();
+                warningsCount += channel->getWarnings().size();
+                errorsCount += channel->getErrors().size();
 
                 // Append channels list with the new YoutubeChannel object.
                 channels.push_back(channel);
             }
         }
 
-        std::string reportedProblems;
-        if (warningsCount > 0 and errorsCount > 0) {
-            reportedProblems = " with " + std::to_string(warningsCount) + " warnings and "
-                    + std::to_string(errorsCount) + " errors";
-        }
-        else if (warningsCount > 0) {
-            reportedProblems = " with " + std::to_string(warningsCount) + " warnings";
-        }
-        else if (errorsCount > 0) {
-            reportedProblems = " with " + std::to_string(errorsCount) + " errors";
-        }
-
-        // Return the parsed channels (and report possible issues).
-        std::cout << "Processing completed" << reportedProblems << "." << std::endl;
+        printReport(warningsCount, errorsCount);
 
         // Clear the warnings and errors in the channel objects
         for (auto & channel : channels) {
@@ -125,10 +137,8 @@ namespace sane {
         std::cout << "Storing to database successful!" << std::endl;
     }
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username) {
-        size_t warningsCount = 0;
-        size_t errorsCount = 0;
 
+    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -145,10 +155,14 @@ namespace sane {
             channel.reset();
             std::cerr << "\tERROR: Creation of the following channel was aborted:" << std::endl;
             std::cerr << jsonData.dump(4);
+
             return nullptr;
         } else {
-            warningsCount = channel->getWarnings().size();
-            errorsCount = channel->getErrors().size();
+            // Print a report of any errors or warnings that might have occurred.
+            printReport(channel);
+
+            // Clear the warnings and errors in the channel object
+            channel->clearErrorsAndWarnings();
 
             // Return the new YoutubeChannel object.
             return channel;
@@ -156,9 +170,6 @@ namespace sane {
     }
 
     std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_username) {
-        size_t warningsCount = 0;
-        size_t errorsCount = 0;
-
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -175,10 +186,14 @@ namespace sane {
             channel.reset();
             std::cerr << "\tERROR: Creation of the following channel was aborted:" << std::endl;
             std::cerr << jsonData.dump(4);
+
             return nullptr;
         } else {
-            warningsCount = channel->getWarnings().size();
-            errorsCount = channel->getErrors().size();
+            // Print a report of any errors or warnings that might have occurred.
+            printReport(channel);
+
+            // Clear the warnings and errors in the channel object
+            channel->clearErrorsAndWarnings();
 
             // Return the new YoutubeChannel object.
             return channel;

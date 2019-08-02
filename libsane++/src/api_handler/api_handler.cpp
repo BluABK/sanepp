@@ -134,7 +134,37 @@ namespace sane {
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
         nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?username=" + t_username);
-        std::cout << "Got response from SaneAPI, processing " << jsonData.size() << " channels..." << std::endl;
+        std::cout << "Got response from SaneAPI, processing channel..." << std::endl;
+
+
+        // Create a new YoutubeChannel object for the requested channel.
+        std::shared_ptr<YoutubeChannel> channel = std::make_shared<YoutubeChannel>(jsonData);
+
+        if (channel->wasAborted()) {
+            // Explicitly delete the broken channel object now instead of waiting for smart ptr deallocation.
+            channel.reset();
+            std::cerr << "\tERROR: Creation of the following channel was aborted:" << std::endl;
+            std::cerr << jsonData.dump(4);
+            return nullptr;
+        } else {
+            warningsCount = channel->getWarnings().size();
+            errorsCount = channel->getErrors().size();
+
+            // Return the new YoutubeChannel object.
+            return channel;
+        }
+    }
+
+    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_username) {
+        size_t warningsCount = 0;
+        size_t errorsCount = 0;
+
+        std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
+
+        // Parse the JSON response from the API.
+        std::cout << "Waiting for SaneAPI response..." << std::endl;
+        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?id=" + t_username);
+        std::cout << "Got response from SaneAPI, processing channel..." << std::endl;
 
 
         // Create a new YoutubeChannel object for the requested channel.

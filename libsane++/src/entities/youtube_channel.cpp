@@ -46,15 +46,13 @@ namespace sane {
         if (unknownJsonTypeValue.is_null()) {
             addWarning("WARNING: YoutubeChannel::addFromJson." + std::string(GET_VARIABLE_NAME(stringToAssignValue))
                        + " is NULL not string, setting '" + MISSING_VALUE + "' string in its stead!", t_json);
-            std::string missingValue = std::string(MISSING_VALUE);
-            stringToAssignValue = icu::UnicodeString(missingValue.c_str());
+            stringToAssignValue = icu::UnicodeString(MISSING_VALUE);
         }
         else if (!unknownJsonTypeValue.is_string()) {
             addWarning("WARNING: YoutubeChannel::addFromJson.favouritesPlaylist is " +
                        std::string(unknownJsonTypeValue.type_name()) + " not string, setting'" +
                        MISSING_VALUE + "' string in its stead!", t_json);
-            std::string missingValue = std::string(MISSING_VALUE);
-            stringToAssignValue = icu::UnicodeString(missingValue.c_str());
+            stringToAssignValue = icu::UnicodeString(MISSING_VALUE);
         } else {
             // If it actually is a string, then explicitly cast it.
             std::string jsonStr = unknownJsonTypeValue.get<std::string>();

@@ -143,9 +143,7 @@ namespace sane {
 
         const std::string getDescriptionAsString();
 
-        const icu::UnicodeString getDescriptionAsUnicode();
-
-        const char* getDescriptionAsCString();
+        const icu::UnicodeString getDescription();
 
         const std::string getPublishedAt();
 
@@ -167,9 +165,7 @@ namespace sane {
 
         const std::string getTitleAsString();
 
-        const icu::UnicodeString getTitleAsUnicode();
-
-        const char* getTitleAsCString();
+        const icu::UnicodeString getTitle();
 
         bool hasFavouritesPlaylist();
 

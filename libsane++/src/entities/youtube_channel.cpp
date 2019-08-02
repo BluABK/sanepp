@@ -260,21 +260,23 @@ namespace sane {
         return m_id.c_str();
     }
 
-    const icu::UnicodeString YoutubeChannel::getDescriptionAsUnicode() {
+    const icu::UnicodeString YoutubeChannel::getDescription() {
         return m_description;
     }
 
+    /**
+     * Converts the UTF-8 value to std::string.
+     * BEWARE: Can cause out of scope issues.
+     *
+     * @return std::string m_titleAsString
+     */
     const std::string YoutubeChannel::getDescriptionAsString() {
         std::string descriptionAsString;
 
         // Convert the UnicodeString to UTF-8 and append the result to a standard string.
-        getDescriptionAsUnicode().toUTF8String(descriptionAsString);
+        getDescription().toUTF8String(descriptionAsString);
 
         return descriptionAsString;
-    }
-
-    const char* YoutubeChannel::getDescriptionAsCString() {
-        return getDescriptionAsString().c_str();
     }
 
     const std::string YoutubeChannel::getPublishedAt() {
@@ -313,21 +315,23 @@ namespace sane {
         return m_thumbnails["medium"].c_str();
     }
 
-    const icu::UnicodeString YoutubeChannel::getTitleAsUnicode() {
+    const icu::UnicodeString YoutubeChannel::getTitle() {
         return m_title;
     }
 
+    /**
+     * Converts the UTF-8 value to std::string.
+     * BEWARE: Can cause out of scope issues.
+     *
+     * @return std::string m_titleAsString
+     */
     const std::string YoutubeChannel::getTitleAsString() {
         std::string titleAsString;
 
         // Convert the UnicodeString to UTF-8 and append the result to a standard string.
-        getTitleAsUnicode().toUTF8String(titleAsString);
+        getTitle().toUTF8String(titleAsString);
 
         return titleAsString;
-    }
-
-    const char* YoutubeChannel::getTitleAsCString() {
-        return getTitleAsString().c_str();
     }
 
     void YoutubeChannel::print(int indentationSpacing = 0) {

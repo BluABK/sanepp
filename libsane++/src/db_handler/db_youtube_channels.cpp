@@ -110,9 +110,19 @@ namespace sane {
             int hasUploadsPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasLikesPlaylist = channel->hasLikesPlaylist() ? 1 : 0;
-            const char* title = validateSQLiteInput(channel->getTitleAsCString());
-            const char* description = validateSQLiteInput(channel->getDescriptionAsCString());
 
+            // Convert the UnicodeStrings to UTF-8 and append the result to a standard string,
+            // and then convert that to a C-String and store that in a const char*.
+            std::string m_titleAsString;
+            channel->getTitle().toUTF8String(m_titleAsString);
+            const char* m_titleAsCString = m_titleAsString.c_str();
+
+            std::string m_descriptionAsString;
+            channel->getDescription().toUTF8String(m_descriptionAsString);
+            const char* m_descriptionAsCString = m_descriptionAsString.c_str();
+
+            const char* title = validateSQLiteInput(m_titleAsCString);
+            const char* description = validateSQLiteInput(m_descriptionAsCString);
             const char* thumbnailDefault = validateSQLiteInput(channel->getThumbnailDefaultAsCString());
             const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHighAsCString());
             const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMediumAsCString());

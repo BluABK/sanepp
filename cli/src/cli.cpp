@@ -3,7 +3,7 @@
 
 #include <entities/youtube_channel.hpp>
 #include <api_handler/api_handler.hpp>
-#include <api_handler/entity_reponse.hpp>
+#include <api_handler/entity_response.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 #include <sstream>
 

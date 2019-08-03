@@ -1,5 +1,5 @@
-#ifndef SANE_ENTITY_REPONSE_HPP
-#define SANE_ENTITY_REPONSE_HPP
+#ifndef SANE_ENTITY_RESPONSE_HPP
+#define SANE_ENTITY_RESPONSE_HPP
 
 #include <list>
 
@@ -21,4 +21,4 @@ namespace sane {
     std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_channelId,
                                                        bool clearProblems = CLEAR_PROBLEMS);
 } // namespace sane.
-#endif //SANE_ENTITY_REPONSE_HPP
+#endif //SANE_ENTITY_RESPONSE_HPP

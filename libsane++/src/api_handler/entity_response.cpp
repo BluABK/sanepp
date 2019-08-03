@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 
 // Project specific libraries.
-#include <api_handler/entity_reponse.hpp>
+#include <api_handler/entity_response.hpp>
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 

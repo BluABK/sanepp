@@ -53,8 +53,8 @@ add_executable(sane++_cli cli/src/main.cpp
         libsane++/src/db_handler/db_youtube_channels.cpp
         libsane++/include/db_handler/db_youtube_channels.hpp
         third_party/nlohmann/json.hpp
-        libsane++/src/api_handler/entity_reponse.cpp
-        libsane++/include/api_handler/entity_reponse.hpp
+        libsane++/src/api_handler/entity_response.cpp
+        libsane++/include/api_handler/entity_response.hpp
         libsane++/src/api_handler/json_response.cpp
         libsane++/include/api_handler/json_response.hpp)
 
@@ -77,8 +77,8 @@ add_executable(sane++_gui gui/src/main.cpp
         libsane++/include/db_handler/db_youtube_channels.hpp
         libsane++/src/api_handler/api_handler.cpp
         libsane++/include/api_handler/api_handler.hpp
-        libsane++/src/api_handler/entity_reponse.cpp
-        libsane++/include/api_handler/entity_reponse.hpp
+        libsane++/src/api_handler/entity_response.cpp
+        libsane++/include/api_handler/entity_response.hpp
         libsane++/src/api_handler/json_response.cpp
         libsane++/include/api_handler/json_response.hpp)
 
@@ -131,8 +131,8 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
             libsane++/test/db_handler/unit-test_001_create_table_youtube_channels.cpp
             libsane++/test/entities/unit-test_001_create_youtube_channel_from_map.cpp
             libsane++/test/entities/unit-test_002_create_youtube_channel_from_json.cpp
-            libsane++/src/api_handler/entity_reponse.cpp
-            libsane++/include/api_handler/entity_reponse.hpp
+            libsane++/src/api_handler/entity_response.cpp
+            libsane++/include/api_handler/entity_response.hpp
             libsane++/src/api_handler/json_response.cpp
             libsane++/include/api_handler/json_response.hpp)
 
@@ -172,8 +172,8 @@ else()
             libsane++/test/db_handler/unit-test_002_add_channels.cpp
             libsane++/test/entities/unit-test_001_create_youtube_channel_from_map.cpp
             libsane++/test/entities/unit-test_002_create_youtube_channel_from_json.cpp
-            libsane++/src/api_handler/entity_reponse.cpp
-            libsane++/include/api_handler/entity_reponse.hpp
+            libsane++/src/api_handler/entity_response.cpp
+            libsane++/include/api_handler/entity_response.hpp
             libsane++/src/api_handler/json_response.cpp
             libsane++/include/api_handler/json_response.hpp)
 

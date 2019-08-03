@@ -88,13 +88,13 @@ namespace sane {
             // re-using handles is a key to good performance with libcurl
             curl_easy_cleanup(curl);
 
-            // Convert readBuffer to json
+            // Convert readBuffer to JSON
             jsonData = nlohmann::json::parse(readBuffer);
         }
         return jsonData;
     }
 
-    void sapiGetSubscriptions() {
+    void sapiGetSubscriptions(bool clearProblems) {
         std::list <std::shared_ptr<YoutubeChannel>> channels;
 
         std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
@@ -126,9 +126,11 @@ namespace sane {
 
         printReport(warningsCount, errorsCount);
 
-        // Clear the warnings and errors in the channel objects
-        for (auto & channel : channels) {
-            channel->clearErrorsAndWarnings();
+        if (clearProblems) {
+            // Clear the warnings and errors in the channel objects to save resources.
+            for (auto &channel : channels) {
+                channel->clearErrorsAndWarnings();
+            }
         }
 
         // Store to Database
@@ -138,7 +140,7 @@ namespace sane {
     }
 
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username) {
+    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username, bool clearProblems) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -161,15 +163,17 @@ namespace sane {
             // Print a report of any errors or warnings that might have occurred.
             printReport(channel);
 
-            // Clear the warnings and errors in the channel object
-            channel->clearErrorsAndWarnings();
+            if (clearProblems) {
+                // Clear the warnings and errors in the channel object to save resources.
+                channel->clearErrorsAndWarnings();
+            }
 
             // Return the new YoutubeChannel object.
             return channel;
         }
     }
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_username) {
+    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_username, bool clearProblems) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -192,8 +196,10 @@ namespace sane {
             // Print a report of any errors or warnings that might have occurred.
             printReport(channel);
 
-            // Clear the warnings and errors in the channel object
-            channel->clearErrorsAndWarnings();
+            if (clearProblems) {
+                // Clear the warnings and errors in the channel object to save resources.
+                channel->clearErrorsAndWarnings();
+            }
 
             // Return the new YoutubeChannel object.
             return channel;

@@ -69,15 +69,19 @@
 #define SAPI_YT_WATERMARKS_SET                  "http://127.0.0.1:5002/api/v1/youtube/watermarks/set"
 #define SAPI_YT_WATERMARKS_UNSET                "http://127.0.0.1:5002/api/v1/youtube/watermarks/unset"
 
+#define CLEAR_PROBLEMS true
+#define DONT_CLEAR_PROBLEMS false
 namespace sane {
     void printReport(int t_warningsCount, int t_errorsCount);
 
     void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
 
-    void sapiGetSubscriptions();
+    void sapiGetSubscriptions(bool clearProblems = CLEAR_PROBLEMS);
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username);
+    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username,
+                                                             bool clearProblems = CLEAR_PROBLEMS);
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_id);
+    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_id,
+                                                       bool clearProblems = CLEAR_PROBLEMS);
 } // namespace sane.
 #endif // Header guards.

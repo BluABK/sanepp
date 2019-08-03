@@ -38,7 +38,7 @@ namespace sane {
         printReport(warningsCount, errorsCount);
     }
 
-    void sapiGetSubscriptions(bool clearProblems) {
+    void sapiRemoteGetSubscriptions(bool clearProblems) {
         std::list <std::shared_ptr<YoutubeChannel>> channels;
 
         std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
@@ -84,7 +84,7 @@ namespace sane {
     }
 
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username, bool clearProblems) {
+    std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelByUsername(const std::string &t_username, bool clearProblems) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -116,7 +116,7 @@ namespace sane {
         }
     }
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_channelId, bool clearProblems) {
+    std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelById(const std::string &t_channelId, bool clearProblems) {
         std::cout << "Retrieving channel '" << t_channelId << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.

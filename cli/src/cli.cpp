@@ -91,7 +91,7 @@ namespace sane {
      * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
      */
     void CLI::getSubscriptionsFromApi() {
-        sapiGetSubscriptions();
+        sapiRemoteGetSubscriptions();
     }
 
     void CLI::printSubscriptionsFull() {
@@ -202,7 +202,7 @@ namespace sane {
     }
 
     void CLI::printChannelFromApiByName(const std::string &t_input) {
-        std::shared_ptr<YoutubeChannel> channel = sapiGetChannelByUsername(t_input);
+        std::shared_ptr<YoutubeChannel> channel = sapiRemoteGetChannelByUsername(t_input);
         channel->print(DEFAULT_INDENT);
     }
 
@@ -215,7 +215,7 @@ namespace sane {
     }
 
     void CLI::printChannelFromApiById(const std::string &t_input) {
-        std::shared_ptr<YoutubeChannel> channel = sapiGetChannelById(t_input);
+        std::shared_ptr<YoutubeChannel> channel = sapiRemoteGetChannelById(t_input);
         channel->print(DEFAULT_INDENT);
     }
 

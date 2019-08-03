@@ -13,12 +13,19 @@ namespace sane {
 
     void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
 
-    void sapiGetSubscriptions(bool clearProblems = CLEAR_PROBLEMS);
+    /** Remote: Requests to the YouTube API with some extra functionality added on. */
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username,
+    void sapiRemoteGetSubscriptions(bool clearProblems = CLEAR_PROBLEMS);
+
+    std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelByUsername(const std::string &t_username,
+                                                                   bool clearProblems = CLEAR_PROBLEMS);
+
+    std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelById(const std::string &t_channelId,
                                                              bool clearProblems = CLEAR_PROBLEMS);
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_channelId,
-                                                       bool clearProblems = CLEAR_PROBLEMS);
+    /** YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+     * "Youtube" prefix is implicit.
+     * */
+
 } // namespace sane.
 #endif //SANE_ENTITY_RESPONSE_HPP

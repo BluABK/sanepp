@@ -11,7 +11,7 @@
 #include <api_handler/json_response.hpp>
 
 namespace sane {
-    nlohmann::json sapiGetSubscriptionsJson() {
+    nlohmann::json sapiRemoteGetSubscriptionsJson() {
         std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -22,7 +22,7 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json sapiGetChannelByUsernameJson(const std::string &t_username) {
+    nlohmann::json sapiRemoteGetChannelByUsernameJson(const std::string &t_username) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -33,7 +33,7 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json sapiGetChannelByIdJson(const std::string &t_channelId) {
+    nlohmann::json sapiRemoteGetChannelByIdJson(const std::string &t_channelId) {
         std::cout << "Retrieving channel '" << t_channelId << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.

@@ -18,7 +18,7 @@ namespace sane {
     std::shared_ptr<YoutubeChannel> sapiGetChannelByUsername(const std::string &t_username,
                                                              bool clearProblems = CLEAR_PROBLEMS);
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_id,
+    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_channelId,
                                                        bool clearProblems = CLEAR_PROBLEMS);
 } // namespace sane.
 #endif //SANE_ENTITY_REPONSE_HPP

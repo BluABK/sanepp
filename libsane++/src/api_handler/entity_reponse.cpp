@@ -116,12 +116,12 @@ namespace sane {
         }
     }
 
-    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_username, bool clearProblems) {
-        std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
+    std::shared_ptr<YoutubeChannel> sapiGetChannelById(const std::string &t_channelId, bool clearProblems) {
+        std::cout << "Retrieving channel '" << t_channelId << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?id=" + t_username);
+        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?id=" + t_channelId);
         std::cout << "Got response from SaneAPI, processing channel..." << std::endl;
 
         // Create a new YoutubeChannel object for the requested channel.

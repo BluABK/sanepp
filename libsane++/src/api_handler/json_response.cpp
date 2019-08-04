@@ -8,10 +8,9 @@
 
 // Project specific libraries.
 #include <api_handler/api_handler.hpp>
-#include <api_handler/json_response.hpp>
 
 namespace sane {
-    nlohmann::json sapiRemoteGetSubscriptionsJson() {
+    nlohmann::json APIHandler::sapiRemoteGetSubscriptionsJson() {
         std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -22,7 +21,7 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json sapiRemoteGetChannelByUsernameJson(const std::string &t_username) {
+    nlohmann::json APIHandler::sapiRemoteGetChannelJsonByUsername(const std::string &t_username) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -33,7 +32,7 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json sapiRemoteGetChannelByIdJson(const std::string &t_channelId) {
+    nlohmann::json APIHandler::sapiRemoteGetChannelJsonById(const std::string &t_channelId) {
         std::cout << "Retrieving channel '" << t_channelId << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.

@@ -8,12 +8,11 @@
 #include <nlohmann/json.hpp>
 
 // Project specific libraries.
-#include <api_handler/entity_response.hpp>
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 
 namespace sane {
-    void printReport(int t_warningsCount, int t_errorsCount) {
+    void APIHandler::printReport(int t_warningsCount, int t_errorsCount) {
         std::string reportedProblems;
 
         if (t_warningsCount > 0 and t_errorsCount > 0) {
@@ -31,14 +30,14 @@ namespace sane {
         std::cout << "Processing completed" << reportedProblems << "." << std::endl;
     }
 
-    void printReport(std::shared_ptr<YoutubeChannel> &t_channel) {
+    void APIHandler::printReport(std::shared_ptr<YoutubeChannel> &t_channel) {
         int warningsCount = t_channel->getWarnings().size();
         int errorsCount = t_channel->getErrors().size();
 
         printReport(warningsCount, errorsCount);
     }
 
-    void sapiRemoteGetSubscriptions(bool clearProblems) {
+    void APIHandler::sapiRemoteGetSubscriptions(bool clearProblems) {
         std::list <std::shared_ptr<YoutubeChannel>> channels;
 
         std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
@@ -84,7 +83,7 @@ namespace sane {
     }
 
 
-    std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelByUsername(const std::string &t_username, bool clearProblems) {
+    std::shared_ptr<YoutubeChannel> APIHandler::sapiRemoteGetChannelByUsername(const std::string &t_username, bool clearProblems) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.
@@ -116,7 +115,7 @@ namespace sane {
         }
     }
 
-    std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelById(const std::string &t_channelId, bool clearProblems) {
+    std::shared_ptr<YoutubeChannel> APIHandler::sapiRemoteGetChannelById(const std::string &t_channelId, bool clearProblems) {
         std::cout << "Retrieving channel '" << t_channelId << "' from YouTube API..." << std::endl;
 
         // Parse the JSON response from the API.

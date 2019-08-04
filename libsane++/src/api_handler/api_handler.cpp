@@ -40,7 +40,7 @@ namespace sane {
      * @param url   A const string of the full API route URL.
      * @return      Response parsed as JSON or - if cURL failed - an explicitly expressed empty object.
      */
-    nlohmann::json getSapiResponse(const std::string& url) {
+    nlohmann::json APIHandler::getSapiResponse(const std::string& url) {
         CURL *curl;
         std::string readBuffer;
         nlohmann::json jsonData = nlohmann::json::object();

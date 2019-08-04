@@ -4,7 +4,14 @@
 #ifndef SANEPP_API_HANDLER_HEADER
 #define SANEPP_API_HANDLER_HEADER
 
+#include <list>
+
 #include <nlohmann/json.hpp>
+
+#include <entities/youtube_channel.hpp>
+
+#define CLEAR_PROBLEMS true
+#define DONT_CLEAR_PROBLEMS false
 
 /**
 SaneAPI (SAPI) REST API URLs, see SaneAPI documentation
@@ -70,6 +77,35 @@ for the meaning of Local, Remote and YouTube.
 #define SAPI_YT_WATERMARKS_UNSET                "http://127.0.0.1:5002/api/v1/youtube/watermarks/unset"
 
 namespace sane {
-    nlohmann::json getSapiResponse(const std::string& url);
+    class APIHandler {
+    public:
+        nlohmann::json getSapiResponse(const std::string& url);
+
+        void printReport(int t_warningsCount, int t_errorsCount);
+
+        void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
+
+        /** Remote: Requests to the YouTube API with some extra functionality added on. */
+
+        void sapiRemoteGetSubscriptions(bool clearProblems = CLEAR_PROBLEMS);
+
+        nlohmann::json sapiRemoteGetSubscriptionsJson();
+
+        std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelByUsername(const std::string &t_username,
+                                                                       bool clearProblems = CLEAR_PROBLEMS);
+
+        nlohmann::json sapiRemoteGetChannelJsonByUsername(const std::string &t_username);
+
+        std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelById(const std::string &t_channelId,
+                                                                 bool clearProblems = CLEAR_PROBLEMS);
+
+        nlohmann::json sapiRemoteGetChannelJsonById(const std::string &t_channelId);
+
+        /** YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+         * "Youtube" prefix is implicit.
+         * */
+
+    private:
+    };
 } // namespace sane.
 #endif // Header guards.

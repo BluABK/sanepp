@@ -1,10 +1,5 @@
 #include <iostream>
 #include <list>
-
-#include <entities/youtube_channel.hpp>
-#include <api_handler/api_handler.hpp>
-#include <api_handler/entity_response.hpp>
-#include <db_handler/db_youtube_channels.hpp>
 #include <sstream>
 
 #include "cli.hpp"
@@ -14,11 +9,15 @@ namespace sane {
         // Add commands to map of commands on the form of <name, description>.
         commands[EXIT] = "Exit program";
         commands[HELP] = "Print help";
-        commands[GET_SUBSCRIPTIONS_FROM_API] = "Retrieves a fresh list of subscriptions from the YouTube API.";
+        commands[GET_SUBSCRIPTIONS_FROM_API] = "Retrieves (and stores) a fresh list of subscriptions from the YouTube API.";
         commands[PRINT_SUBSCRIPTIONS_FULL] = "Lists all subscriptions separately as fully detailed blocks of text";
         commands[PRINT_SUBSCRIPTIONS_BASIC] = "Lists all subscriptions in a compact line-by-line form.";
-        commands[GET_CHANNEL_BY_USERNAME] = "Retrieve a channel by username.";
-        commands[GET_CHANNEL_BY_ID] = "Retrieve a channel by its ID.";
+        commands[PRINT_SUBSCRIPTIONS_JSON_FROM_API] = "Retrieves a fresh list of subscriptions from the YouTube API"
+                                                    "and prints it as JSON.";
+        commands[PRINT_CHANNEL_BY_USERNAME] = "Retrieve a channel by username.";
+        commands[PRINT_CHANNEL_BY_ID] = "Retrieve and print a channel entity by channel ID.";
+        commands[PRINT_CHANNEL_JSON_BY_USERNAME] = "Retrieve and print a channel JSON by username.";
+        commands[PRINT_CHANNEL_JSON_BY_ID] = "Retrieve and print a channel JSON by channel ID.";
 
         // Determine indentation spacing between command name and description.
         // Create a map iterator and point it to the beginning of the map.
@@ -35,6 +34,9 @@ namespace sane {
             // Increment iterator to point at next command entry.
             it++;
         }
+
+        // Instantiate the API Handler.
+        api = std::make_shared<sane::APIHandler>();
     }
 
     void CLI::help() {
@@ -76,34 +78,22 @@ namespace sane {
             exit();
         } else if (command == GET_SUBSCRIPTIONS_FROM_API) {
             getSubscriptionsFromApi();
+        } else if (command == PRINT_SUBSCRIPTIONS_JSON_FROM_API){
+            printSubscriptionsJsonFromApi();
         } else if (command == PRINT_SUBSCRIPTIONS_FULL) {
             printSubscriptionsFull();
         } else if (command == PRINT_SUBSCRIPTIONS_BASIC) {
             printSubscriptionsBasic();
-        } else if (command == GET_CHANNEL_BY_USERNAME) {
+        } else if (command == PRINT_CHANNEL_BY_USERNAME) {
             printChannelFromApiByName(args);
-        } else if (command == GET_CHANNEL_BY_ID) {
+        } else if (command == PRINT_CHANNEL_JSON_BY_USERNAME) {
+            printChannelJsonFromApiByName(args);
+        } else if (command == PRINT_CHANNEL_BY_ID) {
             printChannelFromApiById(args);
+        } else if (command == PRINT_CHANNEL_JSON_BY_ID) {
+            printChannelJsonFromApiById(args);
         }
 
-    }
-    /**
-     * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
-     */
-    void CLI::getSubscriptionsFromApi() {
-        sapiRemoteGetSubscriptions();
-    }
-
-    void CLI::printSubscriptionsFull() {
-        // Fetch list of channels
-        std::list <std::shared_ptr<YoutubeChannel>> channels;
-        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
-        int counter = 1;  // Humanized counting.
-        for (auto & channel : channels) {
-            std::cout << "Sub#" << counter << ":" << std::endl;
-            channel->print(DEFAULT_INDENT);
-            counter++;
-        }
     }
 
     const std::string CLI::padStringValue(const std::string &string_t,
@@ -119,40 +109,6 @@ namespace sane {
             return string_t;
         }
         return paddedString;
-    }
-
-    void CLI::printSubscriptionsBasic() {
-        // Fetch list of channels
-        std::list <std::shared_ptr<YoutubeChannel>> channels;
-        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
-        // Spacing between each column item.
-        const std::string columnSpacing(4, ' ');
-        // Pad subscription counter based on the amount of digits in the sum total.
-        const std::size_t maxCounterDigitAmount = std::to_string(channels.size()).length();
-        // Max length of IDs, used to calculate padding.
-        const std::size_t idItemMaxLength = 24;
-        // Humanized counting.
-        int counter = 1;
-
-        // Print a table heading/legend.
-        std::cout << padStringValue("#", maxCounterDigitAmount) << columnSpacing <<
-        padStringValue("Channel ID", idItemMaxLength) << columnSpacing <<
-        padStringValue("Uploads playlist ID", idItemMaxLength) <<
-        columnSpacing << "Channel title" <<  std::endl;
-
-        for (auto & channel : channels) {
-            // Pad item columns with spaces to ensure a uniform indentation.
-            const std::string paddedChannelId = padStringValue(channel->getId(), idItemMaxLength);
-            const std::string paddedUploadsPlaylistId = padStringValue(
-                    channel->getUploadsPlaylist(), idItemMaxLength);
-            const std::string paddedNumbering = padStringValue(std::to_string(counter), maxCounterDigitAmount);
-
-            std::cout << paddedNumbering << columnSpacing <<
-            paddedChannelId << columnSpacing << paddedUploadsPlaylistId << columnSpacing << channel->getTitle()
-            << std::endl;
-
-            counter++;
-        }
     }
 
     /**
@@ -173,7 +129,6 @@ namespace sane {
 
         return tokens;
     }
-
 
     void CLI::interactive() {
         std::string input;
@@ -198,32 +153,6 @@ namespace sane {
                 return;
             }
             std::cout << COMMAND_PROMPT_STYLE;
-        }
-    }
-
-    void CLI::printChannelFromApiByName(const std::string &t_input) {
-        std::shared_ptr<YoutubeChannel> channel = sapiRemoteGetChannelByUsername(t_input);
-        channel->print(DEFAULT_INDENT);
-    }
-
-    void CLI::printChannelFromApiByName(const std::vector<std::string> &t_input) {
-        if (t_input.empty()) {
-            std::cout << "Error: no arguments given, required: 1." << std::endl;
-        } else {
-            printChannelFromApiByName(t_input.front());
-        }
-    }
-
-    void CLI::printChannelFromApiById(const std::string &t_input) {
-        std::shared_ptr<YoutubeChannel> channel = sapiRemoteGetChannelById(t_input);
-        channel->print(DEFAULT_INDENT);
-    }
-
-    void CLI::printChannelFromApiById(const std::vector<std::string> &t_input) {
-        if (t_input.empty()) {
-            std::cout << "Error: no arguments given, required: 1." << std::endl;
-        } else {
-            printChannelFromApiById(t_input.front());
         }
     }
 } // namespace sane

@@ -5,59 +5,70 @@
 #include "cli.hpp"
 
 namespace sane {
-    CLI::CLI() {
-        // Add commands to map of commands on the form of <name, description>.
-        commands[EXIT] = "Exit program";
-        commands[HELP] = "Print help";
-        commands[GET_SUBSCRIPTIONS_FROM_API] = "Retrieves (and stores) a fresh list of subscriptions from the YouTube API.";
-        commands[PRINT_SUBSCRIPTIONS_FULL] = "Lists all subscriptions separately as fully detailed blocks of text";
-        commands[PRINT_SUBSCRIPTIONS_BASIC] = "Lists all subscriptions in a compact line-by-line form.";
-        commands[PRINT_SUBSCRIPTIONS_JSON_FROM_API] = "Retrieves a fresh list of subscriptions from the YouTube API"
-                                                    "and prints it as JSON.";
-        commands[PRINT_CHANNEL_BY_USERNAME] = "Retrieve a channel by username.";
-        commands[PRINT_CHANNEL_BY_ID] = "Retrieve and print a channel entity by channel ID.";
-        commands[PRINT_CHANNEL_JSON_BY_USERNAME] = "Retrieve and print a channel JSON by username.";
-        commands[PRINT_CHANNEL_JSON_BY_ID] = "Retrieve and print a channel JSON by channel ID.";
+//    template<typename Function>
+    void CLI::addCommand(const std::string &t_name, const std::string &t_description, const int &t_category) {
+        // Define a command type struct.
+        command_t command;
+
+        // Assign values and its function.
+        command.name = t_name;
+        command.description = t_description;
+        command.category = t_category;
+
+        // Add category to list of categories and clear non-unique elements.
+        m_commandCategories.push_back(t_category);
+        m_commandCategories.unique();
+
+//        if (functionHasArgs) {
+//            command.functionWithArgs = t_function;
+//        } else {
+//            command.function = t_function;
+//        }
 
         // Determine indentation spacing between command name and description.
-        // Create a map iterator and point it to the beginning of the map.
-        auto it = commands.begin();
-
-        // Iterate the map.
-        longestLine = 0;
-        while(it != commands.end())
-        {
-            if (it->first.length() > longestLine) {
-                longestLine = it->first.length();
-            }
-
-            // Increment iterator to point at next command entry.
-            it++;
+        if (t_name.length() > longestLine) {
+            longestLine = t_name.length();
         }
+
+        // Add the command to the commands map.
+        m_commands[t_name] = command;
+    }
+
+    CLI::CLI() {
+        // Add commands to map of commands on the form of: name, description, category, function ptr.
+        addCommand(EXIT, "Exit program", CORE_CATEGORY);
+        addCommand(HELP, "Print help", CORE_CATEGORY);
+        addCommand(GET_SUBSCRIPTIONS_FROM_API, "Retrieves (and stores) a fresh list of subscriptions from "
+                                               "the YouTube API.", DB_CATEGORY);
+        addCommand(PRINT_SUBSCRIPTIONS_FULL, "Lists all subscriptions separately as fully detailed blocks of text",
+                   ENTITY_CATEGORY);
+        addCommand(PRINT_SUBSCRIPTIONS_BASIC, "Lists all subscriptions in a compact line-by-line form.",
+                   ENTITY_CATEGORY);
+        addCommand(PRINT_SUBSCRIPTIONS_JSON_FROM_API, "Retrieves a fresh list of subscriptions from the YouTube API"
+                                                      "and prints it as JSON.", JSON_CATEGORY);
+        addCommand(PRINT_CHANNEL_BY_USERNAME, "Retrieve a channel by username.", ENTITY_CATEGORY);
+        addCommand(PRINT_CHANNEL_BY_ID, "Retrieve and print a channel entity by channel ID.", ENTITY_CATEGORY);
+        addCommand(PRINT_CHANNEL_JSON_BY_USERNAME, "Retrieve and print a channel JSON by username.", JSON_CATEGORY);
+        addCommand(PRINT_CHANNEL_JSON_BY_ID, "Retrieve and print a channel JSON by channel ID.", JSON_CATEGORY);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
     }
 
     void CLI::help() {
-        // Create a map iterator and point it to the beginning of the map.
-        auto it = commands.begin();
-
         // Subtract 7 for the length of the string "Command", and then also remember to add the spacing length.
         std::cout << "Command" << std::string(longestLine - 7 + spacingLength, ' ') << "Description" << std::endl;
 
-        // Iterate the map.
-        while(it != commands.end())
-        {
+        // Iterate the map of commands.
+        for (auto const& commandEntry : m_commands) {
             // Set the spacing variable (varies for each item).
-            std::string commandSpacing(longestLine - it->first.length() + spacingLength, ' ');
+            std::string commandSpacing(longestLine - commandEntry.second.name.length() + spacingLength, ' ');
 
             // Print list of commands on the form of <name, description>.
-            std::cout << it->first << commandSpacing << it->second << std::endl;
+            std::cout << commandEntry.first << commandSpacing << commandEntry.second.description << std::endl;
 
-            // Increment iterator to point at next command entry.
-            it++;
         }
+
         std::cout << std::endl;
     }
 
@@ -143,7 +154,7 @@ namespace sane {
             std::vector<std::string> tokenizedInput = tokenize(input, ' ');
 
             // Check if input is a valid command.
-            if ( commands.find(tokenizedInput.front()) == commands.end() ) {
+            if ( m_commands.find(tokenizedInput.front()) == m_commands.end() ) {
                 std::cout << "Error: Invalid command! (see 'help' for available commands)" << std::endl;
             } else{
                 executeCommand(tokenizedInput);

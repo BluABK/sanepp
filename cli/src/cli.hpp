@@ -10,12 +10,31 @@
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 
-#define DEFAULT_INDENT 4
+#define DEFAULT_INDENT  4
+
+// Command categories
+#define UNCATEGORISED   -1
+#define CORE_CATEGORY    0
+#define ENTITY_CATEGORY  1
+#define JSON_CATEGORY    2
+#define DB_CATEGORY      3
 
 namespace sane {
+    struct command_t {
+        std::string name;
+        std::string description;
+        int category;
+//        void (*function)();
+//        void (*functionWithArgs)(std::string);
+    };
+
     class CLI {
     public:
         explicit CLI();
+
+//        template<typename Function>
+        void addCommand(const std::string &t_name, const std::string &t_description,
+                const int &t_category = UNCATEGORISED);
         
         void interactive();
 
@@ -31,9 +50,9 @@ namespace sane {
 
         void printSubscriptionsJsonFromApi(int jsonIndent = DEFAULT_INDENT);
 
-        static void printSubscriptionsFull();
+        void printSubscriptionsFull();
 
-        static void printSubscriptionsBasic();
+        void printSubscriptionsBasic();
 
         void printChannelFromApiByName(const std::string &t_input);
 
@@ -74,12 +93,13 @@ namespace sane {
         const std::string PRINT_CHANNEL_JSON_BY_USERNAME = "get-channel-json-by-name";
         const std::string PRINT_CHANNEL_JSON_BY_ID = "get-channel-json-by-id";
 
-        // list of commands (to be populated)
-        std::map<std::string, std::string> commands;
+        // Map of commands (to be populated)
+        std::map<std::string, command_t> m_commands;
+        std::list<int> m_commandCategories;
 
         // Semantics
         const std::string COMMAND_PROMPT_STYLE = ">: ";
-        size_t longestLine;
+        size_t longestLine = 0;
         int spacingLength = 4;
 
         std::shared_ptr<sane::APIHandler> api;

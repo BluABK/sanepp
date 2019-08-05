@@ -3,7 +3,7 @@
 namespace sane {
     void CLI::printSubscriptionsJsonFromApi(int jsonIndent) {
         nlohmann::json subsJson = api->sapiRemoteGetSubscriptionsJson();
-        subsJson.dump(jsonIndent);
+        std::cout << subsJson.dump(jsonIndent) << std::endl;
     }
 
     void CLI::printChannelJsonFromApiByName(const std::string &t_input, int jsonIndent) {

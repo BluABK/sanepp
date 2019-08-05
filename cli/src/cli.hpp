@@ -82,7 +82,7 @@ namespace sane {
         const std::string PRINT_SUBSCRIPTIONS_FULL = PRINT_SUBSCRIPTIONS_PREFIX + "full";
         const std::string PRINT_SUBSCRIPTIONS_BASIC = PRINT_SUBSCRIPTIONS_PREFIX + "basic";
         // Subscriptions -- JSON
-        const std::string PRINT_SUBSCRIPTIONS_JSON_FROM_API = "get-subscriptions-json";
+        const std::string PRINT_SUBSCRIPTIONS_JSON_FROM_API = "print-subscriptions-json";
         // Channel -- Entity
         const std::string PRINT_CHANNEL_BY_USERNAME = "get-channel-by-name";
         const std::string PRINT_CHANNEL_BY_ID = "get-channel-by-id";

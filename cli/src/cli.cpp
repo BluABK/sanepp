@@ -19,12 +19,6 @@ namespace sane {
         m_commandCategories.push_back(t_category);
         m_commandCategories.unique();
 
-//        if (functionHasArgs) {
-//            command.functionWithArgs = t_function;
-//        } else {
-//            command.function = t_function;
-//        }
-
         // Determine indentation spacing between command name and description.
         if (t_name.length() > longestLine) {
             longestLine = t_name.length();
@@ -114,9 +108,7 @@ namespace sane {
         if (string_t.length() <= maxLength) {
             paddedString = string_t + std::string(maxLength - string_t.length(), ' ');
         } else {
-            // If the string is longer than pad length, give a warning and return the original string.
-//            std::cerr << "padStringValue WARNING: Given string '" << string_t <<
-//            "' is longer than specified max length: " << maxLength << "!" << std::endl;
+            // If the string is longer than pad length, return the original string.
             return string_t;
         }
         return paddedString;

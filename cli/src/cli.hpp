@@ -24,15 +24,12 @@ namespace sane {
         std::string name;
         std::string description;
         int category;
-//        void (*function)();
-//        void (*functionWithArgs)(std::string);
     };
 
     class CLI {
     public:
         explicit CLI();
 
-//        template<typename Function>
         void addCommand(const std::string &t_name, const std::string &t_description,
                 const int &t_category = UNCATEGORISED);
         

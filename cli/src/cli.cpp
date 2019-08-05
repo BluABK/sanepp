@@ -5,7 +5,6 @@
 #include "cli.hpp"
 
 namespace sane {
-//    template<typename Function>
     void CLI::addCommand(const std::string &t_name, const std::string &t_description, const int &t_category) {
         // Define a command type struct.
         command_t command;

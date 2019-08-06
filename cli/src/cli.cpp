@@ -43,6 +43,8 @@ namespace sane {
         addCommand(PRINT_CHANNEL_BY_ID, "Retrieve and print a channel entity by channel ID.", ENTITY_CATEGORY);
         addCommand(PRINT_CHANNEL_JSON_BY_USERNAME, "Retrieve and print a channel JSON by username.", JSON_CATEGORY);
         addCommand(PRINT_CHANNEL_JSON_BY_ID, "Retrieve and print a channel JSON by channel ID.", JSON_CATEGORY);
+        addCommand(LIST_ACTIVITIES_JSON, "Returns a list of channel activity events that match the request criteria.",
+                JSON_CATEGORY);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
@@ -102,6 +104,8 @@ namespace sane {
             printChannelFromApiById(args);
         } else if (command == PRINT_CHANNEL_JSON_BY_ID) {
             printChannelJsonFromApiById(args);
+        } else if (command == LIST_ACTIVITIES_JSON) {
+            listActivitiesJsonFromApi(args);
         }
 
     }

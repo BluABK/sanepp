@@ -32,6 +32,8 @@ namespace sane {
 
         static std::vector<std::string> tokenize(const std::string &t_input, char t_delim = ' ');
 
+        static std::map<std::string, std::string> stringToMap(const std::string &t_string);
+
         void addCommand(const std::string &t_name, const std::string &t_description,
                 const int &t_category = UNCATEGORISED);
         
@@ -70,6 +72,9 @@ namespace sane {
 
         void printChannelJsonFromApiById(const std::vector<std::string> &t_input,
                                                 int jsonIndent = DEFAULT_INDENT);
+
+        void listActivitiesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
     private:
         // Internal
         bool manuallyExit = false;
@@ -92,6 +97,8 @@ namespace sane {
         // Channels -- JSON
         const std::string PRINT_CHANNEL_JSON_BY_USERNAME = "get-channel-json-by-name";
         const std::string PRINT_CHANNEL_JSON_BY_ID = "get-channel-json-by-id";
+        // Activities -- JSON
+        const std::string LIST_ACTIVITIES_JSON = "list-activities-json";
 
         // Map of commands (to be populated)
         std::map<std::string, command_t> m_commands;

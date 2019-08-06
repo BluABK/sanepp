@@ -117,10 +117,8 @@ namespace sane {
         varMaps.push_back(t_optParams);
         compiledVariables += compileUrlVariables(varMaps, IS_NOT_BEGINNING);
 
-        std::cout << SAPI_YT_ACTIVITIES_LIST + compiledVariables << std::endl;
-
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(SAPI_YT_ACTIVITIES_LIST);
+        nlohmann::json jsonData = getSapiResponse(SAPI_YT_ACTIVITIES_LIST + compiledVariables);
 
         return jsonData;
     }

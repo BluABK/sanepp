@@ -72,6 +72,7 @@ namespace sane {
         std::string part;
         std::map<std::string,std::string> filters;
         std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
 
         if (t_input.empty() or t_input.size() < 2) {
             std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
@@ -81,13 +82,16 @@ namespace sane {
             if (t_input.size() == 2) {
                 filters = stringToMap(t_input.at(1));
 
-                api->sapiGetActivitiesList(part, filters);
+                jsonData = api->sapiGetActivitiesList(part, filters);
             } else if (t_input.size() == 3) {
                 filters = stringToMap(t_input.at(1));
                 optParams = stringToMap(t_input.at(2));
 
-                api->sapiGetActivitiesList(part, filters, optParams);
+                jsonData = api->sapiGetActivitiesList(part, filters, optParams);
             }
         }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
     }
 } // namespace sane

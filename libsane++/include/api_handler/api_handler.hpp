@@ -12,6 +12,7 @@
 
 #define CLEAR_PROBLEMS true
 #define DONT_CLEAR_PROBLEMS false
+#define IS_NOT_BEGINNING false
 
 /**
 SaneAPI (SAPI) REST API URLs, see SaneAPI documentation
@@ -85,6 +86,11 @@ namespace sane {
 
         void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
 
+        static std::string compileUrlVariables(const std::list<std::map<std::string, std::string>> &t_variableMaps,
+                bool t_isBeginning = true);
+
+        static std::string compileUrlVariables(const std::list<std::string> &t_variableValues);
+
         /** Remote: Requests to the YouTube API with some extra functionality added on. */
 
         void sapiRemoteGetSubscriptions(bool clearProblems = CLEAR_PROBLEMS);
@@ -103,7 +109,10 @@ namespace sane {
 
         /** YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
          * "Youtube" prefix is implicit.
-         * */
+         */
+        nlohmann::json sapiGetActivitiesList(const std::string &t_part,
+                const std::map<std::string,std::string> & t_filters,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
     private:
     };

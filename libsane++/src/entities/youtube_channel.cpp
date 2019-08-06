@@ -81,10 +81,6 @@ namespace sane {
         }
     }
 
-    void YoutubeChannel::addFromPureStringList(const std::list<std::string> &t_values) {  // FIXME: IMPLEMENT
-        std::cerr << "YoutubeChannel::addFromPureStringList NOT IMPLEMENTED!" << std::endl;
-    }
-
     void YoutubeChannel::addFromValues(const char* t_id, const char* t_uploadsPlaylist,
                                        const char* t_favouritesPlaylist, const char* t_likesPlaylist,
                                        const char* t_title, const char* t_description,

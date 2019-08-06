@@ -1,57 +1,73 @@
 #include <iostream>
 #include <list>
-
-#include <entities/youtube_channel.hpp>
-#include <api_handler/api_handler.hpp>
-#include <db_handler/db_youtube_channels.hpp>
+#include <sstream>
 
 #include "cli.hpp"
 
 namespace sane {
-    CLI::CLI() {
-        // Add commands to map of commands on the form of <name, description>.
-        commands[EXIT] = "Exit program";
-        commands[HELP] = "Print help";
-        commands[GET_SUBSCRIPTIONS_FROM_API] = "Retrieves a fresh list of subscriptions from the YouTube API.";
-        commands[PRINT_SUBSCRIPTIONS_FULL] = "Lists all subscriptions separately as fully detailed blocks of text";
-        commands[PRINT_SUBSCRIPTIONS_BASIC] = "Lists all subscriptions in a compact line-by-line form.";
+    void CLI::addCommand(const std::string &t_name, const std::string &t_description, const int &t_category) {
+        // Define a command type struct.
+        command_t command;
+
+        // Assign values and its function.
+        command.name = t_name;
+        command.description = t_description;
+        command.category = t_category;
+
+        // Add category to list of categories and clear non-unique elements.
+        m_commandCategories.push_back(t_category);
+        m_commandCategories.unique();
 
         // Determine indentation spacing between command name and description.
-        // Create a map iterator and point it to the beginning of the map.
-        auto it = commands.begin();
-
-        // Iterate the map.
-        longestLine = 0;
-        while(it != commands.end())
-        {
-            if (it->first.length() > longestLine) {
-                longestLine = it->first.length();
-            }
-
-            // Increment iterator to point at next command entry.
-            it++;
+        if (t_name.length() > longestLine) {
+            longestLine = t_name.length();
         }
+
+        // Add the command to the commands map.
+        m_commands[t_name] = command;
+    }
+
+    CLI::CLI() {
+        // Add commands to map of commands on the form of: name, description, category, function ptr.
+        addCommand(EXIT, "Exit program", CORE_CATEGORY);
+        addCommand(HELP, "Print help", CORE_CATEGORY);
+        addCommand(GET_SUBSCRIPTIONS_FROM_API, "Retrieves (and stores) a fresh list of subscriptions from "
+                                               "the YouTube API.", DB_CATEGORY);
+        addCommand(PRINT_SUBSCRIPTIONS_FULL, "Lists all subscriptions separately as fully detailed blocks of text",
+                   ENTITY_CATEGORY);
+        addCommand(PRINT_SUBSCRIPTIONS_BASIC, "Lists all subscriptions in a compact line-by-line form.",
+                   ENTITY_CATEGORY);
+        addCommand(PRINT_SUBSCRIPTIONS_JSON_FROM_API, "Retrieves a fresh list of subscriptions from the YouTube API"
+                                                      "and prints it as JSON.", JSON_CATEGORY);
+        addCommand(PRINT_CHANNEL_BY_USERNAME, "Retrieve a channel by username.", ENTITY_CATEGORY);
+        addCommand(PRINT_CHANNEL_BY_ID, "Retrieve and print a channel entity by channel ID.", ENTITY_CATEGORY);
+        addCommand(PRINT_CHANNEL_JSON_BY_USERNAME, "Retrieve and print a channel JSON by username.", JSON_CATEGORY);
+        addCommand(PRINT_CHANNEL_JSON_BY_ID, "Retrieve and print a channel JSON by channel ID.", JSON_CATEGORY);
+
+        // Instantiate the API Handler.
+        api = std::make_shared<sane::APIHandler>();
     }
 
     void CLI::help() {
-        // Create a map iterator and point it to the beginning of the map.
-        auto it = commands.begin();
-
+        if (!isInteractive) {
+            std::cout << "Sane++ (rudimentary) Command Line Interface." << std::endl;
+            std::cout << std::endl;
+            std::cout << "Run without arguments to enter interactive mode." << std::endl;
+            std::cout << std::endl;
+        }
         // Subtract 7 for the length of the string "Command", and then also remember to add the spacing length.
         std::cout << "Command" << std::string(longestLine - 7 + spacingLength, ' ') << "Description" << std::endl;
 
-        // Iterate the map.
-        while(it != commands.end())
-        {
+        // Iterate the map of commands.
+        for (auto const& commandEntry : m_commands) {
             // Set the spacing variable (varies for each item).
-            std::string commandSpacing(longestLine - it->first.length() + spacingLength, ' ');
+            std::string commandSpacing(longestLine - commandEntry.second.name.length() + spacingLength, ' ');
 
             // Print list of commands on the form of <name, description>.
-            std::cout << it->first << commandSpacing << it->second << std::endl;
+            std::cout << commandEntry.first << commandSpacing << commandEntry.second.description << std::endl;
 
-            // Increment iterator to point at next command entry.
-            it++;
         }
+
         std::cout << std::endl;
     }
 
@@ -59,37 +75,35 @@ namespace sane {
         manuallyExit = true;
     }
 
-    void CLI::executeCommand(const std::string &command) {
+    void CLI::executeCommand(const std::vector<std::string> &t_tokenizedInput) {
+        // First item is the command itself
+        const std::string command = t_tokenizedInput.front();
+
+        // Put any remaining args into its own vector.
+        const std::vector<std::string> args(t_tokenizedInput.begin() + 1, t_tokenizedInput.end());
+
         if (command == HELP) {
             help();
         } else if (command == EXIT) {
             exit();
         } else if (command == GET_SUBSCRIPTIONS_FROM_API) {
             getSubscriptionsFromApi();
+        } else if (command == PRINT_SUBSCRIPTIONS_JSON_FROM_API){
+            printSubscriptionsJsonFromApi();
         } else if (command == PRINT_SUBSCRIPTIONS_FULL) {
             printSubscriptionsFull();
         } else if (command == PRINT_SUBSCRIPTIONS_BASIC) {
             printSubscriptionsBasic();
+        } else if (command == PRINT_CHANNEL_BY_USERNAME) {
+            printChannelFromApiByName(args);
+        } else if (command == PRINT_CHANNEL_JSON_BY_USERNAME) {
+            printChannelJsonFromApiByName(args);
+        } else if (command == PRINT_CHANNEL_BY_ID) {
+            printChannelFromApiById(args);
+        } else if (command == PRINT_CHANNEL_JSON_BY_ID) {
+            printChannelJsonFromApiById(args);
         }
 
-    }
-    /**
-     * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
-     */
-    void CLI::getSubscriptionsFromApi() {
-        sapiGetSubscriptions();
-    }
-
-    void CLI::printSubscriptionsFull() {
-        // Fetch list of channels
-        std::list <std::shared_ptr<YoutubeChannel>> channels;
-        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
-        int counter = 1;  // Humanized counting.
-        for (auto & channel : channels) {
-            std::cout << "Sub#" << counter << ":" << std::endl;
-            channel->print(4);
-            counter++;
-        }
     }
 
     const std::string CLI::padStringValue(const std::string &string_t,
@@ -99,49 +113,33 @@ namespace sane {
         if (string_t.length() <= maxLength) {
             paddedString = string_t + std::string(maxLength - string_t.length(), ' ');
         } else {
-            // If the string is longer than pad length, give a warning and return the original string.
-//            std::cerr << "padStringValue WARNING: Given string '" << string_t <<
-//            "' is longer than specified max length: " << maxLength << "!" << std::endl;
+            // If the string is longer than pad length, return the original string.
             return string_t;
         }
         return paddedString;
     }
 
-    void CLI::printSubscriptionsBasic() {
-        // Fetch list of channels
-        std::list <std::shared_ptr<YoutubeChannel>> channels;
-        channels = sane::getChannelsFromDB(NO_ERROR_LOG);
-        // Spacing between each column item.
-        const std::string columnSpacing(4, ' ');
-        // Pad subscription counter based on the amount of digits in the sum total.
-        const std::size_t maxCounterDigitAmount = std::to_string(channels.size()).length();
-        // Max length of IDs, used to calculate padding.
-        const std::size_t idItemMaxLength = 24;
-        // Humanized counting.
-        int counter = 1;
+    /**
+     * Tokenize a std::string with a given delimiter char.
+     *
+     * @param t_input   String to tokenize.
+     * @param t_delim   Delimiter char.
+     * @return          std::vector<std::string> tokens.
+     */
+    std::vector<std::string> CLI::tokenize(const std::string &t_input, char t_delim)  {
+        std::vector<std::string> tokens;
+        std::stringstream   mySstream(t_input);
+        std::string         temp;
 
-        // Print a table heading/legend.
-        std::cout << padStringValue("#", maxCounterDigitAmount) << columnSpacing <<
-        padStringValue("Channel ID", idItemMaxLength) << columnSpacing <<
-        padStringValue("Uploads playlist ID", idItemMaxLength) <<
-        columnSpacing << "Channel title" <<  std::endl;
-
-        for (auto & channel : channels) {
-            // Pad item columns with spaces to ensure a uniform indentation.
-            const std::string paddedChannelId = padStringValue(channel->getId(), idItemMaxLength);
-            const std::string paddedUploadsPlaylistId = padStringValue(
-                    channel->getUploadsPlaylist(), idItemMaxLength);
-            const std::string paddedNumbering = padStringValue(std::to_string(counter), maxCounterDigitAmount);
-
-            std::cout << paddedNumbering << columnSpacing <<
-            paddedChannelId << columnSpacing << paddedUploadsPlaylistId << columnSpacing << channel->getTitle()
-            << std::endl;
-
-            counter++;
+        while( getline( mySstream, temp, t_delim ) ) {
+            tokens.push_back( temp );
         }
+
+        return tokens;
     }
 
     void CLI::interactive() {
+        isInteractive = true;
         std::string input;
         std::cout << COMMAND_PROMPT_STYLE;
         while (std::getline(std::cin, input)) { // quit the program with ctrl-d
@@ -149,11 +147,15 @@ namespace sane {
             if ( input.empty()) {
                 continue;
             }
+
+            // Tokenize input (split on whitespace).
+            std::vector<std::string> tokenizedInput = tokenize(input, ' ');
+
             // Check if input is a valid command.
-            if ( commands.find(input) == commands.end() ) {
+            if ( m_commands.find(tokenizedInput.front()) == m_commands.end() ) {
                 std::cout << "Error: Invalid command! (see 'help' for available commands)" << std::endl;
             } else{
-                executeCommand(input);
+                executeCommand(tokenizedInput);
             }
             // Check for manual exit here instead of at start due to the boolean being set from the above code,
             if (manuallyExit) {

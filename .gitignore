@@ -20,3 +20,5 @@ qrc_src*
 *backdoor*.py
 .gitconfig
 youtube_api_samples
+log_print.cpp
+log_print.hpp

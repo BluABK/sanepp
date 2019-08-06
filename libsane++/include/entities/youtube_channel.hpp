@@ -30,11 +30,6 @@ namespace sane {
             addFromJson(t_data);
         }
 
-        // Create an instance and feed it values through a list of strings.
-        explicit YoutubeChannel(std::list<std::string> &t_values) {
-            addFromPureStringList(t_values);
-        }
-
         // Create an instance and feed it values through a map of strings.
         explicit YoutubeChannel(std::map<std::string, std::string> &t_map) {
             addFromMap(t_map);

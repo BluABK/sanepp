@@ -6,21 +6,28 @@
 
 #include <list>
 
+#include <nlohmann/json.hpp>
+
 #include <entities/youtube_channel.hpp>
 
-// SaneAPI (SAPI) REST API URLs, see SaneAPI documentation
-// for the meaning of Local, Remote and YouTube.
+#define CLEAR_PROBLEMS true
+#define DONT_CLEAR_PROBLEMS false
 
-// Local: SAPI Internal or local operations.
+/**
+SaneAPI (SAPI) REST API URLs, see SaneAPI documentation
+for the meaning of Local, Remote and YouTube.
+*/
+
+/** Local: SAPI Internal or local operations. */
 #define SAPI_LOCAL_ADD_SUBSCRIPTION             "http://127.0.0.1:5002/api/v1/local/add_subscription"
 
-// Remote: Requests to the YouTube API with some extra functionality added on.
+/** Remote: Requests to the YouTube API with some extra functionality added on. */
 #define SAPI_REMOTE_GET_SUBSCRIPTIONS           "http://127.0.0.1:5002/api/v1/remote/subscriptions"
 // TODO: Port SAPI_REMOTE_GET_SUBFEED functionality to native C++
 #define SAPI_REMOTE_GET_SUBFEED                 "http://127.0.0.1:5002/api/v1/remote/subfeed"
 #define SAPI_REMOTE_GET_CHANNEL                 "http://127.0.0.1:5002/api/v1/remote/channel"
 
-// YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+/** YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/ */
 #define SAPI_YT_ACTIVITIES_LIST                 "http://127.0.0.1:5002/api/v1/youtube/activities/list"
 #define SAPI_YT_ACTIVITIES_INSERT               "http://127.0.0.1:5002/api/v1/youtube/activities/insert"
 #define SAPI_YT_CAPTIONS_LIST                   "http://127.0.0.1:5002/api/v1/youtube/captions/list"
@@ -70,7 +77,35 @@
 #define SAPI_YT_WATERMARKS_UNSET                "http://127.0.0.1:5002/api/v1/youtube/watermarks/unset"
 
 namespace sane {
-    void sapiGetSubscriptions();
+    class APIHandler {
+    public:
+        nlohmann::json getSapiResponse(const std::string& url);
 
+        void printReport(int t_warningsCount, int t_errorsCount);
+
+        void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
+
+        /** Remote: Requests to the YouTube API with some extra functionality added on. */
+
+        void sapiRemoteGetSubscriptions(bool clearProblems = CLEAR_PROBLEMS);
+
+        nlohmann::json sapiRemoteGetSubscriptionsJson();
+
+        std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelByUsername(const std::string &t_username,
+                                                                       bool clearProblems = CLEAR_PROBLEMS);
+
+        nlohmann::json sapiRemoteGetChannelJsonByUsername(const std::string &t_username);
+
+        std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelById(const std::string &t_channelId,
+                                                                 bool clearProblems = CLEAR_PROBLEMS);
+
+        nlohmann::json sapiRemoteGetChannelJsonById(const std::string &t_channelId);
+
+        /** YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
+         * "Youtube" prefix is implicit.
+         * */
+
+    private:
+    };
 } // namespace sane.
 #endif // Header guards.

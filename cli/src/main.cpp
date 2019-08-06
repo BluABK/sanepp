@@ -11,12 +11,20 @@
 #include <db_handler/db_handler.hpp>
 #include "cli.hpp"
 
-int main() {
+int main(int argc, char *argv[]) {
     // Instantiate the CLI class.
     std::shared_ptr<sane::CLI> cli = std::make_shared<sane::CLI>();
-    
-    // Make the CLI interactive
-    cli->interactive();
 
+    // If arguments were passed, execute them. If not, then run interactively.
+    if (argc > 1 and argv != nullptr) {
+        // Handle passed arguments.
+        std::vector<std::string> commandWithArgs;
+        commandWithArgs.assign(argv + 1, argv + argc);
+        
+        cli->executeCommand(commandWithArgs);
+    } else {
+        // Make the CLI interactive
+        cli->interactive();
+    }
     return 0;
 }

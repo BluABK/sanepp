@@ -64,6 +64,7 @@ namespace sane {
 
         // 2/3: Step through, and do nothing because this is a CREATE statement with no VALUE bindings.
         while ((rc = sqlite3_step(preparedStatement)) == SQLITE_ROW) {}
+        if (rc) {} // Clear false positive unused variable warning.
 
         // 3/3: Finalize prepared statement
         db->finalizePreparedSqlStatement(preparedStatement);
@@ -99,8 +100,6 @@ namespace sane {
 
         // Iterate through the subscription objects and add relevant fields to DB.
         for (auto &channel : t_channels) {
-            int rc = SQLITE_NEVER_RUN;
-
             // Figure out and sanitize the values.
             const char* id = channel->getIdAsCString();
             int hasUploadsPlaylist = channel->hasUploadsPlaylist() ? 1 : 0;
@@ -153,23 +152,33 @@ namespace sane {
             }
 
             //  Bind-parameter for VALUES (indexing is 1-based).
-            rc = sqlite3_bind_text(preparedStatement, 1,  id, strlen(id), nullptr);
+            int rc = sqlite3_bind_text(preparedStatement, 1,  id, strlen(id), nullptr);
+            db->checkRC(rc,             sqlStatement, 1,  id, strlen(id), t_errors);
             rc = sqlite3_bind_int(preparedStatement,  2,  hasUploadsPlaylist);
+            db->checkRC(rc,            sqlStatement,  2,  hasUploadsPlaylist, t_errors);
             rc = sqlite3_bind_int(preparedStatement,  3,  hasFavouritesPlaylist);
+            db->checkRC(rc,            sqlStatement,  3,  hasFavouritesPlaylist, t_errors);
             rc = sqlite3_bind_int(preparedStatement,  4,  hasLikesPlaylist);
+            db->checkRC(rc,            sqlStatement,  4,  hasLikesPlaylist, t_errors);
             rc = sqlite3_bind_text(preparedStatement, 5,  title, strlen(title), nullptr);
+            db->checkRC(rc,             sqlStatement, 5,  title, strlen(title), t_errors);
             rc = sqlite3_bind_text(preparedStatement, 6,  description, strlen(description), nullptr);
+            db->checkRC(rc,             sqlStatement, 6,  description, strlen(description), t_errors);
             rc = sqlite3_bind_text(preparedStatement, 7,  thumbnailDefault, strlen(thumbnailDefault), nullptr);
+            db->checkRC(rc,             sqlStatement, 7,  thumbnailDefault, strlen(thumbnailDefault), t_errors);
             rc = sqlite3_bind_text(preparedStatement, 8,  thumbnailHigh, strlen(thumbnailHigh), nullptr);
+            db->checkRC(rc,             sqlStatement, 8,  thumbnailHigh, strlen(thumbnailHigh), t_errors);
             rc = sqlite3_bind_text(preparedStatement, 9,  thumbnailMedium, strlen(thumbnailMedium), nullptr);
+            db->checkRC(rc,             sqlStatement, 9,  thumbnailMedium, strlen(thumbnailMedium), t_errors);
             rc = sqlite3_bind_int(preparedStatement,  10, subscribedOnYouTube);
+            db->checkRC(rc,            sqlStatement,  10, subscribedOnYouTube, t_errors);
 
             // Step through, and do nothing, because this is an INSERT statement.
             while (sqlite3_step(preparedStatement) == SQLITE_ROW) {} // While query has result-rows.
 
             // Clear and Reset the statement after each bind.
-            rc = sqlite3_clear_bindings(preparedStatement);
-            rc = sqlite3_reset(preparedStatement);
+            db->checkRC(sqlite3_clear_bindings(preparedStatement), "sqlite3_clear_bindings", sqlStatement, t_errors);
+            db->checkRC(sqlite3_reset(preparedStatement), "sqlite3_reset", sqlStatement, t_errors);
 
             // Finalize prepared statement
             db->finalizePreparedSqlStatement(preparedStatement);
@@ -184,7 +193,6 @@ namespace sane {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
         std::string sqlStatement;
-        int rc = SQLITE_NEVER_RUN;
 
         // Acquire database handle.
         std::cout << "Acquiring DB handle..." << std::endl;
@@ -239,9 +247,9 @@ namespace sane {
             }
 
             // Step, Clear and Reset the statement after each bind.
-            rc = sqlite3_step(preparedStatement);
-            rc = sqlite3_clear_bindings(preparedStatement);
-            rc = sqlite3_reset(preparedStatement);
+            db->checkRC(sqlite3_step(preparedStatement), "sqlite3_step", sqlStatement, t_errors);
+            db->checkRC(sqlite3_clear_bindings(preparedStatement), "sqlite3_clear_bindings", sqlStatement, t_errors);
+            db->checkRC(sqlite3_reset(preparedStatement), "sqlite3_reset", sqlStatement, t_errors);
 
         // Finalize prepared statement
         db->finalizePreparedSqlStatement(preparedStatement);

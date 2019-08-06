@@ -10,6 +10,100 @@ namespace sane {
     sqlite3 *DBHandler::m_db = nullptr;
 
     /**
+     * Prints an sqlite3_errmsg.
+     */
+    void DBHandler::printErrorMessage() {
+        std::cerr << "SQLite3 Error: " << sqlite3_errmsg(m_db) << std::endl;
+    }
+
+    /**
+     * Check integer return value against valid SQLite3 values.
+     *
+     * @param t_rc              Integer return value.
+     * @param t_function        Name of the function that was called.
+     * @param t_sqlStatement    The SQL statement (raw string, not prepared)
+     * @param t_errors          Pointer to a string list to put errors in, send in nullptr to disable.
+     * @param t_prefix          Prefix to the function string, e.g. "sane::".
+     */
+    void DBHandler::checkRC(int t_rc, const std::string &t_function, const std::string &t_sqlStatement,
+                            std::list<std::string> *t_errors, const std::string &t_prefix) {
+        if (t_rc == SQLITE_OK or t_rc == SQLITE_DONE or t_rc == SQLITE_ROW) {
+            // Success codes; do nothing.
+        }
+        else {
+            std::cerr << t_prefix << t_function << "(" << t_sqlStatement << ") ERROR: returned invalid status: "
+                      << std::to_string(t_rc) << std::endl;
+            t_errors->push_back(t_prefix + t_function + t_sqlStatement + ") ERROR: returned invalid status: "
+                                + std::to_string(t_rc));
+
+            std::cerr << "SQLite3 Error: " << sqlite3_errmsg(m_db) << std::endl;
+        }
+    }
+
+    /**
+     * Check sqlite3_bind_text return value against valid SQLite3 values.
+     *
+     * @param t_rc              Integer return value.
+     * @param t_sqlStatement    The SQL statement (raw string, not prepared)
+     * @param t_nr              "?" variable nr it was bound to.
+     * @param t_bindStr         String value that was bound.
+     * @param t_bindLen         Length of string value that was given.
+     * @param t_errors          Pointer to a string list to put errors in, send in nullptr to disable.
+     */
+    void DBHandler::checkRC(int t_rc, const std::string &t_sqlStatement,
+                            int t_nr, const std::string &t_bindStr, size_t t_bindLen,
+                            std::list<std::string> *t_errors) {
+        if (t_rc != SQLITE_OK) {
+            std::cerr << "sqlite3_bind_text(" << t_sqlStatement << ", "
+                                              << t_nr << ", "
+                                              << t_bindStr << ", "
+                                              << t_bindLen
+                                              <<  ") ERROR: returned non-zero status: " << std::to_string(t_rc)
+                                              << std::endl;
+
+            t_errors->push_back("sqlite3_bind_text("
+                                + t_sqlStatement + ", "
+                                + std::to_string(t_nr) + ", "
+                                + t_bindStr + ", "
+                                + std::to_string(t_bindLen)
+                                + ") ERROR: returned non-zero status: " + std::to_string(t_rc)
+                                );
+
+            std::cerr << "SQLite3 Error: " << sqlite3_errmsg(m_db) << std::endl;
+        }
+    }
+
+    /**
+     * Check sqlite3_bind_int return value against valid SQLite3 values.
+     *
+     * @param t_rc              Integer return value.
+     * @param t_sqlStatement    The SQL statement (raw string, not prepared)
+     * @param t_nr              "?" variable nr it was bound to.
+     * @param t_bindInt         Integer value that was bound.
+     * @param t_errors          Pointer to a string list to put errors in, send in nullptr to disable.
+     */
+    void DBHandler::checkRC(int t_rc, const std::string &t_sqlStatement,
+                            int t_nr, int t_bindInt, std::list<std::string> *t_errors) {
+        if (t_rc != SQLITE_OK) {
+            std::cerr << "sqlite3_bind_int(" << t_sqlStatement << ", "
+                      << t_nr << ", "
+                      << t_bindInt
+                      << ") ERROR: returned non-zero status: " << std::to_string(t_rc)
+                      << std::endl;
+
+            t_errors->push_back("sqlite3_bind_int("
+                                + t_sqlStatement + ", "
+                                + std::to_string(t_nr) + ", "
+                                + std::to_string(t_bindInt)
+                                + ") ERROR: returned non-zero status: "
+                                + std::to_string(t_rc)
+                                );
+
+            std::cerr << "SQLite3 Error: " << sqlite3_errmsg(m_db) << std::endl;
+        }
+    }
+
+    /**
     * Prepare an sqlStatement
     *
     *                              Suggested step-method:
@@ -82,7 +176,7 @@ namespace sane {
     int DBHandler::runSqlStatement(const std::string &t_sql) {
         // Setup
         sqlite3_stmt *preparedStatement = nullptr;
-        int rc = SQLITE_NEVER_RUN;
+        int rc;
         
         // 1/3: Create a prepared statement
         preparedStatement = prepareSqlStatement(t_sql);
@@ -94,6 +188,7 @@ namespace sane {
 
         // 2/3: Step through, and do nothing because this is a CREATE statement with no VALUE bindings.
         while ((rc = sqlite3_step(preparedStatement)) == SQLITE_ROW) {}
+        if (rc) {} // Clear false positive unused variable warning.
 
         // 3/3: Finalize prepared statement
         finalizePreparedSqlStatement(preparedStatement);

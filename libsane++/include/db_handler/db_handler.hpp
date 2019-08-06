@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 #include <vector>
 #include <functional>
 #include <type_traits>
@@ -43,6 +44,17 @@ namespace sane {
                 m_usageCounter++;
             }
         }
+
+        static void printErrorMessage();
+
+        static void checkRC(int t_rc, const std::string &t_function, const std::string &t_sqlStatement,
+                            std::list<std::string> *t_errors, const std::string &t_prefix = "sane::");
+
+        static void checkRC(int t_rc, const std::string &t_sqlStatement, int t_nr,
+                const std::string &t_bindStr, size_t t_bindLen, std::list<std::string> *t_errors);
+
+        static void checkRC(int t_rc, const std::string &t_sqlStatement, int t_nr, int t_bindInt,
+                std::list<std::string> *t_errors);
 
         sqlite3_stmt * prepareSqlStatement(const std::string &t_sql);
 
@@ -98,12 +110,11 @@ namespace sane {
     private:
         std::string m_dbFilename;
 
-static sqlite3 *m_db;
+        static sqlite3 *m_db;
 
+        int m_lastStatus = SQLITE_NEVER_RUN;
 
-int m_lastStatus = SQLITE_NEVER_RUN;
-
-};
+    };
 } // namespace sane
 
 #endif //SANE_DB_HANDLER_HPP

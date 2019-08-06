@@ -30,6 +30,8 @@ namespace sane {
     public:
         explicit CLI();
 
+        static std::vector<std::string> tokenize(const std::string &t_input, char t_delim = ' ');
+
         void addCommand(const std::string &t_name, const std::string &t_description,
                 const int &t_category = UNCATEGORISED);
         
@@ -71,6 +73,7 @@ namespace sane {
     private:
         // Internal
         bool manuallyExit = false;
+        bool isInteractive = false;
 
         // Define Command names.
         // Internal

@@ -49,6 +49,12 @@ namespace sane {
     }
 
     void CLI::help() {
+        if (!isInteractive) {
+            std::cout << "Sane++ (rudimentary) Command Line Interface." << std::endl;
+            std::cout << std::endl;
+            std::cout << "Run without arguments to enter interactive mode." << std::endl;
+            std::cout << std::endl;
+        }
         // Subtract 7 for the length of the string "Command", and then also remember to add the spacing length.
         std::cout << "Command" << std::string(longestLine - 7 + spacingLength, ' ') << "Description" << std::endl;
 
@@ -120,7 +126,7 @@ namespace sane {
      * @param t_delim   Delimiter char.
      * @return          std::vector<std::string> tokens.
      */
-    std::vector<std::string> tokenize(const std::string &t_input, char t_delim)  {
+    std::vector<std::string> CLI::tokenize(const std::string &t_input, char t_delim)  {
         std::vector<std::string> tokens;
         std::stringstream   mySstream(t_input);
         std::string         temp;
@@ -133,6 +139,7 @@ namespace sane {
     }
 
     void CLI::interactive() {
+        isInteractive = true;
         std::string input;
         std::cout << COMMAND_PROMPT_STYLE;
         while (std::getline(std::cin, input)) { // quit the program with ctrl-d

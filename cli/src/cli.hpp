@@ -23,6 +23,7 @@ namespace sane {
     struct command_t {
         std::string name;
         std::string description;
+        std::string usage;
         int category;
     };
 
@@ -36,6 +37,9 @@ namespace sane {
 
         void addCommand(const std::string &t_name, const std::string &t_description,
                 const int &t_category = UNCATEGORISED);
+
+        void addCommand(const std::string &t_name, const std::string &t_description,
+                        const std::string &t_usage = std::string(), const int &t_category = UNCATEGORISED);
         
         void interactive();
 

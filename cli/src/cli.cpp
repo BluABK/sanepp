@@ -27,6 +27,30 @@ namespace sane {
         m_commands[t_name] = command;
     }
 
+    void CLI::addCommand(const std::string &t_name, const std::string &t_description, const std::string &t_usage,
+                         const int &t_category) {
+        // Define a command type struct.
+        command_t command;
+
+        // Assign values and its function.
+        command.name = t_name;
+        command.description = t_description;
+        command.usage = t_usage;
+        command.category = t_category;
+
+        // Add category to list of categories and clear non-unique elements.
+        m_commandCategories.push_back(t_category);
+        m_commandCategories.unique();
+
+        // Determine indentation spacing between command name and description.
+        if (t_name.length() > longestLine) {
+            longestLine = t_name.length();
+        }
+
+        // Add the command to the commands map.
+        m_commands[t_name] = command;
+    }
+
     CLI::CLI() {
         // Add commands to map of commands on the form of: name, description, category, function ptr.
         addCommand(EXIT, "Exit program", CORE_CATEGORY);
@@ -44,7 +68,8 @@ namespace sane {
         addCommand(PRINT_CHANNEL_JSON_BY_USERNAME, "Retrieve and print a channel JSON by username.", JSON_CATEGORY);
         addCommand(PRINT_CHANNEL_JSON_BY_ID, "Retrieve and print a channel JSON by channel ID.", JSON_CATEGORY);
         addCommand(LIST_ACTIVITIES_JSON, "Returns a list of channel activity events that match the request criteria.",
-                JSON_CATEGORY);
+                "Usage:   " + LIST_ACTIVITIES_JSON + " part filters optional_parameters\n"
+                "Example: snippet,contentDetails channelId=abc123", JSON_CATEGORY);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
@@ -67,6 +92,14 @@ namespace sane {
 
             // Print list of commands on the form of <name, description>.
             std::cout << commandEntry.first << commandSpacing << commandEntry.second.description << std::endl;
+            // If usage field is not empty, add it on the following line, in the description column.
+            if (!commandEntry.second.usage.empty()) {
+                // Iterate over newlines in order to preserve indent in help "table".
+                for (auto const& line : tokenize(commandEntry.second.usage, '\n')) {
+                    std::cout << std::string(commandEntry.first.length(), ' ') << commandSpacing
+                              << line << std::endl;
+                }
+            }
 
         }
 

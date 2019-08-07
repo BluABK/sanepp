@@ -108,6 +108,15 @@ namespace sane {
         std::cout << jsonData.dump(jsonIndent) << std::endl;
     }
 
+    /**
+     * Takes tokenized args: part videoId <optional params>.
+     *
+     * Example: args = ["snippet,id", "abc123", "id=eeaagg"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/captions/list
+     * @param t_input
+     * @param jsonIndent
+     */
     void CLI::listCaptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
         std::string part;
         std::string videoId;

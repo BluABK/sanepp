@@ -53,8 +53,8 @@ for the meaning of Local, Remote and YouTube.
 #define SAPI_YT_COMMENT_THREADS_INSERT           "http://127.0.0.1:5002/api/v1/youtube/commentThreads/insert"
 #define SAPI_YT_COMMENT_THREADS_UPDATE           "http://127.0.0.1:5002/api/v1/youtube/commentThreads/update"
 #define SAPI_YT_GUIDE_CATEGORIES_LIST           "http://127.0.0.1:5002/api/v1/youtube/guideCategories/list"
-#define SAPI_YT_IL18N_LANGUAGES_LIST            "http://127.0.0.1:5002/api/v1/youtube/i18nLanguages/list"
-#define SAPI_YT_IL8N_REGIONS_LIST               "http://127.0.0.1:5002/api/v1/youtube/i18nRegions/list"
+#define SAPI_YT_I18N_LANGUAGES_LIST            "http://127.0.0.1:5002/api/v1/youtube/i18nLanguages/list"
+#define SAPI_YT_I18N_REGIONS_LIST               "http://127.0.0.1:5002/api/v1/youtube/i18nRegions/list"
 #define SAPI_YT_PLAYLIST_ITEMS_LIST             "http://127.0.0.1:5002/api/v1/youtube/playlistItems/list"
 #define SAPI_YT_PLAYLIST_ITEMS_INSERT           "http://127.0.0.1:5002/api/v1/youtube/playlistItems/insert"
 #define SAPI_YT_PLAYLIST_ITEMS_UPDATE           "http://127.0.0.1:5002/api/v1/youtube/playlistItems/update"
@@ -129,6 +129,44 @@ namespace sane {
         nlohmann::json sapiGetCommentsList(const std::string &t_part,
                 const std::map<std::string,std::string> &t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetCommentThreadsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetGuideCategoriesList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGeti18nLanguagesList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGeti18nRegionsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetPlaylistItemsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetPlaylistsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetSubscriptionsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetVideoAbuseReportReasonsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetVideoCategoriesList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetVideosList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
 
     private:
     };

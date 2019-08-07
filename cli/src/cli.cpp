@@ -96,7 +96,7 @@ namespace sane {
         addCommand(PRINT_SUBSCRIPTIONS_BASIC, "Lists all subscriptions in a compact line-by-line form.",
                    ENTITY_CATEGORY);
         addCommand(PRINT_SUBSCRIPTIONS_JSON_FROM_API, "Retrieves a fresh list of subscriptions from the YouTube API"
-                                                      "and prints it as JSON.", JSON_CATEGORY);
+                                                      " and prints it as JSON.", JSON_CATEGORY);
         addCommand(PRINT_CHANNEL_BY_USERNAME, "Retrieve a channel by username.", "NAME", ENTITY_CATEGORY);
         addCommand(PRINT_CHANNEL_BY_ID, "Retrieve and print a channel entity by channel ID.", "CHAN_ID",
                 ENTITY_CATEGORY);

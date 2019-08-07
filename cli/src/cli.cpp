@@ -112,6 +112,8 @@ namespace sane {
                    "PART... FILTER [PARAM...]", JSON_CATEGORY);
         addCommand(LIST_CHANNEL_SECTIONS_JSON, "Returns a list of channelSection resources.",
                    "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_COMMENTS_JSON, "Returns a list of comments.",
+                   "PART... FILTER [PARAM...]", JSON_CATEGORY);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
@@ -214,6 +216,8 @@ namespace sane {
             listChannelsJsonFromApi(args);
         } else if (command == LIST_CHANNEL_SECTIONS_JSON) {
             listChannelSectionsJsonFromApi(args);
+        } else if (command == LIST_COMMENTS_JSON) {
+            listCommentsJsonFromApi(args);
         }
 
     }

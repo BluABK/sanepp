@@ -27,14 +27,47 @@ namespace sane {
         m_commands[t_name] = command;
     }
 
-    void CLI::addCommand(const std::string &t_name, const std::string &t_description, const std::string &t_usage,
+    void CLI::addCommand(const std::string &t_name, const std::string &t_description, const std::string &t_usageSyntax,
                          const int &t_category) {
+        if (!t_usageSyntax.empty()) {
+            usageSyntaxEntryExists = true;
+        }
+
         // Define a command type struct.
         command_t command;
 
         // Assign values and its function.
         command.name = t_name;
         command.description = t_description;
+        command.usageSyntax = " " + t_usageSyntax;
+        command.category = t_category;
+
+        // Add category to list of categories and clear non-unique elements.
+        m_commandCategories.push_back(t_category);
+        m_commandCategories.unique();
+
+        // Determine indentation spacing between command name and description.
+        if ((t_name + t_usageSyntax).length() > longestLineWithUsageSyntax) {
+            longestLineWithUsageSyntax = (t_name + t_usageSyntax).length();
+        }
+
+        // Add the command to the commands map.
+        m_commands[t_name] = command;
+    }
+
+    void CLI::addCommand(const std::string &t_name, const std::string &t_description, const std::string &t_usageSyntax,
+                         const std::string &t_usage, const int &t_category) {
+        if (!t_usageSyntax.empty()) {
+            usageSyntaxEntryExists = true;
+        }
+
+        // Define a command type struct.
+        command_t command;
+
+        // Assign values and its function.
+        command.name = t_name;
+        command.description = t_description;
+        command.usageSyntax = " " + t_usageSyntax;
         command.usage = t_usage;
         command.category = t_category;
 
@@ -43,8 +76,8 @@ namespace sane {
         m_commandCategories.unique();
 
         // Determine indentation spacing between command name and description.
-        if (t_name.length() > longestLine) {
-            longestLine = t_name.length();
+        if ((t_name + t_usageSyntax).length() > longestLineWithUsageSyntax) {
+            longestLineWithUsageSyntax = (t_name + t_usageSyntax).length();
         }
 
         // Add the command to the commands map.
@@ -55,6 +88,7 @@ namespace sane {
         // Add commands to map of commands on the form of: name, description, category, function ptr.
         addCommand(EXIT, "Exit program", CORE_CATEGORY);
         addCommand(HELP, "Print help", CORE_CATEGORY);
+        addCommand(HELP_EXTENDED, "Print extended help", CORE_CATEGORY);
         addCommand(GET_SUBSCRIPTIONS_FROM_API, "Retrieves (and stores) a fresh list of subscriptions from "
                                                "the YouTube API.", DB_CATEGORY);
         addCommand(PRINT_SUBSCRIPTIONS_FULL, "Lists all subscriptions separately as fully detailed blocks of text",
@@ -63,40 +97,69 @@ namespace sane {
                    ENTITY_CATEGORY);
         addCommand(PRINT_SUBSCRIPTIONS_JSON_FROM_API, "Retrieves a fresh list of subscriptions from the YouTube API"
                                                       "and prints it as JSON.", JSON_CATEGORY);
-        addCommand(PRINT_CHANNEL_BY_USERNAME, "Retrieve a channel by username.", ENTITY_CATEGORY);
-        addCommand(PRINT_CHANNEL_BY_ID, "Retrieve and print a channel entity by channel ID.", ENTITY_CATEGORY);
-        addCommand(PRINT_CHANNEL_JSON_BY_USERNAME, "Retrieve and print a channel JSON by username.", JSON_CATEGORY);
-        addCommand(PRINT_CHANNEL_JSON_BY_ID, "Retrieve and print a channel JSON by channel ID.", JSON_CATEGORY);
+        addCommand(PRINT_CHANNEL_BY_USERNAME, "Retrieve a channel by username.", "NAME", ENTITY_CATEGORY);
+        addCommand(PRINT_CHANNEL_BY_ID, "Retrieve and print a channel entity by channel ID.", "CHAN_ID",
+                ENTITY_CATEGORY);
+        addCommand(PRINT_CHANNEL_JSON_BY_USERNAME, "Retrieve and print a channel JSON by username.", "NAME",
+                JSON_CATEGORY);
+        addCommand(PRINT_CHANNEL_JSON_BY_ID, "Retrieve and print a channel JSON by channel ID.", "CHAN_ID",
+                JSON_CATEGORY);
         addCommand(LIST_ACTIVITIES_JSON, "Returns a list of channel activity events that match the request criteria.",
-                "Usage:   " + LIST_ACTIVITIES_JSON + " part filters optional_parameters\n"
-                "Example: snippet,contentDetails channelId=abc123", JSON_CATEGORY);
+                "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_CAPTIONS_JSON, "Returns a list of channel activity events that match the request criteria.",
+                   "PART... VIDEO_ID [PARAM...]", JSON_CATEGORY);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
     }
 
-    void CLI::help() {
+    /**
+     * Prints a "help" table listing Command names and descriptions.
+     *
+     * @param extended  If true, print extended help information.
+     */
+    void CLI::help(bool extended) {
+        std::string cmdHeader;
+        size_t longestLine_ = 0;
+
         if (!isInteractive) {
             std::cout << "Sane++ (rudimentary) Command Line Interface." << std::endl;
             std::cout << std::endl;
             std::cout << "Run without arguments to enter interactive mode." << std::endl;
             std::cout << std::endl;
         }
-        // Subtract 7 for the length of the string "Command", and then also remember to add the spacing length.
-        std::cout << "Command" << std::string(longestLine - 7 + spacingLength, ' ') << "Description" << std::endl;
+
+        if (usageSyntaxEntryExists and extended) {
+            longestLine_ = longestLineWithUsageSyntax;
+            cmdHeader = "Command (w/ usage syntax)";
+        } else {
+            longestLine_ = longestLine;
+            cmdHeader = "Command";
+        }
+
+        std::cout << cmdHeader << std::string(longestLine_ - cmdHeader.length() + spacingLength, ' ')
+                  << "Description" << std::endl;
 
         // Iterate the map of commands.
         for (auto const& commandEntry : m_commands) {
+            std::string commandName = commandEntry.second.name;
+
+            // If usage syntax is defined and we're in extended mode, append it to the command name.
+            if (!commandEntry.second.usageSyntax.empty() and extended) {
+                commandName += commandEntry.second.usageSyntax;
+            }
+
             // Set the spacing variable (varies for each item).
-            std::string commandSpacing(longestLine - commandEntry.second.name.length() + spacingLength, ' ');
+            std::string commandSpacing(longestLine_ - commandName.length() + spacingLength, ' ');
 
             // Print list of commands on the form of <name, description>.
-            std::cout << commandEntry.first << commandSpacing << commandEntry.second.description << std::endl;
-            // If usage field is not empty, add it on the following line, in the description column.
+            std::cout << commandName << commandSpacing << commandEntry.second.description << std::endl;
+
+            // If usage field is defined, add it on the following line, in the description column.
             if (!commandEntry.second.usage.empty()) {
                 // Iterate over newlines in order to preserve indent in help "table".
                 for (auto const& line : tokenize(commandEntry.second.usage, '\n')) {
-                    std::cout << std::string(commandEntry.first.length(), ' ') << commandSpacing
+                    std::cout << std::string(commandName.length(), ' ') << commandSpacing
                               << line << std::endl;
                 }
             }
@@ -119,6 +182,8 @@ namespace sane {
 
         if (command == HELP) {
             help();
+        } else if (command == HELP_EXTENDED) {
+            help(true);
         } else if (command == EXIT) {
             exit();
         } else if (command == GET_SUBSCRIPTIONS_FROM_API) {
@@ -139,6 +204,8 @@ namespace sane {
             printChannelJsonFromApiById(args);
         } else if (command == LIST_ACTIVITIES_JSON) {
             listActivitiesJsonFromApi(args);
+        } else if (command == LIST_CAPTIONS_JSON) {
+            listCaptionsJsonFromApi(args);
         }
 
     }

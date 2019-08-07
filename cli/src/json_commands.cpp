@@ -1,8 +1,15 @@
+#include <algorithm>
+#include <string>
+
 #include "cli.hpp"
 
 namespace sane {
     /**
-     * Takes a comma-separated string on the form of "a=b,c=d,e=f"
+     * Takes a comma-separated string on the form of:
+     *      single assignments: "a=b,c=d,e=f"
+     *      and
+     *      list assignments: "a=b:t:y,b=t:a:u,c=stuff"
+     *
      * and returns a map on the form of map[a] = b etc.
      *
      * @param t_string
@@ -15,12 +22,20 @@ namespace sane {
         std::vector<std::string> variableAssignments = tokenize(t_string, ',');
 
         // For each assignment in variableAssignments
+        std::vector<std::string> assignmentTokens;
+        std::string variable;
+        std::string value;
         for (auto const& assignment: variableAssignments) {
             // Split out var name and value by tokenizing on equals symbol.
-            std::vector<std::string> assignmentTokens = tokenize(assignment, '=');
+            assignmentTokens = tokenize(assignment, '=');
+            variable = assignmentTokens.at(0);
+            value = assignmentTokens.at(1);
+
+            // Replace custom list separator ':' with a proper ','.
+            std::replace(value.begin(), value.end(), ':', ',');
 
             // Add assignment to map.
-            variableAssignmentMap[assignmentTokens.at(0)] = assignmentTokens.at(1);
+            variableAssignmentMap[variable] = value;
         }
 
         return variableAssignmentMap;
@@ -76,19 +91,42 @@ namespace sane {
 
         if (t_input.empty() or t_input.size() < 2) {
             std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
-        } else {
-            part = t_input.at(0);
+            return;
+        }
 
-            if (t_input.size() == 2) {
-                filters = stringToMap(t_input.at(1));
+        part = t_input.at(0);
+        filters = stringToMap(t_input.at(1));
 
-                jsonData = api->sapiGetActivitiesList(part, filters);
-            } else if (t_input.size() == 3) {
-                filters = stringToMap(t_input.at(1));
-                optParams = stringToMap(t_input.at(2));
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetActivitiesList(part, filters);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetActivitiesList(part, filters, optParams);
+        }
 
-                jsonData = api->sapiGetActivitiesList(part, filters, optParams);
-            }
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    void CLI::listCaptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::string videoId;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        videoId = t_input.at(1);
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetCaptionsList(part, videoId);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetCaptionsList(part, videoId, optParams);
         }
 
         // Print the result

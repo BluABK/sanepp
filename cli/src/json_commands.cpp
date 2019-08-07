@@ -76,19 +76,17 @@ namespace sane {
 
         if (t_input.empty() or t_input.size() < 2) {
             std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
-        } else {
-            part = t_input.at(0);
+            return;
+        }
 
-            if (t_input.size() == 2) {
-                filters = stringToMap(t_input.at(1));
+        part = t_input.at(0);
+        filters = stringToMap(t_input.at(1));
 
-                jsonData = api->sapiGetActivitiesList(part, filters);
-            } else if (t_input.size() == 3) {
-                filters = stringToMap(t_input.at(1));
-                optParams = stringToMap(t_input.at(2));
-
-                jsonData = api->sapiGetActivitiesList(part, filters, optParams);
-            }
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetActivitiesList(part, filters);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetActivitiesList(part, filters, optParams);
         }
 
         // Print the result

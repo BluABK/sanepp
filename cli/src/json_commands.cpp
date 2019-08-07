@@ -15,7 +15,7 @@ namespace sane {
      * @param t_string
      * @return
      */
-    std::map<std::string, std::string> CLI::stringToMap(const std::string &t_string) {
+    std::map<std::string, std::string> CLI::stringToMap(const std::string &t_string) { // FIXME: Handle '=' in value str
         std::map<std::string, std::string> variableAssignmentMap;
 
         // Split out assignments by tokenizing on comma.

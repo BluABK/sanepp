@@ -104,7 +104,7 @@ namespace sane {
     }
 
     nlohmann::json APIHandler::sapiGetActivitiesList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filters, const std::map<std::string,std::string> &t_optParams) {
+            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -112,8 +112,8 @@ namespace sane {
         // 'part' is a required first part of a YouTube API HTTP string.
         compiledVariables += "?part=" + t_part;
 
-        // Append filters and optional parameters.
-        varMaps.push_back(t_filters);
+        // Append required filter and optional parameters.
+        varMaps.push_back(t_filter);
         varMaps.push_back(t_optParams);
         compiledVariables += compileUrlVariables(varMaps);
 
@@ -138,6 +138,26 @@ namespace sane {
 
         // Parse the JSON response from the API.
         nlohmann::json jsonData = getSapiResponse(SAPI_YT_CAPTIONS_LIST + compiledVariables);
+
+        return jsonData;
+    }
+
+    nlohmann::json APIHandler::sapiGetChannelsList(const std::string &t_part,
+            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+        // Setup
+        std::list<std::map<std::string, std::string>> varMaps;
+        std::string compiledVariables;
+
+        // 'part' is a required first part of a YouTube API HTTP string.
+        compiledVariables += "?part=" + t_part;
+
+        // Append filter and optional parameters.
+        varMaps.push_back(t_filter);
+        varMaps.push_back(t_optParams);
+        compiledVariables += compileUrlVariables(varMaps);
+
+        // Parse the JSON response from the API.
+        nlohmann::json jsonData = getSapiResponse(SAPI_YT_CHANNELS_LIST + compiledVariables);
 
         return jsonData;
     }

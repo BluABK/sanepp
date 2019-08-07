@@ -143,15 +143,15 @@ namespace sane {
     }
 
     /**
- * Takes tokenized args: part filter <optional params>.
- *
- * Example: args = ["snippet,contentDetails", "id=chan1:chan2", "maxResults=15"]
- *
- * For more info see: https://developers.google.com/youtube/v3/docs/channels/list
- *
- * @param t_input
- * @param jsonIndent
- */
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,contentDetails", "id=chan1:chan2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/channels/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
     void CLI::listChannelsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
         std::string part;
         std::map<std::string,std::string> filter;

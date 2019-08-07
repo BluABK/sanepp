@@ -39,19 +39,19 @@ for the meaning of Local, Remote and YouTube.
 #define SAPI_YT_CAPTIONS_DELETE                 "http://127.0.0.1:5002/api/v1/youtube/captions/delete"
 #define SAPI_YT_CHANNEL_BANNERS_INSERT          "http://127.0.0.1:5002/api/v1/youtube/channelBanners/insert"
 #define SAPI_YT_CHANNELS_LIST                   "http://127.0.0.1:5002/api/v1/youtube/channels/list"
-#define SAPI_YT_CHANNEL_SECTION_LIST            "http://127.0.0.1:5002/api/v1/youtube/channelSection/list"
-#define SAPI_YT_CHANNEL_SECTION_INSERT          "http://127.0.0.1:5002/api/v1/youtube/channelSection/insert"
-#define SAPI_YT_CHANNEL_SECTION_UPDATE          "http://127.0.0.1:5002/api/v1/youtube/channelSection/update"
-#define SAPI_YT_CHANNEL_SECTION_DELETE          "http://127.0.0.1:5002/api/v1/youtube/channelSection/delete"
-#define SAPI_YT_COMMENT_LIST                    "http://127.0.0.1:5002/api/v1/youtube/comment/list"
-#define SAPI_YT_COMMENT_INSERT                  "http://127.0.0.1:5002/api/v1/youtube/comment/insert"
-#define SAPI_YT_COMMENT_UPDATE                  "http://127.0.0.1:5002/api/v1/youtube/comment/update"
-#define SAPI_YT_COMMENT_MARK_AS_SPAM            "http://127.0.0.1:5002/api/v1/youtube/comment/markAsSpam"
-#define SAPI_YT_COMMENT_SET_MODERATION_STATUS   "http://127.0.0.1:5002/api/v1/youtube/comment/setModerationStatus"
-#define SAPI_YT_COMMENT_DELETE                  "http://127.0.0.1:5002/api/v1/youtube/comment/delete"
-#define SAPI_YT_COMMENT_THREAD_LIST             "http://127.0.0.1:5002/api/v1/youtube/commentThread/list"
-#define SAPI_YT_COMMENT_THREAD_INSERT           "http://127.0.0.1:5002/api/v1/youtube/commentThread/insert"
-#define SAPI_YT_COMMENT_THREAD_UPDATE           "http://127.0.0.1:5002/api/v1/youtube/commentThread/update"
+#define SAPI_YT_CHANNEL_SECTIONS_LIST            "http://127.0.0.1:5002/api/v1/youtube/channelSections/list"
+#define SAPI_YT_CHANNEL_SECTIONS_INSERT          "http://127.0.0.1:5002/api/v1/youtube/channelSection/insert"
+#define SAPI_YT_CHANNEL_SECTIONS_UPDATE          "http://127.0.0.1:5002/api/v1/youtube/channelSection/update"
+#define SAPI_YT_CHANNEL_SECTIONS_DELETE          "http://127.0.0.1:5002/api/v1/youtube/channelSection/delete"
+#define SAPI_YT_COMMENTS_LIST                    "http://127.0.0.1:5002/api/v1/youtube/comments/list"
+#define SAPI_YT_COMMENTS_INSERT                  "http://127.0.0.1:5002/api/v1/youtube/comments/insert"
+#define SAPI_YT_COMMENTS_UPDATE                  "http://127.0.0.1:5002/api/v1/youtube/comments/update"
+#define SAPI_YT_COMMENTS_MARK_AS_SPAM            "http://127.0.0.1:5002/api/v1/youtube/comments/markAsSpam"
+#define SAPI_YT_COMMENTS_SET_MODERATION_STATUS   "http://127.0.0.1:5002/api/v1/youtube/comments/setModerationStatus"
+#define SAPI_YT_COMMENTS_DELETE                  "http://127.0.0.1:5002/api/v1/youtube/comments/delete"
+#define SAPI_YT_COMMENT_THREADS_LIST             "http://127.0.0.1:5002/api/v1/youtube/commentThreads/list"
+#define SAPI_YT_COMMENT_THREADS_INSERT           "http://127.0.0.1:5002/api/v1/youtube/commentThreads/insert"
+#define SAPI_YT_COMMENT_THREADS_UPDATE           "http://127.0.0.1:5002/api/v1/youtube/commentThreads/update"
 #define SAPI_YT_GUIDE_CATEGORIES_LIST           "http://127.0.0.1:5002/api/v1/youtube/guideCategories/list"
 #define SAPI_YT_IL18N_LANGUAGES_LIST            "http://127.0.0.1:5002/api/v1/youtube/i18nLanguages/list"
 #define SAPI_YT_IL8N_REGIONS_LIST               "http://127.0.0.1:5002/api/v1/youtube/i18nRegions/list"
@@ -112,10 +112,18 @@ namespace sane {
          * "Youtube" prefix is implicit.
          */
         nlohmann::json sapiGetActivitiesList(const std::string &t_part,
-                const std::map<std::string,std::string> & t_filters,
+                const std::map<std::string,std::string> & t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
         nlohmann::json sapiGetCaptionsList(const std::string &t_part, const std::string &t_videoId,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetChannelsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetChannelSectionsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
     private:

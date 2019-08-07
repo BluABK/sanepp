@@ -23,6 +23,7 @@ namespace sane {
     struct command_t {
         std::string name;
         std::string description;
+        std::string usageSyntax;
         std::string usage;
         int category;
     };
@@ -39,7 +40,11 @@ namespace sane {
                 const int &t_category = UNCATEGORISED);
 
         void addCommand(const std::string &t_name, const std::string &t_description,
-                        const std::string &t_usage = std::string(), const int &t_category = UNCATEGORISED);
+                        const std::string &t_usageSyntax = std::string(), const int &t_category = UNCATEGORISED);
+
+        void addCommand(const std::string &t_name, const std::string &t_description,
+                        const std::string &t_usageSyntax = std::string(), const std::string &t_usage = std::string(),
+                        const int &t_category = UNCATEGORISED);
         
         void interactive();
 
@@ -47,7 +52,7 @@ namespace sane {
 
         void exit();
 
-        void help();
+        void help(bool extended = false);
 
         void executeCommand(const std::vector<std::string> &t_tokenizedInput);
 
@@ -88,6 +93,7 @@ namespace sane {
         // Internal
         const std::string EXIT = "exit";
         const std::string HELP = "help";
+        const std::string HELP_EXTENDED = "help-extended";
         // Subscriptions -- Entity
         const std::string GET_SUBSCRIPTIONS_FROM_API = "get-subscriptions";
         const std::string PRINT_SUBSCRIPTIONS_PREFIX = "list-subscriptions-";
@@ -111,6 +117,8 @@ namespace sane {
         // Semantics
         const std::string COMMAND_PROMPT_STYLE = ">: ";
         size_t longestLine = 0;
+        size_t longestLineWithUsageSyntax = 0;
+        bool usageSyntaxEntryExists = false;
         int spacingLength = 4;
 
         std::shared_ptr<sane::APIHandler> api;

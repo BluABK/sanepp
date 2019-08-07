@@ -84,6 +84,8 @@ namespace sane {
 
         void listActivitiesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
+        void listCaptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
     private:
         // Internal
         bool manuallyExit = false;
@@ -109,6 +111,7 @@ namespace sane {
         const std::string PRINT_CHANNEL_JSON_BY_ID = "get-channel-json-by-id";
         // Activities -- JSON
         const std::string LIST_ACTIVITIES_JSON = "list-activities-json";
+        const std::string LIST_CAPTIONS_JSON = "list-captions-json";
 
         // Map of commands (to be populated)
         std::map<std::string, command_t> m_commands;

@@ -115,6 +115,9 @@ namespace sane {
                 const std::map<std::string,std::string> & t_filters,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
+        nlohmann::json sapiGetCaptionsList(const std::string &t_part, const std::string &t_videoId,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
     private:
     };
 } // namespace sane.

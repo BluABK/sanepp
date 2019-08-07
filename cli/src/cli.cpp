@@ -106,6 +106,8 @@ namespace sane {
                 JSON_CATEGORY);
         addCommand(LIST_ACTIVITIES_JSON, "Returns a list of channel activity events that match the request criteria.",
                 "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_CAPTIONS_JSON, "Returns a list of channel activity events that match the request criteria.",
+                   "PART... VIDEO_ID [PARAM...]", JSON_CATEGORY);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
@@ -202,6 +204,8 @@ namespace sane {
             printChannelJsonFromApiById(args);
         } else if (command == LIST_ACTIVITIES_JSON) {
             listActivitiesJsonFromApi(args);
+        } else if (command == LIST_CAPTIONS_JSON) {
+            listCaptionsJsonFromApi(args);
         }
 
     }

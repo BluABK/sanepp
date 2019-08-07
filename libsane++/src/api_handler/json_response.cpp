@@ -115,10 +115,29 @@ namespace sane {
         // Append filters and optional parameters.
         varMaps.push_back(t_filters);
         varMaps.push_back(t_optParams);
-        compiledVariables += compileUrlVariables(varMaps, IS_NOT_BEGINNING);
+        compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
         nlohmann::json jsonData = getSapiResponse(SAPI_YT_ACTIVITIES_LIST + compiledVariables);
+
+        return jsonData;
+    }
+
+    nlohmann::json APIHandler::sapiGetCaptionsList(const std::string &t_part, const std::string &t_videoId,
+            const std::map<std::string,std::string> &t_optParams) {
+        // Setup
+        std::list<std::map<std::string, std::string>> varMaps;
+        std::string compiledVariables;
+
+        // 'part' and 'videoId' are required first part of a YouTube API HTTP string.
+        compiledVariables += "?part=" + t_part + "&videoId=" + t_videoId;
+
+        // Append optional parameters.
+        varMaps.push_back(t_optParams);
+        compiledVariables += compileUrlVariables(varMaps);
+
+        // Parse the JSON response from the API.
+        nlohmann::json jsonData = getSapiResponse(SAPI_YT_CAPTIONS_LIST + compiledVariables);
 
         return jsonData;
     }

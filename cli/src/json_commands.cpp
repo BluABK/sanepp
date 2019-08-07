@@ -92,4 +92,29 @@ namespace sane {
         // Print the result
         std::cout << jsonData.dump(jsonIndent) << std::endl;
     }
+
+    void CLI::listCaptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::string videoId;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        videoId = t_input.at(1);
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetCaptionsList(part, videoId);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetCaptionsList(part, videoId, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
 } // namespace sane

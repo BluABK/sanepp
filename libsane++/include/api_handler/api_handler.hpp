@@ -122,6 +122,10 @@ namespace sane {
                 const std::map<std::string,std::string> &t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
+        nlohmann::json sapiGetChannelSectionsList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
     private:
     };
 } // namespace sane.

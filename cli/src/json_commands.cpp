@@ -176,4 +176,39 @@ namespace sane {
         // Print the result
         std::cout << jsonData.dump(jsonIndent) << std::endl;
     }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,contentDetails", "id=chan1:chan2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/channelSections/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listChannelSectionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetChannelSectionsList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetChannelSectionsList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
 } // namespace sane

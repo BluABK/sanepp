@@ -88,6 +88,8 @@ namespace sane {
 
         void listChannelsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
+        void listChannelSectionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
     private:
         // Internal
         bool manuallyExit = false;
@@ -112,6 +114,8 @@ namespace sane {
         const std::string PRINT_CHANNEL_JSON_BY_USERNAME = "get-channel-json-by-name";
         const std::string PRINT_CHANNEL_JSON_BY_ID = "get-channel-json-by-id";
         const std::string LIST_CHANNELS_JSON = "list-channels-json";
+        // Channel sections -- JSON
+        const std::string LIST_CHANNEL_SECTIONS_JSON = "list-channel-sections-json";
         // Activities -- JSON
         const std::string LIST_ACTIVITIES_JSON = "list-activities-json";
         // Captions -- JSON

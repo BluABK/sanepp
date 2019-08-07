@@ -13,6 +13,7 @@
 #define CLEAR_PROBLEMS true
 #define DONT_CLEAR_PROBLEMS false
 #define IS_NOT_BEGINNING false
+#define IS_BEGINNING true
 
 /**
 SaneAPI (SAPI) REST API URLs, see SaneAPI documentation
@@ -87,7 +88,7 @@ namespace sane {
         void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
 
         static std::string compileUrlVariables(const std::list<std::map<std::string, std::string>> &t_variableMaps,
-                bool t_isBeginning = true);
+                bool t_isBeginning = false);
 
         static std::string compileUrlVariables(const std::list<std::string> &t_variableValues);
 

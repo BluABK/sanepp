@@ -395,7 +395,7 @@ def youtube_api_channels_list():
 """ ChannelSections """
 
 
-@app.route('/api/v1/youtube/channelSection/list')
+@app.route('/api/v1/youtube/channelSections/list')
 def youtube_api_channel_section_list():
     """
     Passes on any kwargs directly to the YouTube API: channelSection.list().

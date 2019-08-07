@@ -177,7 +177,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(SAPI_YT_CHANNEL_SECTION_LIST + compiledVariables);
+        nlohmann::json jsonData = getSapiResponse(SAPI_YT_CHANNEL_SECTIONS_LIST + compiledVariables);
 
         return jsonData;
     }

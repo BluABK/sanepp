@@ -63,7 +63,7 @@ for the meaning of Local, Remote and YouTube.
 #define SAPI_YT_PLAYLISTS_INSERT                "http://127.0.0.1:5002/api/v1/youtube/playlists/insert"
 #define SAPI_YT_PLAYLISTS_UPDATE                "http://127.0.0.1:5002/api/v1/youtube/playlists/update"
 #define SAPI_YT_PLAYLISTS_DELETE                "http://127.0.0.1:5002/api/v1/youtube/playlists/delete"
-#define SAPI_YT_SEARCH                          "http://127.0.0.1:5002/api/v1/youtube/search"
+#define SAPI_YT_SEARCH_LIST                     "http://127.0.0.1:5002/api/v1/youtube/search/list"
 #define SAPI_YT_SUBSCRIPTIONS_LIST              "http://127.0.0.1:5002/api/v1/youtube/subscriptions/list"
 #define SAPI_YT_THUMBNAILS_SET                  "http://127.0.0.1:5002/api/v1/youtube/thumbnails/set"
 #define SAPI_YT_VIDEO_ABUSE_REPORT_REASONS_LIST "http://127.0.0.1:5002/api/v1/youtube/videoAbuseReportReasons/list"
@@ -164,6 +164,10 @@ namespace sane {
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
         nlohmann::json sapiGetVideosList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
+        nlohmann::json sapiGetSearchList(const std::string &t_part,
                 const std::map<std::string,std::string> &t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 

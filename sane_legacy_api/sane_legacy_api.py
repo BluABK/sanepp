@@ -899,7 +899,7 @@ def youtube_api_playlists_delete():
 """ Search """
 
 
-@app.route('/api/v1/youtube/search')
+@app.route('/api/v1/youtube/search/list')
 def youtube_api_search():
     """
     Passes on any kwargs directly to the YouTube API: Search().

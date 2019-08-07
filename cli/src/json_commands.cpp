@@ -1,8 +1,15 @@
+#include <algorithm>
+#include <string>
+
 #include "cli.hpp"
 
 namespace sane {
     /**
-     * Takes a comma-separated string on the form of "a=b,c=d,e=f"
+     * Takes a comma-separated string on the form of:
+     *      single assignments: "a=b,c=d,e=f"
+     *      and
+     *      list assignments: "a=b:t:y,b=t:a:u,c=stuff"
+     *
      * and returns a map on the form of map[a] = b etc.
      *
      * @param t_string
@@ -15,12 +22,20 @@ namespace sane {
         std::vector<std::string> variableAssignments = tokenize(t_string, ',');
 
         // For each assignment in variableAssignments
+        std::vector<std::string> assignmentTokens;
+        std::string variable;
+        std::string value;
         for (auto const& assignment: variableAssignments) {
             // Split out var name and value by tokenizing on equals symbol.
-            std::vector<std::string> assignmentTokens = tokenize(assignment, '=');
+            assignmentTokens = tokenize(assignment, '=');
+            variable = assignmentTokens.at(0);
+            value = assignmentTokens.at(1);
+
+            // Replace custom list separator ':' with a proper ','.
+            std::replace(value.begin(), value.end(), ':', ',');
 
             // Add assignment to map.
-            variableAssignmentMap[assignmentTokens.at(0)] = assignmentTokens.at(1);
+            variableAssignmentMap[variable] = value;
         }
 
         return variableAssignmentMap;

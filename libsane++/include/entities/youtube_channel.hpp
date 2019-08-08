@@ -7,11 +7,7 @@
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
 
-#define MISSING_VALUE "N/A"
-#define YOUTUBE_CHANNEL_PREFIX "UC"
-#define YOUTUBE_UPLOADS_PLAYLIST_PREFIX "UU"
-#define YOUTUBE_FAVOURITES_PLAYLIST_PREFIX "FL"
-#define YOUTUBE_LIKES_PLAYLIST_PREFIX "LL"
+#include "common.hpp"
 
 namespace sane {
     /**

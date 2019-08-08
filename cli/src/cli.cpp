@@ -96,7 +96,7 @@ namespace sane {
         addCommand(PRINT_SUBSCRIPTIONS_BASIC, "Lists all subscriptions in a compact line-by-line form.",
                    ENTITY_CATEGORY);
         addCommand(PRINT_SUBSCRIPTIONS_JSON_FROM_API, "Retrieves a fresh list of subscriptions from the YouTube API"
-                                                      " and prints it as JSON.", JSON_CATEGORY);
+                                                      " and prints it.", JSON_CATEGORY);
         addCommand(PRINT_CHANNEL_BY_USERNAME, "Retrieve a channel by username.", "NAME", ENTITY_CATEGORY);
         addCommand(PRINT_CHANNEL_BY_ID, "Retrieve and print a channel entity by channel ID.", "CHAN_ID",
                 ENTITY_CATEGORY);
@@ -114,6 +114,29 @@ namespace sane {
                    "PART... FILTER [PARAM...]", JSON_CATEGORY);
         addCommand(LIST_COMMENTS_JSON, "Returns a list of comments.",
                    "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_COMMENT_THREADS_JSON, "Returns a list of comment threads.", "PART... FILTER [PARAM...]",
+                JSON_CATEGORY);
+        addCommand(LIST_GUIDE_CATEGORIES_JSON, "Returns a list of categories that can be associated with "
+                                               "YouTube channels.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_I18N_LANGUAGES_JSON, "Returns a list of application languages that the "
+                                             "YouTube website supports.", "PART [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_I18N_REGIONS_JSON, "Returns a list of content regions that the "
+                                           "YouTube website supports.", "PART [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_PLAYLIST_ITEMS_JSON, "Returns a collection of playlist items. You can retrieve all of "
+                                             "the playlist items in a specified playlist or retrieve one or "
+                                             "more playlist items by their unique IDs", "PART... FILTER [PARAM...]",
+                   JSON_CATEGORY);
+        addCommand(LIST_PLAYLISTS_JSON, "Returns a collection of playlists.", "PART... FILTER [PARAM...]",
+                   JSON_CATEGORY);
+        addCommand(SEARCH_JSON, "Returns a collection of search results.", "PART [FILTER] [PARAM...]",
+                   JSON_CATEGORY);
+        addCommand(LIST_SUBSCRIPTIONS_JSON, "Returns subscription resources.", "PART... FILTER [PARAM...]",
+                   JSON_CATEGORY);
+        addCommand(LIST_VIDEO_ABUSE_REPORT_REASONS_JSON, "Retrieve a list of reasons that can be used to report "
+                                                         "abusive videos.", "PART [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_VIDEO_CATEGORIES_JSON, "Returns a list of categories that can be associated with "
+                                               "YouTube videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(LIST_VIDEOS_JSON, "Returns a list of videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
@@ -218,6 +241,28 @@ namespace sane {
             listChannelSectionsJsonFromApi(args);
         } else if (command == LIST_COMMENTS_JSON) {
             listCommentsJsonFromApi(args);
+        } else if (command == LIST_COMMENT_THREADS_JSON) {
+            listCommentThreadsJsonFromApi(args);
+        } else if (command == LIST_GUIDE_CATEGORIES_JSON) {
+            listGuideCategoriesJsonFromApi(args);
+        } else if (command == LIST_I18N_LANGUAGES_JSON) {
+            listi18nLanguagesJsonFromApi(args);
+        } else if (command == LIST_I18N_REGIONS_JSON) {
+            listi18nRegionsJsonFromApi(args);
+        } else if (command == LIST_PLAYLIST_ITEMS_JSON) {
+            listPlaylistItemsJsonFromApi(args);
+        } else if (command == LIST_PLAYLISTS_JSON) {
+            listPlaylistsJsonFromApi(args);
+        } else if (command == SEARCH_JSON) {
+            listSearchJsonFromApi(args);
+        } else if (command == LIST_SUBSCRIPTIONS_JSON) {
+            listSubscriptionsJsonFromApi(args);
+        } else if (command == LIST_VIDEO_ABUSE_REPORT_REASONS_JSON) {
+            listVideoAbuseReportReasonsJsonFromApi(args);
+        } else if (command == LIST_VIDEO_CATEGORIES_JSON) {
+            listVideoCategoriesJsonFromApi(args);
+        } else if (command == LIST_VIDEOS_JSON) {
+            listVideosJsonFromApi(args);
         }
 
     }

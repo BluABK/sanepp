@@ -399,7 +399,7 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetSearchList(const std::string &t_part,
+    nlohmann::json APIHandler::sapiGetSearchList(const std::string &t_part, // FIXME: Filter is optional (0 or 1)
             const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;

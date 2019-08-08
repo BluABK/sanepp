@@ -108,8 +108,8 @@ namespace sane {
 
         void listSubscriptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
-        void listi18nVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input,
-                int jsonIndent = DEFAULT_INDENT);
+        void listVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input,
+                                                    int jsonIndent = DEFAULT_INDENT);
 
         void listVideoCategoriesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
@@ -125,28 +125,67 @@ namespace sane {
         const std::string EXIT = "exit";
         const std::string HELP = "help";
         const std::string HELP_EXTENDED = "help-extended";
-        // Subscriptions -- Entity
+        // Activities
+        // -- JSON
+        const std::string LIST_ACTIVITIES_JSON = "list-activities-json";
+        // Captions
+        // -- JSON
+        const std::string LIST_CAPTIONS_JSON = "list-captions-json";
+        // Channel
+        // -- Entity
+        const std::string PRINT_CHANNEL_BY_USERNAME = "get-channel-by-name";
+        const std::string PRINT_CHANNEL_BY_ID = "get-channel-by-id";
+        // Channels
+        // -- JSON
+        const std::string PRINT_CHANNEL_JSON_BY_USERNAME = "get-channel-json-by-name";
+        const std::string PRINT_CHANNEL_JSON_BY_ID = "get-channel-json-by-id";
+        const std::string LIST_CHANNELS_JSON = "list-channels-json";
+        // Channel sections
+        // -- JSON
+        const std::string LIST_CHANNEL_SECTIONS_JSON = "list-channel-sections-json";
+        // Comments
+        // -- JSON
+        const std::string LIST_COMMENTS_JSON = "list-comments-json";
+        // Comment threads
+        // -- JSON
+        const std::string LIST_COMMENT_THREADS_JSON = "list-comment-threads-json";
+        // Guide Categories
+        // -- JSON
+        const std::string LIST_GUIDE_CATEGORIES_JSON = "list-guide-categories-json";
+        // i18n Languages
+        // -- JSON
+        const std::string LIST_I18N_LANGUAGES_JSON = "list-i18n-languages-json";
+        // i18n Regions
+        // -- JSON
+        const std::string LIST_I18N_REGIONS_JSON = "list-i18n-regions-json";
+        // Playlist items
+        // -- JSON
+        const std::string LIST_PLAYLIST_ITEMS_JSON = "list-playlist-items-json";
+        // Playlists
+        // -- JSON
+        const std::string LIST_PLAYLISTS_JSON = "list-playlists-json";
+        // Search
+        // -- JSON
+        const std::string SEARCH_JSON = "search-json";
+        // Subscriptions
+        // -- Entity
         const std::string GET_SUBSCRIPTIONS_FROM_API = "get-subscriptions";
         const std::string PRINT_SUBSCRIPTIONS_PREFIX = "list-subscriptions-";
         const std::string PRINT_SUBSCRIPTIONS_FULL = PRINT_SUBSCRIPTIONS_PREFIX + "full";
         const std::string PRINT_SUBSCRIPTIONS_BASIC = PRINT_SUBSCRIPTIONS_PREFIX + "basic";
-        // Subscriptions -- JSON
+        // -- JSON
+        const std::string LIST_SUBSCRIPTIONS_JSON = "list-subscriptions-json";
         const std::string PRINT_SUBSCRIPTIONS_JSON_FROM_API = "print-subscriptions-json";
-        // Channel -- Entity
-        const std::string PRINT_CHANNEL_BY_USERNAME = "get-channel-by-name";
-        const std::string PRINT_CHANNEL_BY_ID = "get-channel-by-id";
-        // Channels -- JSON
-        const std::string PRINT_CHANNEL_JSON_BY_USERNAME = "get-channel-json-by-name";
-        const std::string PRINT_CHANNEL_JSON_BY_ID = "get-channel-json-by-id";
-        const std::string LIST_CHANNELS_JSON = "list-channels-json";
-        // Channel sections -- JSON
-        const std::string LIST_CHANNEL_SECTIONS_JSON = "list-channel-sections-json";
-        // Activities -- JSON
-        const std::string LIST_ACTIVITIES_JSON = "list-activities-json";
-        // Captions -- JSON
-        const std::string LIST_CAPTIONS_JSON = "list-captions-json";
-        // Comments -- JSOM
-        const std::string LIST_COMMENTS_JSON = "list-comments-json";
+        // Video Abuse Report Reasons
+        // -- JSON
+        const std::string LIST_VIDEO_ABUSE_REPORT_REASONS_JSON = "list-video-abuse-report-reasons-json";
+        // Video categories
+        // -- JSON
+        const std::string LIST_VIDEO_CATEGORIES_JSON = "list-video-categories-json";
+        // Videos
+        // -- JSON
+        const std::string LIST_VIDEOS_JSON = "list-videos-json";
+
 
         // Map of commands (to be populated)
         std::map<std::string, command_t> m_commands;

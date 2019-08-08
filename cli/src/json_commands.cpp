@@ -533,7 +533,7 @@ namespace sane {
      * @param t_input
      * @param jsonIndent
      */
-    void CLI::listi18nVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+    void CLI::listVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
         std::string part;
         std::map<std::string,std::string> optParams;
         nlohmann::json jsonData;

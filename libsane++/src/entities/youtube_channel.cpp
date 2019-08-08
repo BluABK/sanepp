@@ -16,7 +16,7 @@ namespace sane {
      * Attempts to assign a JSON value to a given string and handle any bogus data.
      * If the input JSON value isn't a string it sets MISSING_VALUE.
      *
-     * This function passes stringToAssignValue by reference (directly modififying it).
+     * This function passes stringToAssignValue by reference (directly modifying it).
      *
      * @param stringToAssignValue   String to assign a value (modified directly).
      * @param unknownJsonTypeValue  The undetermined JSON value to assign the string.

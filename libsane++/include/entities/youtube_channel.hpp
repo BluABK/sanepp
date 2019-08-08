@@ -67,8 +67,6 @@ namespace sane {
 
         void addFromJson(nlohmann::json t_json);
 
-        void addFromPureStringList(const std::list<std::string> &t_values);
-
         void addFromValues(const char* t_id, const char* t_uploadsPlaylist,
                            const char* t_favouritesPlaylist, const char* t_likesPlaylist,
                            const char* t_title, const char* t_description,

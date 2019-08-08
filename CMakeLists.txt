@@ -56,7 +56,10 @@ add_executable(sane++_cli cli/src/main.cpp
         libsane++/src/api_handler/entity_response.cpp
         libsane++/src/api_handler/json_response.cpp
         cli/src/entity_commands.cpp
-        cli/src/json_commands.cpp cli/src/print_functions.cpp)
+        cli/src/json_commands.cpp
+        cli/src/print_functions.cpp
+        libsane++/src/youtube/subfeed.cpp
+        libsane++/include/youtube/subfeed.hpp)
 
 # API Handler
 target_link_libraries (sane++_cli -lcurl)
@@ -79,7 +82,8 @@ add_executable(sane++_gui gui/src/main.cpp
         libsane++/include/api_handler/api_handler.hpp
         libsane++/src/api_handler/entity_response.cpp
         libsane++/src/api_handler/json_response.cpp
-        )
+        libsane++/src/youtube/subfeed.cpp
+        libsane++/include/youtube/subfeed.hpp)
 
 # API Handler
 target_link_libraries (sane++_gui -lcurl)
@@ -133,7 +137,10 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
             libsane++/src/api_handler/entity_response.cpp
             libsane++/src/api_handler/json_response.cpp
             cli/src/entity_commands.cpp
-            cli/src/json_commands.cpp)
+            cli/src/json_commands.cpp
+            cli/src/print_functions.cpp
+            libsane++/src/youtube/subfeed.cpp
+            libsane++/include/youtube/subfeed.hpp)
 
     # API Handler
     target_link_libraries(travis_test_all -lcurl)
@@ -174,7 +181,10 @@ else()
             libsane++/src/api_handler/entity_response.cpp
             libsane++/src/api_handler/json_response.cpp
             cli/src/entity_commands.cpp
-            cli/src/json_commands.cpp)
+            cli/src/json_commands.cpp
+            cli/src/print_functions.cpp
+            libsane++/src/youtube/subfeed.cpp
+            libsane++/include/youtube/subfeed.hpp)
 
     # API Handler
     target_link_libraries(test_all -lcurl)

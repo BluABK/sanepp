@@ -454,9 +454,9 @@ namespace sane {
     }
 
     /**
-     * Takes tokenized args: part filter <optional params>.
+     * Takes tokenized args: <optional params>.
      *
-     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     * Example: args = ["maxResults=15"]
      *
      * For more info see: https://developers.google.com/youtube/v3/docs/search/list
      *
@@ -464,24 +464,52 @@ namespace sane {
      * @param jsonIndent
      */
     void CLI::listSearchJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
-        std::string part;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.size() > 1) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 1." << std::endl;
+            return;
+        }
+
+        if (t_input.empty()) {
+            jsonData = api->sapiGetSearchList();
+        } else if (t_input.size() == 1) {
+            optParams = stringToMap(t_input.at(0));
+            jsonData = api->sapiGetSearchList(optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: filter <optional params>.
+     *
+     * Example: args = ["id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/search/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listFilteredSearchJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
         std::map<std::string,std::string> filter;
         std::map<std::string,std::string> optParams;
         nlohmann::json jsonData;
 
-        if (t_input.empty() or t_input.size() < 2) {
-            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+        if (t_input.empty() or t_input.size() > 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 1." << std::endl;
             return;
         }
 
-        part = t_input.at(0);
-        filter = stringToMap(t_input.at(1));
+        filter = stringToMap(t_input.at(0));
 
-        if (t_input.size() == 2) {
-            jsonData = api->sapiGetSearchList(part, filter);
-        } else if (t_input.size() == 3) {
-            optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetSearchList(part, filter, optParams);
+        if (t_input.size() == 1) {
+            jsonData = api->sapiGetSearchFilteredList(filter);
+        } else if (t_input.size() == 2) {
+            optParams = stringToMap(t_input.at(1));
+            jsonData = api->sapiGetSearchFilteredList(filter, optParams);
         }
 
         // Print the result

@@ -106,6 +106,8 @@ namespace sane {
 
         void listSearchJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
+        void listFilteredSearchJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
         void listSubscriptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
         void listVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input,
@@ -167,6 +169,7 @@ namespace sane {
         // Search
         // -- JSON
         const std::string SEARCH_JSON = "search-json";
+        const std::string FILTERED_SEARCH_JSON = "search-filtered-json";
         // Subscriptions
         // -- Entity
         const std::string GET_SUBSCRIPTIONS_FROM_API = "get-subscriptions";

@@ -907,8 +907,8 @@ def youtube_api_search():
     https://developers.google.com/youtube/v3/docs/search/list
     :return:
     """
-    # Get an authenticated API key object
-    youtube_auth = load_key()
+    # Get an authenticated API OAuth2 object
+    youtube_auth = load_youtube_resource_oauth()
 
     # Strip out empty kwargs.
     kwargs = remove_empty_kwargs(**request.args)

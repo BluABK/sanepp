@@ -128,7 +128,9 @@ namespace sane {
                    JSON_CATEGORY);
         addCommand(LIST_PLAYLISTS_JSON, "Returns a collection of playlists.", "PART... FILTER [PARAM...]",
                    JSON_CATEGORY);
-        addCommand(SEARCH_JSON, "Returns a collection of search results.", "PART [FILTER] [PARAM...]",
+        addCommand(SEARCH_JSON, "Returns a collection of search results.", "PARAM...",
+                   JSON_CATEGORY);
+        addCommand(FILTERED_SEARCH_JSON, "Returns a collection of filtered search results.", "FILTER [PARAM...]",
                    JSON_CATEGORY);
         addCommand(LIST_SUBSCRIPTIONS_JSON, "Returns subscription resources.", "PART... FILTER [PARAM...]",
                    JSON_CATEGORY);
@@ -255,6 +257,8 @@ namespace sane {
             listPlaylistsJsonFromApi(args);
         } else if (command == SEARCH_JSON) {
             listSearchJsonFromApi(args);
+        } else if (command == FILTERED_SEARCH_JSON) {
+            listFilteredSearchJsonFromApi(args);
         } else if (command == LIST_SUBSCRIPTIONS_JSON) {
             listSubscriptionsJsonFromApi(args);
         } else if (command == LIST_VIDEO_ABUSE_REPORT_REASONS_JSON) {

@@ -92,6 +92,29 @@ namespace sane {
 
         void listCommentsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
+        void listCommentThreadsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listGuideCategoriesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listi18nLanguagesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listi18nRegionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listPlaylistItemsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listPlaylistsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listSearchJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listSubscriptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listi18nVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input,
+                int jsonIndent = DEFAULT_INDENT);
+
+        void listVideoCategoriesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void listVideosJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
     private:
         // Internal
         bool manuallyExit = false;

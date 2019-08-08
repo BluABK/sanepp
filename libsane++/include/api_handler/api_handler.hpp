@@ -152,6 +152,10 @@ namespace sane {
                 const std::map<std::string,std::string> &t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
+        nlohmann::json sapiGetSearchList(const std::string &t_part,
+                const std::map<std::string,std::string> &t_filter,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
         nlohmann::json sapiGetSubscriptionsList(const std::string &t_part,
                 const std::map<std::string,std::string> &t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
@@ -166,11 +170,6 @@ namespace sane {
         nlohmann::json sapiGetVideosList(const std::string &t_part,
                 const std::map<std::string,std::string> &t_filter,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
-
-        nlohmann::json sapiGetSearchList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
-
 
     private:
     };

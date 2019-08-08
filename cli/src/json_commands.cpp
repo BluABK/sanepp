@@ -246,4 +246,383 @@ namespace sane {
         // Print the result
         std::cout << jsonData.dump(jsonIndent) << std::endl;
     }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/commentThreads/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listCommentThreadsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetCommentThreadsList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetCommentThreadsList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/guideCategories/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listGuideCategoriesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetGuideCategoriesList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetGuideCategoriesList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part <optional params>.
+     *
+     * Example: args = ["snippet", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/i18nLanguages/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listi18nLanguagesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() > 2) {
+            std::cout << "Error: wrong amount of arguments given, required: <= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+
+        if (t_input.size() == 1) {
+            jsonData = api->sapiGeti18nLanguagesList(part);
+        } else if (t_input.size() == 2) {
+            optParams = stringToMap(t_input.at(1));
+            jsonData = api->sapiGeti18nLanguagesList(part, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part <optional params>.
+     *
+     * Example: args = ["snippet", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/i18nRegions/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listi18nRegionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() > 2) {
+            std::cout << "Error: wrong amount of arguments given, required: <= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+
+        if (t_input.size() == 1) {
+            jsonData = api->sapiGeti18nRegionsList(part);
+        } else if (t_input.size() == 2) {
+            optParams = stringToMap(t_input.at(1));
+            jsonData = api->sapiGeti18nRegionsList(part, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/playlistItems/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listPlaylistItemsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetPlaylistItemsList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetPlaylistItemsList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/playlists/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listPlaylistsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetPlaylistsList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetPlaylistsList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/search/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listSearchJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetSearchList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetSearchList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/subscriptions/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listSubscriptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetSubscriptionsList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetSubscriptionsList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part <optional params>.
+     *
+     * Example: args = ["snippet", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/videoAbuseReportReasons/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listi18nVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() > 2) {
+            std::cout << "Error: wrong amount of arguments given, required: <= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+
+        if (t_input.size() == 1) {
+            jsonData = api->sapiGetVideoAbuseReportReasonsList(part);
+        } else if (t_input.size() == 2) {
+            optParams = stringToMap(t_input.at(1));
+            jsonData = api->sapiGetVideoAbuseReportReasonsList(part, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/videoCategories/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listVideoCategoriesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetVideoCategoriesList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetVideoCategoriesList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    /**
+     * Takes tokenized args: part filter <optional params>.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/videos/list
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::listVideosJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        std::string part;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 2) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
+            return;
+        }
+
+        part = t_input.at(0);
+        filter = stringToMap(t_input.at(1));
+
+        if (t_input.size() == 2) {
+            jsonData = api->sapiGetVideosList(part, filter);
+        } else if (t_input.size() == 3) {
+            optParams = stringToMap(t_input.at(2));
+            jsonData = api->sapiGetVideosList(part, filter, optParams);
+        }
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
 } // namespace sane

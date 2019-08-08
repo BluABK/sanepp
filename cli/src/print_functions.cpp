@@ -9,8 +9,13 @@ namespace sane {
 
         filter["playlistId"] = t_playlistId;
 
-        // Get list of videos
+        // Get list of videos.
         playlistJson = api->sapiGetPlaylistItemsList(part, filter, optParams);
+
+        // Store page info.
+        int resultsPerPage = playlistJson["pageInfo"]["resultsPerPage"].get<int>();
+        int totalResults = playlistJson["pageInfo"]["totalResults"].get<int>();
+        std::string nextPage = playlistJson["nextPageToken"].get<std::string>();
 
         // Indent stuff.
         int indentLength = 4;
@@ -42,8 +47,6 @@ namespace sane {
             std::string videoTitle = playlistItem["snippet"]["title"].get<std::string>();
             std::string videoPrivacyStatus = playlistItem["status"]["privacyStatus"].get<std::string>();
             std::string videoPublishDate = playlistItem["snippet"]["publishedAt"].get<std::string>();
-            std::string description;
-            std::string descriptionAsOneLine;
 
             std::string channelId = playlistItem["snippet"]["channelId"].get<std::string>();
             std::string channelTitle = playlistItem["snippet"]["channelTitle"].get<std::string>();
@@ -53,11 +56,14 @@ namespace sane {
             // Humanize date
             videoPublishDate = videoPublishDate.substr(0, videoPublishDate.size() -5);
             std::replace(videoPublishDate.begin(), videoPublishDate.end(), 'T', ' ');
-//            description, descriptionAsOneLine = playlistItem["snippet"]["description"].get<std::string>();
-//            std::replace(descriptionAsOneLine.begin(), descriptionAsOneLine.end(), '\n', '|');
 
+            // Print table item.
             std::cout << playlistPosition << "\t" << videoPublishDate << indent << videoId << indent
             << videoPrivacyStatus << indent << channelTitle << channelIndent << videoTitle << std::endl;
+
         }
+        // Print page info/summary.
+        std::cout << std::endl << "Showing " << resultsPerPage << "/" << totalResults << " results."
+        << " Next page: " << nextPage << std::endl;
     }
 } // namespace sane

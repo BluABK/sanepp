@@ -56,6 +56,9 @@ namespace sane {
 
         void executeCommand(const std::vector<std::string> &t_tokenizedInput);
 
+        void printPlaylistVideos(const std::string &t_playlistId,
+                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+
         void getSubscriptionsFromApi();
 
         void printSubscriptionsJsonFromApi(int jsonIndent = DEFAULT_INDENT);
@@ -161,6 +164,8 @@ namespace sane {
         // -- JSON
         const std::string LIST_I18N_REGIONS_JSON = "list-i18n-regions-json";
         // Playlist items
+        // -- Print
+        const std::string PRINT_PLAYLIST_ITEMS = "print-playlist-items";
         // -- JSON
         const std::string LIST_PLAYLIST_ITEMS_JSON = "list-playlist-items-json";
         // Playlists

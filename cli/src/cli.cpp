@@ -139,6 +139,7 @@ namespace sane {
         addCommand(LIST_VIDEO_CATEGORIES_JSON, "Returns a list of categories that can be associated with "
                                                "YouTube videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
         addCommand(LIST_VIDEOS_JSON, "Returns a list of videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(PRINT_PLAYLIST_ITEMS, "Prints a table of playlist videos.", "PLAYLIST_ID [PARAM...]", UNCATEGORISED);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
@@ -267,6 +268,16 @@ namespace sane {
             listVideoCategoriesJsonFromApi(args);
         } else if (command == LIST_VIDEOS_JSON) {
             listVideosJsonFromApi(args);
+        } else if (command == PRINT_PLAYLIST_ITEMS) {
+            if (args.size() == 1) {
+                // Has playlist ID
+                printPlaylistVideos(args.at(0));
+            } else if (args.size() == 2) {
+                // Has playlist ID and optional params.
+                printPlaylistVideos( args.at(0), stringToMap(args.at(1)) );
+            } else {
+                std::cerr << "Error in PRINT_PLAYLIST_ITEMS: invalid argument count: " << args.size() << std::endl;
+            }
         }
 
     }

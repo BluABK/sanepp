@@ -56,7 +56,7 @@ add_executable(sane++_cli cli/src/main.cpp
         libsane++/src/api_handler/entity_response.cpp
         libsane++/src/api_handler/json_response.cpp
         cli/src/entity_commands.cpp
-        cli/src/json_commands.cpp)
+        cli/src/json_commands.cpp cli/src/print_functions.cpp)
 
 # API Handler
 target_link_libraries (sane++_cli -lcurl)

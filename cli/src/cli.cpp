@@ -47,7 +47,12 @@ namespace sane {
         m_commandCategories.unique();
 
         // Determine indentation spacing between command name and description.
-        if ((t_name + t_usageSyntax).length() > longestLineWithUsageSyntax) {
+        if (t_name.length() > longestLine) {
+            longestLine = t_name.length();
+        }
+
+        // Determine indentation spacing between command name and description, including usage syntax.
+        if (t_name.length() + t_usageSyntax.length() > longestLineWithUsageSyntax) {
             longestLineWithUsageSyntax = (t_name + t_usageSyntax).length();
         }
 

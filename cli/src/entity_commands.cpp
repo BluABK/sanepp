@@ -79,4 +79,16 @@ namespace sane {
             printChannelFromApiById(t_input.front());
         }
     }
+
+    void CLI::printVideosFromApi(const std::vector<std::string> &t_input) {
+        nlohmann::json videosJson = listVideosJsonFromApi(t_input);
+        if (!videosJson.empty() and videosJson.find("items") != videosJson.end()) {
+            for (nlohmann::json videoItemJson : videosJson["items"]) {
+                std::shared_ptr<YoutubeVideo> video = std::make_shared<YoutubeVideo>(videoItemJson);
+
+                video->print(DEFAULT_INDENT);
+            }
+//            std::cout << videoJson.dump(DEFAULT_INDENT);
+        }
+    }
 } // namespace sane

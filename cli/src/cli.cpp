@@ -143,7 +143,8 @@ namespace sane {
                                                          "abusive videos.", "PART [PARAM...]", JSON_CATEGORY);
         addCommand(LIST_VIDEO_CATEGORIES_JSON, "Returns a list of categories that can be associated with "
                                                "YouTube videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
-        addCommand(LIST_VIDEOS_JSON, "Returns a list of videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(PRINT_VIDEOS_JSON, "Returns a list of videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
+        addCommand(PRINT_VIDEOS, "Returns a list of videos.", "PART... FILTER [PARAM...]", ENTITY_CATEGORY);
         addCommand(PRINT_PLAYLIST_ITEMS, "Prints a table of playlist videos.", "PLAYLIST_ID [PARAM...]", UNCATEGORISED);
 
         // Instantiate the API Handler.
@@ -271,8 +272,10 @@ namespace sane {
             listVideoAbuseReportReasonsJsonFromApi(args);
         } else if (command == LIST_VIDEO_CATEGORIES_JSON) {
             listVideoCategoriesJsonFromApi(args);
-        } else if (command == LIST_VIDEOS_JSON) {
-            listVideosJsonFromApi(args);
+        } else if (command == PRINT_VIDEOS_JSON) {
+            printVideosJsonFromApi(args);
+        } else if (command == PRINT_VIDEOS) {
+            printVideosFromApi(args);
         } else if (command == PRINT_PLAYLIST_ITEMS) {
             if (args.size() == 1) {
                 // Has playlist ID

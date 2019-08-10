@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <entities/youtube_channel.hpp>
+#include <entities/youtube_video.hpp>
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 
@@ -118,7 +119,11 @@ namespace sane {
 
         void listVideoCategoriesJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
-        void listVideosJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+        nlohmann::json listVideosJsonFromApi(const std::vector<std::string> &t_input);
+
+        void printVideosJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
+        void printVideosFromApi(const std::vector<std::string> &t_input);
 
     private:
         // Internal
@@ -191,8 +196,10 @@ namespace sane {
         // -- JSON
         const std::string LIST_VIDEO_CATEGORIES_JSON = "list-video-categories-json";
         // Videos
+        // -- Entity
+        const std::string PRINT_VIDEOS = "print-videos";
         // -- JSON
-        const std::string LIST_VIDEOS_JSON = "list-videos-json";
+        const std::string PRINT_VIDEOS_JSON = "print-videos-json";
 
 
         // Map of commands (to be populated)

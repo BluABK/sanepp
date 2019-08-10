@@ -629,7 +629,14 @@ namespace sane {
      * @param t_input
      * @param jsonIndent
      */
-    void CLI::listVideosJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+    void CLI::printVideosJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent) {
+        nlohmann::json jsonData = listVideosJsonFromApi(t_input);
+
+        // Print the result
+        std::cout << jsonData.dump(jsonIndent) << std::endl;
+    }
+
+    nlohmann::json CLI::listVideosJsonFromApi(const std::vector<std::string> &t_input) {
         std::string part;
         std::map<std::string,std::string> filter;
         std::map<std::string,std::string> optParams;
@@ -637,7 +644,7 @@ namespace sane {
 
         if (t_input.empty() or t_input.size() < 2) {
             std::cout << "Error: wrong amount of arguments given, required: >= 2." << std::endl;
-            return;
+            return nlohmann::json::object();
         }
 
         part = t_input.at(0);
@@ -650,7 +657,6 @@ namespace sane {
             jsonData = api->sapiGetVideosList(part, filter, optParams);
         }
 
-        // Print the result
-        std::cout << jsonData.dump(jsonIndent) << std::endl;
+        return jsonData;
     }
 } // namespace sane

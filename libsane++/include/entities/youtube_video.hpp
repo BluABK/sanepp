@@ -156,6 +156,260 @@ namespace sane {
 
         void setId(nlohmann::json t_id, nlohmann::json t_json = nlohmann::json::object());
 
+        const std::string &getId() const;
+
+        const std::string &getPublishedAt() const;
+
+        void setPublishedAt(const std::string &mPublishedAt);
+
+        const std::string &getChannelId() const;
+
+        void setChannelId(const std::string &mChannelId);
+
+        const std::string &getTitle() const;
+
+        void setTitle(const std::string &mTitle);
+
+        const std::string &getDescription() const;
+
+        void setDescription(const std::string &mDescription);
+
+        const std::map<std::string, thumbnail_t> &getThumbnails() const;
+
+        void setThumbnails(const std::map<std::string, thumbnail_t> &mThumbnails);
+
+        const std::string &getChannelTitle() const;
+
+        void setChannelTitle(const std::string &mChannelTitle);
+
+        const std::list<std::string> &getTags() const;
+
+        void setTags(const std::list<std::string> &mTags);
+
+        const std::string &getCategoryId() const;
+
+        void setCategoryId(const std::string &mCategoryId);
+
+        const std::string &getLiveBroadcastContent() const;
+
+        void setLiveBroadcastContent(const std::string &mLiveBroadcastContent);
+
+        const std::string &getDefaultLanguage() const;
+
+        void setDefaultLanguage(const std::string &mDefaultLanguage);
+
+        const std::string &getLocalizedTitle() const;
+
+        void setLocalizedTitle(const std::string &mLocalizedTitle);
+
+        const std::string &getLocalizedDescription() const;
+
+        void setLocalizedDescription(const std::string &mLocalizedDescription);
+
+        const std::string &getDefaultAudioLanguage() const;
+
+        void setDefaultAudioLanguage(const std::string &mDefaultAudioLanguage);
+
+        const std::string &getDuration() const;
+
+        void setDuration(const std::string &mDuration);
+
+        bool isMIs3D() const;
+
+        void setIs3D(bool mIs3D);
+
+        bool isMIs2D() const;
+
+        void setIs2D(bool mIs2D);
+
+        bool isMIsHd() const;
+
+        void setIsHd(bool mIsHd);
+
+        bool isMHasCaptions() const;
+
+        void setHasCaptions(bool mHasCaptions);
+
+        bool isMIsLicensedContent() const;
+
+        void setIsLicensedContent(bool mIsLicensedContent);
+
+        const std::list<std::string> &getRegionRestrictionWhitelist() const;
+
+        void setRegionRestrictionWhitelist(const std::list<std::string> &mRegionRestrictionWhitelist);
+
+        const std::list<std::string> &getRegionRestrictionBlacklist() const;
+
+        void setRegionRestrictionBlacklist(const std::list<std::string> &mRegionRestrictionBlacklist);
+
+        bool isMIs360() const;
+
+        void setIs360(bool mIs360);
+
+        bool isMIsRectanguar() const;
+
+        void setIsRectanguar(bool mIsRectanguar);
+
+        bool isMHasCustomThumbnail() const;
+
+        void setHasCustomThumbnail(bool mHasCustomThumbnail);
+
+        const std::string &getUploadStatus() const;
+
+        void setUploadStatus(const std::string &mUploadStatus);
+
+        const std::string &getFailureReason() const;
+
+        void setFailureReason(const std::string &mFailureReason);
+
+        const std::string &getRejectionReason() const;
+
+        void setRejectionReason(const std::string &mRejectionReason);
+
+        const std::string &getPrivacyStatus() const;
+
+        void setPrivacyStatus(const std::string &mPrivacyStatus);
+
+        const std::string &getPublishAt() const;
+
+        void setPublishAt(const std::string &mPublishAt);
+
+        const std::string &getLicense() const;
+
+        void setLicense(const std::string &mLicense);
+
+        bool isMIsEmbeddable() const;
+
+        void setIsEmbeddable(bool mIsEmbeddable);
+
+        bool isMPublicStatsViewable() const;
+
+        void setPublicStatsViewable(bool mPublicStatsViewable);
+
+        unsigned long getViewCount() const;
+
+        void setViewCount(unsigned long mViewCount);
+
+        unsigned long getLikeCount() const;
+
+        void setLikeCount(unsigned long mLikeCount);
+
+        unsigned long getDislikeCount() const;
+
+        void setDislikeCount(unsigned long mDislikeCount);
+
+        unsigned long getCommentCount() const;
+
+        void setCommentCount(unsigned long commentCount);
+
+        const player_t &getPlayer() const;
+
+        void setPlayer(const player_t &mPlayer);
+
+        const std::list<std::string> &getTopicCategories() const;
+
+        void setTopicCategories(const std::list<std::string> &mTopicCategories);
+
+        const std::string &getLocation() const;
+
+        void setLocation(const std::string &mLocation);
+
+        const std::string &getRecordingDate() const;
+
+        void setRecordingDate(const std::string &mRecordingDate);
+
+        const std::string &getFileName() const;
+
+        void setFileName(const std::string &mFileName);
+
+        unsigned long getFileSize() const;
+
+        void setFileSize(unsigned long mFileSize);
+
+        const std::string &getFileType() const;
+
+        void setFileType(const std::string &mFileType);
+
+        const std::string &getContainer() const;
+
+        void setContainer(const std::string &mContainer);
+
+        const std::list<videoStream_t> &getVideoStreams() const;
+
+        void setVideoStreams(const std::list<videoStream_t> &mVideoStreams);
+
+        const std::list<audioStream_t> &getAudioStreams() const;
+
+        void setAudioStreams(const std::list<audioStream_t> &mAudioStreams);
+
+        unsigned long getDurationMs() const;
+
+        void setDurationMs(unsigned long mDurationMs);
+
+        unsigned long getBitrateBps() const;
+
+        void setBitrateBps(unsigned long mBitrateBps);
+
+        const std::string &getCreationTime() const;
+
+        void setCreationTime(const std::string &mCreationTime);
+
+        const std::string &getProcessingStatus() const;
+
+        void setProcessingStatus(const std::string &mProcessingStatus);
+
+        const processingProgress_t &getProcessingProgress() const;
+
+        void setProcessingProgress(const processingProgress_t &mProcessingProgress);
+
+        const std::string &getProcessingFailureReason() const;
+
+        void setProcessingFailureReason(const std::string &mProcessingFailureReason);
+
+        const std::string &getProcessingIssuesAvailability() const;
+
+        void setProcessingIssuesAvailability(const std::string &mProcessingIssuesAvailability);
+
+        const std::string &getTagSuggestionsAvailability() const;
+
+        void setTagSuggestionsAvailability(const std::string &mTagSuggestionsAvailability);
+
+        const std::string &getEditorSuggestionsAvailability() const;
+
+        void setEditorSuggestionsAvailability(const std::string &mEditorSuggestionsAvailability);
+
+        const std::string &getThumbnailsAvailability() const;
+
+        void setThumbnailsAvailability(const std::string &mThumbnailsAvailability);
+
+        const std::list<std::string> &getProcessingErrors() const;
+
+        void setProcessingErrors(const std::list<std::string> &mProcessingErrors);
+
+        const std::list<std::string> &getProcessingWarnings() const;
+
+        void setProcessingWarnings(const std::list<std::string> &mProcessingWarnings);
+
+        const std::list<std::string> &getProcessingHints() const;
+
+        void setProcessingHints(const std::list<std::string> &mProcessingHints);
+
+        const std::list<tagSuggestions_t> &getTagSuggestions() const;
+
+        void setTagSuggestions(const std::list<tagSuggestions_t> &mTagSuggestions);
+
+        const std::list<std::string> &getEditorSuggestions() const;
+
+        void setEditorSuggestions(const std::list<std::string> &mEditorSuggestions);
+
+        const std::list<liveStreamingDetails_t> &getLiveStreamingDetails() const;
+
+        void setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &mLiveStreamingDetails);
+
+        const std::list<localization_t> &getLocalizations() const;
+
+        void setLocalizations(const std::list<localization_t> &mLocalizations);
+
     private:
         /**
          * Entity Internal.
@@ -288,7 +542,7 @@ namespace sane {
         unsigned long m_viewCount{};
         unsigned long m_likeCount{};
         unsigned long m_dislikeCount{};
-        unsigned long commentCount{};
+        unsigned long m_commentCount{};
 
         /**
          * PLAYER

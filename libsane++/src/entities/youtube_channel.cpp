@@ -6,8 +6,6 @@
 
 #include <entities/youtube_channel.hpp>
 
-#define GET_VARIABLE_NAME(Variable) (#Variable)
-
 namespace sane {
     // An empty constructor if you want to populate it later.
     YoutubeChannel::YoutubeChannel() = default;

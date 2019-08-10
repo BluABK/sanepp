@@ -217,7 +217,7 @@ namespace sane {
         return m_isHD;
     }
 
-    void YoutubeVideo::setIsHd(bool t_isHD) {
+    void YoutubeVideo::setIsHD(bool t_isHD) {
         m_isHD = t_isHD;
     }
 

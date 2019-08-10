@@ -226,7 +226,7 @@ namespace sane {
 
         bool isHD() const;
 
-        void setIsHd(bool t_isHD);
+        void setIsHD(bool t_isHD);
 
         bool hasCaptions() const;
 
@@ -411,6 +411,8 @@ namespace sane {
         const std::list<localization_t> &getLocalizations() const;
 
         void setLocalizations(const std::list<localization_t> &t_localizations);
+
+        // END: Getters & Setters.
 
     private:
         /**

@@ -34,6 +34,15 @@ namespace sane {
         }
     }
 
+    bool YoutubeVideo::getJsonBoolValue(nlohmann::json &t_bool) {
+        if (!t_bool.empty()) {
+            if (t_bool.is_boolean()) {
+                return t_bool.get<bool>();
+            } else if (t_bool.is_string())
+                return t_bool.get<std::string>() == "true";
+        }
+    }
+
     void YoutubeVideo::addError(const std::string &t_errorMsg, nlohmann::json &t_json) {
         std::map<std::string, nlohmann::json> _;
         _["error"] = t_errorMsg;
@@ -300,6 +309,28 @@ namespace sane {
         m_duration = t_duration;
     }
 
+    void YoutubeVideo::setDuration(nlohmann::json &t_duration) {
+        assignJsonStringValue(m_duration, t_duration);
+    }
+
+    void YoutubeVideo::setDimension(nlohmann::json &t_dimension) {
+        // Determine is video is 2D or 3D;
+        if (!t_dimension.empty() and t_dimension.is_string()) {
+            std::string dimension = t_dimension.get<std::string>();
+
+            if (dimension == "2D") {
+                setIs2D(true);
+                setIs3D(false);
+            } else if (dimension == "3D") {
+                setIs2D(false);
+                setIs3D(true);
+            } else {
+                // If somehow a third dimension appears:
+                addError("setDimension: Unexpected dimension '" + dimension + "'!", t_dimension);
+            }
+        }
+    }
+
     bool YoutubeVideo::is3D() const {
         return m_is3D;
     }
@@ -314,6 +345,22 @@ namespace sane {
 
     void YoutubeVideo::setIs2D(bool t_is2D) {
         m_is2D = t_is2D;
+    }
+
+    void YoutubeVideo::setDefinition(nlohmann::json &t_definition) {
+        // Determine is video is 2D or 3D;
+        if (!t_definition.empty() and t_definition.is_string()) {
+            std::string definition = t_definition.get<std::string>();
+
+            if (definition == "hd") {
+                setIsHD(true);
+            } else if (definition == "sd") {
+                setIsHD(false);
+            } else {
+                // If somehow a third definition appears:
+                addError("setDefinition: Unexpected definition '" + definition + "'!", t_definition);
+            }
+        }
     }
 
     bool YoutubeVideo::isHD() const {
@@ -332,12 +379,20 @@ namespace sane {
         m_hasCaptions = t_hasCaptions;
     }
 
+    void YoutubeVideo::setHasCaptions(nlohmann::json &t_hasCaptions) {
+        setHasCaptions(getJsonBoolValue(t_hasCaptions));
+    }
+
     bool YoutubeVideo::isLicensedContent() const {
         return m_isLicensedContent;
     }
 
     void YoutubeVideo::setIsLicensedContent(bool t_isLicensedContent) {
         m_isLicensedContent = t_isLicensedContent;
+    }
+
+    void YoutubeVideo::setIsLicensedContent(nlohmann::json &t_isLicensedContent) {
+        setIsLicensedContent(getJsonBoolValue(t_isLicensedContent));
     }
 
     const std::list<std::string> &YoutubeVideo::getRegionRestrictionWhitelist() const {
@@ -348,12 +403,50 @@ namespace sane {
         m_regionRestrictionWhitelist = t_regionRestrictionWhitelist;
     }
 
+    void YoutubeVideo::setRegionRestrictionWhitelist(nlohmann::json &t_regionRestrictionWhitelist) {
+        std::list<std::string> whitelist;
+
+        for (const nlohmann::json& countryCode : t_regionRestrictionWhitelist) {
+            whitelist.push_back(countryCode.get<std::string>());
+        }
+
+        m_regionRestrictionWhitelist = whitelist;
+    }
+
     const std::list<std::string> &YoutubeVideo::getRegionRestrictionBlacklist() const {
         return m_regionRestrictionBlacklist;
     }
 
     void YoutubeVideo::setRegionRestrictionBlacklist(const std::list<std::string> &t_regionRestrictionBlacklist) {
         m_regionRestrictionBlacklist = t_regionRestrictionBlacklist;
+    }
+
+    void YoutubeVideo::setRegionRestrictionBlacklist(nlohmann::json &t_regionRestrictionBlacklist) {
+        std::list<std::string> blacklist;
+
+        for (const nlohmann::json& countryCode : t_regionRestrictionBlacklist) {
+            blacklist.push_back(countryCode.get<std::string>());
+        }
+
+        m_regionRestrictionWhitelist = blacklist;
+    }
+
+    void YoutubeVideo::setProjection(nlohmann::json &t_projection) {
+        // Determine is video is rectangular or 360 degrees.
+        if (!t_projection.empty() and t_projection.is_string()) {
+            std::string definition = t_projection.get<std::string>();
+
+            if (definition == "rectangular") {
+                setIsRectanguar(true);
+                setIs360(false);
+            } else if (definition == "360") {
+                setIsRectanguar(false);
+                setIs360(true);
+            } else {
+                // If somehow a third definition appears:
+                addError("setProjection: Unexpected projection '" + definition + "'!", t_projection);
+            }
+        }
     }
 
     bool YoutubeVideo::is360() const {
@@ -378,6 +471,10 @@ namespace sane {
 
     void YoutubeVideo::setHasCustomThumbnail(bool t_hasCustomThumbnail) {
         m_hasCustomThumbnail = t_hasCustomThumbnail;
+    }
+
+    void YoutubeVideo::setHasCustomThumbnail(nlohmann::json &t_hasCustomThumbnail) {
+        setHasCustomThumbnail(getJsonBoolValue(t_hasCustomThumbnail));
     }
 
     const std::string &YoutubeVideo::getUploadStatus() const {
@@ -731,12 +828,22 @@ namespace sane {
                 if (snippet.find("thumbnails") != snippet.end()) {
                     setThumbnails(snippet["thumbnails"]);
                 }
-
             }
 
             // Part: Content details.
             if (t_json.find("contentDetails") != t_json.end()) {
                 nlohmann::json contentDetails = t_json["contentDetails"];
+
+                setDuration(contentDetails["duration"]);
+                setDimension(contentDetails["dimension"]);
+                setDefinition(contentDetails["definition"]);
+                setHasCaptions(contentDetails["caption"]);
+                setIsLicensedContent(contentDetails["licensedContent"]);
+                setRegionRestrictionWhitelist(contentDetails["regionRestriction"]["allowed"]);
+                setRegionRestrictionBlacklist(contentDetails["regionRestriction"]["blocked"]);
+                // TODO: Content rating is SKIPPED for now.
+                setProjection(contentDetails["projection"]);
+                setHasCustomThumbnail(contentDetails["hasCustomThumbnail"]);
             }
 
             // Part: Status.

@@ -134,6 +134,8 @@ namespace sane {
                                    nlohmann::json &unknownJsonTypeValue,
                                    nlohmann::json t_json = nlohmann::json::object());
 
+        bool getJsonBoolValue(nlohmann::json &t_bool);
+
         void addFromJson(nlohmann::json t_json);
 
         void print(int indentationSpacing);
@@ -247,23 +249,21 @@ namespace sane {
 
         void setDuration(nlohmann::json &t_duration);
 
+        void setDimension(nlohmann::json &t_dimension);
+
         bool is3D() const;
 
         void setIs3D(bool t_is3D);
-
-        void setIs3D(nlohmann::json &t_is3D);
 
         bool is2D() const;
 
         void setIs2D(bool t_is2D);
 
-        void setIs2D(nlohmann::json &t_is2D);
+        void setDefinition(nlohmann::json &t_definition);
 
         bool isHD() const;
 
         void setIsHD(bool t_isHD);
-
-        void setIsHD(nlohmann::json &t_isHD);
 
         bool hasCaptions() const;
 
@@ -289,17 +289,15 @@ namespace sane {
 
         void setRegionRestrictionBlacklist(nlohmann::json &t_regionRestrictionBlacklist);
 
+        void setProjection(nlohmann::json &t_projection);
+
         bool is360() const;
 
         void setIs360(bool t_is360);
 
-        void setIs360(nlohmann::json &t_is360);
-
         bool isRectanguar() const;
 
         void setIsRectanguar(bool t_isRectanguar);
-
-        void setIsRectanguar(nlohmann::json &t_isRectanguar);
 
         bool hasCustomThumbnail() const;
 

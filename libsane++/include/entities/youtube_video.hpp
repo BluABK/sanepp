@@ -157,27 +157,35 @@ namespace sane {
 
         // START: Getters & Setters.
 
-        void setId(nlohmann::json t_id);
+        const std::string &getId() const;
 
         void setId(const std::string &t_id);
 
-        const std::string &getId() const;
+        void setId(nlohmann::json t_id);
 
         const std::string &getPublishedAt() const;
 
         void setPublishedAt(const std::string &t_publishedAt);
 
+        void setPublishedAt(nlohmann::json &t_publishedAt);
+
         const std::string &getChannelId() const;
 
         void setChannelId(const std::string &t_channelId);
+
+        void setChannelId(nlohmann::json &t_channelId);
 
         const std::string &getTitle() const;
 
         void setTitle(const std::string &t_title);
 
+        void setTitle(nlohmann::json &t_title);
+
         const std::string &getDescription() const;
 
         void setDescription(const std::string &t_description);
+
+        void setDescription(nlohmann::json &t_description);
 
         const std::map<std::string, thumbnail_t> &getThumbnails() const;
 
@@ -189,233 +197,349 @@ namespace sane {
 
         void setChannelTitle(const std::string &t_channelTitle);
 
+        void setChannelTitle(nlohmann::json &t_channelTitle);
+
         const std::list<std::string> &getTags() const;
 
         void setTags(const std::list<std::string> &t_tags);
+
+        void setTags(nlohmann::json &t_tags);
 
         const std::string &getCategoryId() const;
 
         void setCategoryId(const std::string &t_categoryId);
 
+        void setCategoryId(nlohmann::json &t_categoryId);
+
         const std::string &getLiveBroadcastContent() const;
 
         void setLiveBroadcastContent(const std::string &t_liveBroadcastContent);
+
+        void setLiveBroadcastContent(nlohmann::json &t_liveBroadcastContent);
 
         const std::string &getDefaultLanguage() const;
 
         void setDefaultLanguage(const std::string &t_defaultLanguage);
 
+        void setDefaultLanguage(nlohmann::json &t_defaultLanguage);
+
         const std::string &getLocalizedTitle() const;
 
         void setLocalizedTitle(const std::string &t_localizedTitle);
+
+        void setLocalizedTitle(nlohmann::json &t_localizedTitle);
 
         const std::string &getLocalizedDescription() const;
 
         void setLocalizedDescription(const std::string &t_localizedDescription);
 
+        void setLocalizedDescription(nlohmann::json &t_localizedDescription);
+
         const std::string &getDefaultAudioLanguage() const;
 
         void setDefaultAudioLanguage(const std::string &t_defaultAudioLanguage);
+
+        void setDefaultAudioLanguage(nlohmann::json &t_defaultAudioLanguage);
 
         const std::string &getDuration() const;
 
         void setDuration(const std::string &t_duration);
 
+        void setDuration(nlohmann::json &t_duration);
+
         bool is3D() const;
 
         void setIs3D(bool t_is3D);
+
+        void setIs3D(nlohmann::json &t_is3D);
 
         bool is2D() const;
 
         void setIs2D(bool t_is2D);
 
+        void setIs2D(nlohmann::json &t_is2D);
+
         bool isHD() const;
 
         void setIsHD(bool t_isHD);
+
+        void setIsHD(nlohmann::json &t_isHD);
 
         bool hasCaptions() const;
 
         void setHasCaptions(bool t_hasCaptions);
 
+        void setHasCaptions(nlohmann::json &t_hasCaptions);
+
         bool isLicensedContent() const;
 
         void setIsLicensedContent(bool t_isLicensedContent);
+
+        void setIsLicensedContent(nlohmann::json &t_isLicensedContent);
 
         const std::list<std::string> &getRegionRestrictionWhitelist() const;
 
         void setRegionRestrictionWhitelist(const std::list<std::string> &t_regionRestrictionWhitelist);
 
+        void setRegionRestrictionWhitelist(nlohmann::json &t_regionRestrictionWhitelist);
+
         const std::list<std::string> &getRegionRestrictionBlacklist() const;
 
         void setRegionRestrictionBlacklist(const std::list<std::string> &t_regionRestrictionBlacklist);
+
+        void setRegionRestrictionBlacklist(nlohmann::json &t_regionRestrictionBlacklist);
 
         bool is360() const;
 
         void setIs360(bool t_is360);
 
+        void setIs360(nlohmann::json &t_is360);
+
         bool isRectanguar() const;
 
         void setIsRectanguar(bool t_isRectanguar);
+
+        void setIsRectanguar(nlohmann::json &t_isRectanguar);
 
         bool hasCustomThumbnail() const;
 
         void setHasCustomThumbnail(bool t_hasCustomThumbnail);
 
+        void setHasCustomThumbnail(nlohmann::json &t_hasCustomThumbnail);
+
         const std::string &getUploadStatus() const;
 
         void setUploadStatus(const std::string &t_uploadStatus);
+
+        void setUploadStatus(nlohmann::json &t_uploadStatus);
 
         const std::string &getFailureReason() const;
 
         void setFailureReason(const std::string &t_failureReason);
 
+        void setFailureReason(nlohmann::json &t_failureReason);
+
         const std::string &getRejectionReason() const;
 
         void setRejectionReason(const std::string &t_rejectionReason);
+
+        void setRejectionReason(nlohmann::json &t_rejectionReason);
 
         const std::string &getPrivacyStatus() const;
 
         void setPrivacyStatus(const std::string &t_privacyStatus);
 
+        void setPrivacyStatus(nlohmann::json &t_privacyStatus);
+
         const std::string &getPublishAt() const;
 
         void setPublishAt(const std::string &t_publishAt);
+
+        void setPublishAt(nlohmann::json &t_publishAt);
 
         const std::string &getLicense() const;
 
         void setLicense(const std::string &t_license);
 
+        void setLicense(nlohmann::json &t_license);
+
         bool isEmbeddable() const;
 
         void setIsEmbeddable(bool t_isEmbeddable);
+
+        void setIsEmbeddable(nlohmann::json &t_isEmbeddable);
 
         bool isPublicStatsViewable() const;
 
         void setPublicStatsViewable(bool t_isPublicStatsViewable);
 
+        void setPublicStatsViewable(nlohmann::json &t_isPublicStatsViewable);
+
         unsigned long getViewCount() const;
 
         void setViewCount(unsigned long t_viewCount);
+
+        void setViewCount(nlohmann::json &t_viewCount);
 
         unsigned long getLikeCount() const;
 
         void setLikeCount(unsigned long t_likeCount);
 
+        void setLikeCount(nlohmann::json &t_likeCount);
+
         unsigned long getDislikeCount() const;
 
         void setDislikeCount(unsigned long t_dislikeCount);
+
+        void setDislikeCount(nlohmann::json &t_dislikeCount);
 
         unsigned long getCommentCount() const;
 
         void setCommentCount(unsigned long t_commentCount);
 
+        void setCommentCount(nlohmann::json &t_commentCount);
+
         const player_t &getPlayer() const;
 
         void setPlayer(const player_t &t_player);
+
+        void setPlayer(nlohmann::json &t_player);
 
         const std::list<std::string> &getTopicCategories() const;
 
         void setTopicCategories(const std::list<std::string> &t_topicCategories);
 
+        void setTopicCategories(nlohmann::json &t_topicCategories);
+
         const std::string &getLocation() const;
 
         void setLocation(const std::string &t_location);
+
+        void setLocation(nlohmann::json &t_location);
 
         const std::string &getRecordingDate() const;
 
         void setRecordingDate(const std::string &t_recordingDate);
 
+        void setRecordingDate(nlohmann::json &t_recordingDate);
+
         const std::string &getFileName() const;
 
         void setFileName(const std::string &t_fileName);
+
+        void setFileName(nlohmann::json &t_fileName);
 
         unsigned long getFileSize() const;
 
         void setFileSize(unsigned long t_fileSize);
 
+        void setFileSize(nlohmann::json &t_fileSize);
+
         const std::string &getFileType() const;
 
         void setFileType(const std::string &t_fileType);
+
+        void setFileType(nlohmann::json &t_fileType);
 
         const std::string &getContainer() const;
 
         void setContainer(const std::string &t_container);
 
+        void setContainer(nlohmann::json &t_container);
+
         const std::list<videoStream_t> &getVideoStreams() const;
 
         void setVideoStreams(const std::list<videoStream_t> &t_videoStreams);
+
+        void setVideoStreams(nlohmann::json &t_videoStreams);
 
         const std::list<audioStream_t> &getAudioStreams() const;
 
         void setAudioStreams(const std::list<audioStream_t> &t_audioStreams);
 
+        void setAudioStreams(nlohmann::json &t_audioStreams);
+
         unsigned long getDurationMs() const;
 
         void setDurationMs(unsigned long t_durationMs);
+
+        void setDurationMs(nlohmann::json &t_durationMs);
 
         unsigned long getBitrateBps() const;
 
         void setBitrateBps(unsigned long t_bitrateBps);
 
+        void setBitrateBps(nlohmann::json &t_bitrateBps);
+
         const std::string &getCreationTime() const;
 
         void setCreationTime(const std::string &t_creationTime);
+
+        void setCreationTime(nlohmann::json &t_creationTime);
 
         const std::string &getProcessingStatus() const;
 
         void setProcessingStatus(const std::string &t_processingStatus);
 
+        void setProcessingStatus(nlohmann::json &t_processingStatus);
+
         const processingProgress_t &getProcessingProgress() const;
 
         void setProcessingProgress(const processingProgress_t &t_processingProgress);
+
+        void setProcessingProgress(nlohmann::json &t_processingProgress);
 
         const std::string &getProcessingFailureReason() const;
 
         void setProcessingFailureReason(const std::string &t_processingFailureReason);
 
+        void setProcessingFailureReason(nlohmann::json &t_processingFailureReason);
+
         const std::string &getProcessingIssuesAvailability() const;
 
         void setProcessingIssuesAvailability(const std::string &t_processingIssuesAvailability);
+
+        void setProcessingIssuesAvailability(nlohmann::json &t_processingIssuesAvailability);
 
         const std::string &getTagSuggestionsAvailability() const;
 
         void setTagSuggestionsAvailability(const std::string &t_tagSuggestionsAvailability);
 
+        void setTagSuggestionsAvailability(nlohmann::json &t_tagSuggestionsAvailability);
+
         const std::string &getEditorSuggestionsAvailability() const;
 
         void setEditorSuggestionsAvailability(const std::string &t_editorSuggestionsAvailability);
+
+        void setEditorSuggestionsAvailability(nlohmann::json &t_editorSuggestionsAvailability);
 
         const std::string &getThumbnailsAvailability() const;
 
         void setThumbnailsAvailability(const std::string &t_thumbnailsAvailability);
 
+        void setThumbnailsAvailability(nlohmann::json &t_thumbnailsAvailability);
+
         const std::list<std::string> &getProcessingErrors() const;
 
         void setProcessingErrors(const std::list<std::string> &t_processingErrors);
+
+        void setProcessingErrors(nlohmann::json &t_processingErrors);
 
         const std::list<std::string> &getProcessingWarnings() const;
 
         void setProcessingWarnings(const std::list<std::string> &t_processingWarnings);
 
+        void setProcessingWarnings(nlohmann::json &t_processingWarnings);
+
         const std::list<std::string> &getProcessingHints() const;
 
         void setProcessingHints(const std::list<std::string> &t_processingHints);
+
+        void setProcessingHints(nlohmann::json &t_processingHints);
 
         const std::list<tagSuggestions_t> &getTagSuggestions() const;
 
         void setTagSuggestions(const std::list<tagSuggestions_t> &t_tagSuggestions);
 
+        void setTagSuggestions(nlohmann::json &t_tagSuggestions);
+
         const std::list<std::string> &getEditorSuggestions() const;
 
         void setEditorSuggestions(const std::list<std::string> &t_editorSuggestions);
+
+        void setEditorSuggestions(nlohmann::json &t_editorSuggestions);
 
         const std::list<liveStreamingDetails_t> &getLiveStreamingDetails() const;
 
         void setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &t_liveStreamingDetails);
 
+        void setLiveStreamingDetails(nlohmann::json &t_liveStreamingDetails);
+
         const std::list<localization_t> &getLocalizations() const;
 
         void setLocalizations(const std::list<localization_t> &t_localizations);
+
+        void setLocalizations(nlohmann::json &t_localizations);
 
         // END: Getters & Setters.
 

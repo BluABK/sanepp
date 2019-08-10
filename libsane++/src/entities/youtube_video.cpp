@@ -252,6 +252,10 @@ namespace sane {
         m_defaultLanguage = t_defaultLanguage;
     }
 
+    void YoutubeVideo::setDefaultLanguage(nlohmann::json &t_defaultLanguage) {
+        assignJsonStringValue(m_defaultLanguage, t_defaultLanguage);
+    }
+
     const std::string &YoutubeVideo::getLocalizedTitle() const {
         return m_localizedTitle;
     }
@@ -282,6 +286,10 @@ namespace sane {
 
     void YoutubeVideo::setDefaultAudioLanguage(const std::string &t_defaultAudioLanguage) {
         m_defaultAudioLanguage = t_defaultAudioLanguage;
+    }
+
+    void YoutubeVideo::setDefaultAudioLanguage(nlohmann::json &t_defaultAudioLanguage) {
+        assignJsonStringValue(m_defaultAudioLanguage, t_defaultAudioLanguage);
     }
 
     const std::string &YoutubeVideo::getDuration() const {
@@ -708,6 +716,8 @@ namespace sane {
                 setChannelId(snippet["channelId"]);
                 setChannelTitle(snippet["channelTitle"]);
                 setTags(snippet["tags"]);
+                setDefaultLanguage(snippet["defaultLanguage"]);
+                setDefaultAudioLanguage(snippet["defaultAudioLanguage"]);
                 setDescription(snippet["description"]);
                 setCategoryId(snippet["categoryId"]);
                 setLiveBroadcastContent(snippet["liveBroadcastContent"]);

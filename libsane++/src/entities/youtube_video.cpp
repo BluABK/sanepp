@@ -89,504 +89,504 @@ namespace sane {
         return m_publishedAt;
     }
 
-    void YoutubeVideo::setPublishedAt(const std::string &mPublishedAt) {
-        m_publishedAt = mPublishedAt;
+    void YoutubeVideo::setPublishedAt(const std::string &t_publishedAt) {
+        m_publishedAt = t_publishedAt;
     }
 
     const std::string &YoutubeVideo::getChannelId() const {
         return m_channelId;
     }
 
-    void YoutubeVideo::setChannelId(const std::string &mChannelId) {
-        m_channelId = mChannelId;
+    void YoutubeVideo::setChannelId(const std::string &t_channelId) {
+        m_channelId = t_channelId;
     }
 
     const std::string &YoutubeVideo::getTitle() const {
         return m_title;
     }
 
-    void YoutubeVideo::setTitle(const std::string &mTitle) {
-        m_title = mTitle;
+    void YoutubeVideo::setTitle(const std::string &t_title) {
+        m_title = t_title;
     }
 
     const std::string &YoutubeVideo::getDescription() const {
         return m_description;
     }
 
-    void YoutubeVideo::setDescription(const std::string &mDescription) {
-        m_description = mDescription;
+    void YoutubeVideo::setDescription(const std::string &t_description) {
+        m_description = t_description;
     }
 
     const std::map<std::string, thumbnail_t> &YoutubeVideo::getThumbnails() const {
         return m_thumbnails;
     }
 
-    void YoutubeVideo::setThumbnails(const std::map<std::string, thumbnail_t> &mThumbnails) {
-        m_thumbnails = mThumbnails;
+    void YoutubeVideo::setThumbnails(const std::map<std::string, thumbnail_t> &t_thumbnails) {
+        m_thumbnails = t_thumbnails;
     }
 
     const std::string &YoutubeVideo::getChannelTitle() const {
         return m_channelTitle;
     }
 
-    void YoutubeVideo::setChannelTitle(const std::string &mChannelTitle) {
-        m_channelTitle = mChannelTitle;
+    void YoutubeVideo::setChannelTitle(const std::string &t_channelTitle) {
+        m_channelTitle = t_channelTitle;
     }
 
     const std::list<std::string> &YoutubeVideo::getTags() const {
         return m_tags;
     }
 
-    void YoutubeVideo::setTags(const std::list<std::string> &mTags) {
-        m_tags = mTags;
+    void YoutubeVideo::setTags(const std::list<std::string> &t_tags) {
+        m_tags = t_tags;
     }
 
     const std::string &YoutubeVideo::getCategoryId() const {
         return m_categoryId;
     }
 
-    void YoutubeVideo::setCategoryId(const std::string &mCategoryId) {
-        m_categoryId = mCategoryId;
+    void YoutubeVideo::setCategoryId(const std::string &t_categoryId) {
+        m_categoryId = t_categoryId;
     }
 
     const std::string &YoutubeVideo::getLiveBroadcastContent() const {
         return m_liveBroadcastContent;
     }
 
-    void YoutubeVideo::setLiveBroadcastContent(const std::string &mLiveBroadcastContent) {
-        m_liveBroadcastContent = mLiveBroadcastContent;
+    void YoutubeVideo::setLiveBroadcastContent(const std::string &t_liveBroadcastContent) {
+        m_liveBroadcastContent = t_liveBroadcastContent;
     }
 
     const std::string &YoutubeVideo::getDefaultLanguage() const {
         return m_defaultLanguage;
     }
 
-    void YoutubeVideo::setDefaultLanguage(const std::string &mDefaultLanguage) {
-        m_defaultLanguage = mDefaultLanguage;
+    void YoutubeVideo::setDefaultLanguage(const std::string &t_defaultLanguage) {
+        m_defaultLanguage = t_defaultLanguage;
     }
 
     const std::string &YoutubeVideo::getLocalizedTitle() const {
         return m_localizedTitle;
     }
 
-    void YoutubeVideo::setLocalizedTitle(const std::string &mLocalizedTitle) {
-        m_localizedTitle = mLocalizedTitle;
+    void YoutubeVideo::setLocalizedTitle(const std::string &t_localizedTitle) {
+        m_localizedTitle = t_localizedTitle;
     }
 
     const std::string &YoutubeVideo::getLocalizedDescription() const {
         return m_localizedDescription;
     }
 
-    void YoutubeVideo::setLocalizedDescription(const std::string &mLocalizedDescription) {
-        m_localizedDescription = mLocalizedDescription;
+    void YoutubeVideo::setLocalizedDescription(const std::string &t_localizedDescription) {
+        m_localizedDescription = t_localizedDescription;
     }
 
     const std::string &YoutubeVideo::getDefaultAudioLanguage() const {
         return m_defaultAudioLanguage;
     }
 
-    void YoutubeVideo::setDefaultAudioLanguage(const std::string &mDefaultAudioLanguage) {
-        m_defaultAudioLanguage = mDefaultAudioLanguage;
+    void YoutubeVideo::setDefaultAudioLanguage(const std::string &t_defaultAudioLanguage) {
+        m_defaultAudioLanguage = t_defaultAudioLanguage;
     }
 
     const std::string &YoutubeVideo::getDuration() const {
         return m_duration;
     }
 
-    void YoutubeVideo::setDuration(const std::string &mDuration) {
-        m_duration = mDuration;
+    void YoutubeVideo::setDuration(const std::string &t_duration) {
+        m_duration = t_duration;
     }
 
-    bool YoutubeVideo::isMIs3D() const {
+    bool YoutubeVideo::is3D() const {
         return m_is3D;
     }
 
-    void YoutubeVideo::setIs3D(bool mIs3D) {
-        m_is3D = mIs3D;
+    void YoutubeVideo::setIs3D(bool t_is3D) {
+        m_is3D = t_is3D;
     }
 
-    bool YoutubeVideo::isMIs2D() const {
+    bool YoutubeVideo::is2D() const {
         return m_is2D;
     }
 
-    void YoutubeVideo::setIs2D(bool mIs2D) {
-        m_is2D = mIs2D;
+    void YoutubeVideo::setIs2D(bool t_is2D) {
+        m_is2D = t_is2D;
     }
 
-    bool YoutubeVideo::isMIsHd() const {
+    bool YoutubeVideo::isHD() const {
         return m_isHD;
     }
 
-    void YoutubeVideo::setIsHd(bool mIsHd) {
-        m_isHD = mIsHd;
+    void YoutubeVideo::setIsHd(bool t_isHD) {
+        m_isHD = t_isHD;
     }
 
-    bool YoutubeVideo::isMHasCaptions() const {
+    bool YoutubeVideo::hasCaptions() const {
         return m_hasCaptions;
     }
 
-    void YoutubeVideo::setHasCaptions(bool mHasCaptions) {
-        m_hasCaptions = mHasCaptions;
+    void YoutubeVideo::setHasCaptions(bool t_hasCaptions) {
+        m_hasCaptions = t_hasCaptions;
     }
 
-    bool YoutubeVideo::isMIsLicensedContent() const {
+    bool YoutubeVideo::isLicensedContent() const {
         return m_isLicensedContent;
     }
 
-    void YoutubeVideo::setIsLicensedContent(bool mIsLicensedContent) {
-        m_isLicensedContent = mIsLicensedContent;
+    void YoutubeVideo::setIsLicensedContent(bool t_isLicensedContent) {
+        m_isLicensedContent = t_isLicensedContent;
     }
 
     const std::list<std::string> &YoutubeVideo::getRegionRestrictionWhitelist() const {
         return m_regionRestrictionWhitelist;
     }
 
-    void YoutubeVideo::setRegionRestrictionWhitelist(const std::list<std::string> &mRegionRestrictionWhitelist) {
-        m_regionRestrictionWhitelist = mRegionRestrictionWhitelist;
+    void YoutubeVideo::setRegionRestrictionWhitelist(const std::list<std::string> &t_regionRestrictionWhitelist) {
+        m_regionRestrictionWhitelist = t_regionRestrictionWhitelist;
     }
 
     const std::list<std::string> &YoutubeVideo::getRegionRestrictionBlacklist() const {
         return m_regionRestrictionBlacklist;
     }
 
-    void YoutubeVideo::setRegionRestrictionBlacklist(const std::list<std::string> &mRegionRestrictionBlacklist) {
-        m_regionRestrictionBlacklist = mRegionRestrictionBlacklist;
+    void YoutubeVideo::setRegionRestrictionBlacklist(const std::list<std::string> &t_regionRestrictionBlacklist) {
+        m_regionRestrictionBlacklist = t_regionRestrictionBlacklist;
     }
 
-    bool YoutubeVideo::isMIs360() const {
+    bool YoutubeVideo::is360() const {
         return m_is360;
     }
 
-    void YoutubeVideo::setIs360(bool mIs360) {
-        m_is360 = mIs360;
+    void YoutubeVideo::setIs360(bool t_is360) {
+        m_is360 = t_is360;
     }
 
-    bool YoutubeVideo::isMIsRectanguar() const {
+    bool YoutubeVideo::isRectanguar() const {
         return m_isRectanguar;
     }
 
-    void YoutubeVideo::setIsRectanguar(bool mIsRectanguar) {
-        m_isRectanguar = mIsRectanguar;
+    void YoutubeVideo::setIsRectanguar(bool t_isRectanguar) {
+        m_isRectanguar = t_isRectanguar;
     }
 
-    bool YoutubeVideo::isMHasCustomThumbnail() const {
+    bool YoutubeVideo::hasCustomThumbnail() const {
         return m_hasCustomThumbnail;
     }
 
-    void YoutubeVideo::setHasCustomThumbnail(bool mHasCustomThumbnail) {
-        m_hasCustomThumbnail = mHasCustomThumbnail;
+    void YoutubeVideo::setHasCustomThumbnail(bool t_hasCustomThumbnail) {
+        m_hasCustomThumbnail = t_hasCustomThumbnail;
     }
 
     const std::string &YoutubeVideo::getUploadStatus() const {
         return m_uploadStatus;
     }
 
-    void YoutubeVideo::setUploadStatus(const std::string &mUploadStatus) {
-        m_uploadStatus = mUploadStatus;
+    void YoutubeVideo::setUploadStatus(const std::string &t_uploadStatus) {
+        m_uploadStatus = t_uploadStatus;
     }
 
     const std::string &YoutubeVideo::getFailureReason() const {
         return m_failureReason;
     }
 
-    void YoutubeVideo::setFailureReason(const std::string &mFailureReason) {
-        m_failureReason = mFailureReason;
+    void YoutubeVideo::setFailureReason(const std::string &t_failureReason) {
+        m_failureReason = t_failureReason;
     }
 
     const std::string &YoutubeVideo::getRejectionReason() const {
         return m_rejectionReason;
     }
 
-    void YoutubeVideo::setRejectionReason(const std::string &mRejectionReason) {
-        m_rejectionReason = mRejectionReason;
+    void YoutubeVideo::setRejectionReason(const std::string &t_rejectionReason) {
+        m_rejectionReason = t_rejectionReason;
     }
 
     const std::string &YoutubeVideo::getPrivacyStatus() const {
         return m_privacyStatus;
     }
 
-    void YoutubeVideo::setPrivacyStatus(const std::string &mPrivacyStatus) {
-        m_privacyStatus = mPrivacyStatus;
+    void YoutubeVideo::setPrivacyStatus(const std::string &t_privacyStatus) {
+        m_privacyStatus = t_privacyStatus;
     }
 
     const std::string &YoutubeVideo::getPublishAt() const {
         return m_publishAt;
     }
 
-    void YoutubeVideo::setPublishAt(const std::string &mPublishAt) {
-        m_publishAt = mPublishAt;
+    void YoutubeVideo::setPublishAt(const std::string &t_publishAt) {
+        m_publishAt = t_publishAt;
     }
 
     const std::string &YoutubeVideo::getLicense() const {
         return m_license;
     }
 
-    void YoutubeVideo::setLicense(const std::string &mLicense) {
-        m_license = mLicense;
+    void YoutubeVideo::setLicense(const std::string &t_license) {
+        m_license = t_license;
     }
 
-    bool YoutubeVideo::isMIsEmbeddable() const {
+    bool YoutubeVideo::isEmbeddable() const {
         return m_isEmbeddable;
     }
 
-    void YoutubeVideo::setIsEmbeddable(bool mIsEmbeddable) {
-        m_isEmbeddable = mIsEmbeddable;
+    void YoutubeVideo::setIsEmbeddable(bool t_isEmbeddable) {
+        m_isEmbeddable = t_isEmbeddable;
     }
 
-    bool YoutubeVideo::isMPublicStatsViewable() const {
+    bool YoutubeVideo::isPublicStatsViewable() const {
         return m_publicStatsViewable;
     }
 
-    void YoutubeVideo::setPublicStatsViewable(bool mPublicStatsViewable) {
-        m_publicStatsViewable = mPublicStatsViewable;
+    void YoutubeVideo::setPublicStatsViewable(bool t_isPublicStatsViewable) {
+        m_publicStatsViewable = t_isPublicStatsViewable;
     }
 
     unsigned long YoutubeVideo::getViewCount() const {
         return m_viewCount;
     }
 
-    void YoutubeVideo::setViewCount(unsigned long mViewCount) {
-        m_viewCount = mViewCount;
+    void YoutubeVideo::setViewCount(unsigned long t_viewCount) {
+        m_viewCount = t_viewCount;
     }
 
     unsigned long YoutubeVideo::getLikeCount() const {
         return m_likeCount;
     }
 
-    void YoutubeVideo::setLikeCount(unsigned long mLikeCount) {
-        m_likeCount = mLikeCount;
+    void YoutubeVideo::setLikeCount(unsigned long t_likeCount) {
+        m_likeCount = t_likeCount;
     }
 
     unsigned long YoutubeVideo::getDislikeCount() const {
         return m_dislikeCount;
     }
 
-    void YoutubeVideo::setDislikeCount(unsigned long mDislikeCount) {
-        m_dislikeCount = mDislikeCount;
+    void YoutubeVideo::setDislikeCount(unsigned long t_dislikeCount) {
+        m_dislikeCount = t_dislikeCount;
     }
 
     unsigned long YoutubeVideo::getCommentCount() const {
         return m_commentCount;
     }
 
-    void YoutubeVideo::setCommentCount(unsigned long commentCount) {
-        YoutubeVideo::m_commentCount = commentCount;
+    void YoutubeVideo::setCommentCount(unsigned long t_commentCount) {
+        m_commentCount = t_commentCount;
     }
 
     const player_t &YoutubeVideo::getPlayer() const {
         return m_player;
     }
 
-    void YoutubeVideo::setPlayer(const player_t &mPlayer) {
-        m_player = mPlayer;
+    void YoutubeVideo::setPlayer(const player_t &t_player) {
+        m_player = t_player;
     }
 
     const std::list<std::string> &YoutubeVideo::getTopicCategories() const {
         return m_topicCategories;
     }
 
-    void YoutubeVideo::setTopicCategories(const std::list<std::string> &mTopicCategories) {
-        m_topicCategories = mTopicCategories;
+    void YoutubeVideo::setTopicCategories(const std::list<std::string> &t_topicCategories) {
+        m_topicCategories = t_topicCategories;
     }
 
     const std::string &YoutubeVideo::getLocation() const {
         return m_location;
     }
 
-    void YoutubeVideo::setLocation(const std::string &mLocation) {
-        m_location = mLocation;
+    void YoutubeVideo::setLocation(const std::string &t_location) {
+        m_location = t_location;
     }
 
     const std::string &YoutubeVideo::getRecordingDate() const {
         return m_recordingDate;
     }
 
-    void YoutubeVideo::setRecordingDate(const std::string &mRecordingDate) {
-        m_recordingDate = mRecordingDate;
+    void YoutubeVideo::setRecordingDate(const std::string &t_recordingDate) {
+        m_recordingDate = t_recordingDate;
     }
 
     const std::string &YoutubeVideo::getFileName() const {
         return m_fileName;
     }
 
-    void YoutubeVideo::setFileName(const std::string &mFileName) {
-        m_fileName = mFileName;
+    void YoutubeVideo::setFileName(const std::string &t_fileName) {
+        m_fileName = t_fileName;
     }
 
     unsigned long YoutubeVideo::getFileSize() const {
         return m_fileSize;
     }
 
-    void YoutubeVideo::setFileSize(unsigned long mFileSize) {
-        m_fileSize = mFileSize;
+    void YoutubeVideo::setFileSize(unsigned long t_fileSize) {
+        m_fileSize = t_fileSize;
     }
 
     const std::string &YoutubeVideo::getFileType() const {
         return m_fileType;
     }
 
-    void YoutubeVideo::setFileType(const std::string &mFileType) {
-        m_fileType = mFileType;
+    void YoutubeVideo::setFileType(const std::string &t_fileType) {
+        m_fileType = t_fileType;
     }
 
     const std::string &YoutubeVideo::getContainer() const {
         return m_container;
     }
 
-    void YoutubeVideo::setContainer(const std::string &mContainer) {
-        m_container = mContainer;
+    void YoutubeVideo::setContainer(const std::string &t_container) {
+        m_container = t_container;
     }
 
     const std::list<videoStream_t> &YoutubeVideo::getVideoStreams() const {
         return m_videoStreams;
     }
 
-    void YoutubeVideo::setVideoStreams(const std::list<videoStream_t> &mVideoStreams) {
-        m_videoStreams = mVideoStreams;
+    void YoutubeVideo::setVideoStreams(const std::list<videoStream_t> &t_videoStreams) {
+        m_videoStreams = t_videoStreams;
     }
 
     const std::list<audioStream_t> &YoutubeVideo::getAudioStreams() const {
         return m_audioStreams;
     }
 
-    void YoutubeVideo::setAudioStreams(const std::list<audioStream_t> &mAudioStreams) {
-        m_audioStreams = mAudioStreams;
+    void YoutubeVideo::setAudioStreams(const std::list<audioStream_t> &t_audioStreams) {
+        m_audioStreams = t_audioStreams;
     }
 
     unsigned long YoutubeVideo::getDurationMs() const {
         return m_durationMs;
     }
 
-    void YoutubeVideo::setDurationMs(unsigned long mDurationMs) {
-        m_durationMs = mDurationMs;
+    void YoutubeVideo::setDurationMs(unsigned long t_durationMs) {
+        m_durationMs = t_durationMs;
     }
 
     unsigned long YoutubeVideo::getBitrateBps() const {
         return m_bitrateBps;
     }
 
-    void YoutubeVideo::setBitrateBps(unsigned long mBitrateBps) {
-        m_bitrateBps = mBitrateBps;
+    void YoutubeVideo::setBitrateBps(unsigned long t_bitrateBps) {
+        m_bitrateBps = t_bitrateBps;
     }
 
     const std::string &YoutubeVideo::getCreationTime() const {
         return m_creationTime;
     }
 
-    void YoutubeVideo::setCreationTime(const std::string &mCreationTime) {
-        m_creationTime = mCreationTime;
+    void YoutubeVideo::setCreationTime(const std::string &t_creationTime) {
+        m_creationTime = t_creationTime;
     }
 
     const std::string &YoutubeVideo::getProcessingStatus() const {
         return m_processingStatus;
     }
 
-    void YoutubeVideo::setProcessingStatus(const std::string &mProcessingStatus) {
-        m_processingStatus = mProcessingStatus;
+    void YoutubeVideo::setProcessingStatus(const std::string &t_processingStatus) {
+        m_processingStatus = t_processingStatus;
     }
 
     const processingProgress_t &YoutubeVideo::getProcessingProgress() const {
         return m_processingProgress;
     }
 
-    void YoutubeVideo::setProcessingProgress(const processingProgress_t &mProcessingProgress) {
-        m_processingProgress = mProcessingProgress;
+    void YoutubeVideo::setProcessingProgress(const processingProgress_t &t_processingProgress) {
+        m_processingProgress = t_processingProgress;
     }
 
     const std::string &YoutubeVideo::getProcessingFailureReason() const {
         return m_processingFailureReason;
     }
 
-    void YoutubeVideo::setProcessingFailureReason(const std::string &mProcessingFailureReason) {
-        m_processingFailureReason = mProcessingFailureReason;
+    void YoutubeVideo::setProcessingFailureReason(const std::string &t_processingFailureReason) {
+        m_processingFailureReason = t_processingFailureReason;
     }
 
     const std::string &YoutubeVideo::getProcessingIssuesAvailability() const {
         return m_processingIssuesAvailability;
     }
 
-    void YoutubeVideo::setProcessingIssuesAvailability(const std::string &mProcessingIssuesAvailability) {
-        m_processingIssuesAvailability = mProcessingIssuesAvailability;
+    void YoutubeVideo::setProcessingIssuesAvailability(const std::string &t_processingIssuesAvailability) {
+        m_processingIssuesAvailability = t_processingIssuesAvailability;
     }
 
     const std::string &YoutubeVideo::getTagSuggestionsAvailability() const {
         return m_tagSuggestionsAvailability;
     }
 
-    void YoutubeVideo::setTagSuggestionsAvailability(const std::string &mTagSuggestionsAvailability) {
-        m_tagSuggestionsAvailability = mTagSuggestionsAvailability;
+    void YoutubeVideo::setTagSuggestionsAvailability(const std::string &t_tagSuggestionsAvailability) {
+        m_tagSuggestionsAvailability = t_tagSuggestionsAvailability;
     }
 
     const std::string &YoutubeVideo::getEditorSuggestionsAvailability() const {
         return m_editorSuggestionsAvailability;
     }
 
-    void YoutubeVideo::setEditorSuggestionsAvailability(const std::string &mEditorSuggestionsAvailability) {
-        m_editorSuggestionsAvailability = mEditorSuggestionsAvailability;
+    void YoutubeVideo::setEditorSuggestionsAvailability(const std::string &t_editorSuggestionsAvailability) {
+        m_editorSuggestionsAvailability = t_editorSuggestionsAvailability;
     }
 
     const std::string &YoutubeVideo::getThumbnailsAvailability() const {
         return m_thumbnailsAvailability;
     }
 
-    void YoutubeVideo::setThumbnailsAvailability(const std::string &mThumbnailsAvailability) {
-        m_thumbnailsAvailability = mThumbnailsAvailability;
+    void YoutubeVideo::setThumbnailsAvailability(const std::string &t_thumbnailsAvailability) {
+        m_thumbnailsAvailability = t_thumbnailsAvailability;
     }
 
     const std::list<std::string> &YoutubeVideo::getProcessingErrors() const {
         return m_processingErrors;
     }
 
-    void YoutubeVideo::setProcessingErrors(const std::list<std::string> &mProcessingErrors) {
-        m_processingErrors = mProcessingErrors;
+    void YoutubeVideo::setProcessingErrors(const std::list<std::string> &t_processingErrors) {
+        m_processingErrors = t_processingErrors;
     }
 
     const std::list<std::string> &YoutubeVideo::getProcessingWarnings() const {
         return m_processingWarnings;
     }
 
-    void YoutubeVideo::setProcessingWarnings(const std::list<std::string> &mProcessingWarnings) {
-        m_processingWarnings = mProcessingWarnings;
+    void YoutubeVideo::setProcessingWarnings(const std::list<std::string> &t_processingWarnings) {
+        m_processingWarnings = t_processingWarnings;
     }
 
     const std::list<std::string> &YoutubeVideo::getProcessingHints() const {
         return m_processingHints;
     }
 
-    void YoutubeVideo::setProcessingHints(const std::list<std::string> &mProcessingHints) {
-        m_processingHints = mProcessingHints;
+    void YoutubeVideo::setProcessingHints(const std::list<std::string> &t_processingHints) {
+        m_processingHints = t_processingHints;
     }
 
     const std::list<tagSuggestions_t> &YoutubeVideo::getTagSuggestions() const {
         return m_tagSuggestions;
     }
 
-    void YoutubeVideo::setTagSuggestions(const std::list<tagSuggestions_t> &mTagSuggestions) {
-        m_tagSuggestions = mTagSuggestions;
+    void YoutubeVideo::setTagSuggestions(const std::list<tagSuggestions_t> &t_tagSuggestions) {
+        m_tagSuggestions = t_tagSuggestions;
     }
 
     const std::list<std::string> &YoutubeVideo::getEditorSuggestions() const {
         return m_editorSuggestions;
     }
 
-    void YoutubeVideo::setEditorSuggestions(const std::list<std::string> &mEditorSuggestions) {
-        m_editorSuggestions = mEditorSuggestions;
+    void YoutubeVideo::setEditorSuggestions(const std::list<std::string> &t_editorSuggestions) {
+        m_editorSuggestions = t_editorSuggestions;
     }
 
     const std::list<liveStreamingDetails_t> &YoutubeVideo::getLiveStreamingDetails() const {
         return m_liveStreamingDetails;
     }
 
-    void YoutubeVideo::setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &mLiveStreamingDetails) {
-        m_liveStreamingDetails = mLiveStreamingDetails;
+    void YoutubeVideo::setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &t_liveStreamingDetails) {
+        m_liveStreamingDetails = t_liveStreamingDetails;
     }
 
     const std::list<localization_t> &YoutubeVideo::getLocalizations() const {
         return m_localizations;
     }
 
-    void YoutubeVideo::setLocalizations(const std::list<localization_t> &mLocalizations) {
-        m_localizations = mLocalizations;
+    void YoutubeVideo::setLocalizations(const std::list<localization_t> &t_localizations) {
+        m_localizations = t_localizations;
     }
 
     // END: Getters & Setters.

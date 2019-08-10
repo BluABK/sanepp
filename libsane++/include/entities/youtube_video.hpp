@@ -154,261 +154,263 @@ namespace sane {
 
         bool wasAborted();
 
+        // START: Getters & Setters.
+
         void setId(nlohmann::json t_id, nlohmann::json t_json = nlohmann::json::object());
 
         const std::string &getId() const;
 
         const std::string &getPublishedAt() const;
 
-        void setPublishedAt(const std::string &mPublishedAt);
+        void setPublishedAt(const std::string &t_publishedAt);
 
         const std::string &getChannelId() const;
 
-        void setChannelId(const std::string &mChannelId);
+        void setChannelId(const std::string &t_channelId);
 
         const std::string &getTitle() const;
 
-        void setTitle(const std::string &mTitle);
+        void setTitle(const std::string &t_title);
 
         const std::string &getDescription() const;
 
-        void setDescription(const std::string &mDescription);
+        void setDescription(const std::string &t_description);
 
         const std::map<std::string, thumbnail_t> &getThumbnails() const;
 
-        void setThumbnails(const std::map<std::string, thumbnail_t> &mThumbnails);
+        void setThumbnails(const std::map<std::string, thumbnail_t> &t_thumbnails);
 
         const std::string &getChannelTitle() const;
 
-        void setChannelTitle(const std::string &mChannelTitle);
+        void setChannelTitle(const std::string &t_channelTitle);
 
         const std::list<std::string> &getTags() const;
 
-        void setTags(const std::list<std::string> &mTags);
+        void setTags(const std::list<std::string> &t_tags);
 
         const std::string &getCategoryId() const;
 
-        void setCategoryId(const std::string &mCategoryId);
+        void setCategoryId(const std::string &t_categoryId);
 
         const std::string &getLiveBroadcastContent() const;
 
-        void setLiveBroadcastContent(const std::string &mLiveBroadcastContent);
+        void setLiveBroadcastContent(const std::string &t_liveBroadcastContent);
 
         const std::string &getDefaultLanguage() const;
 
-        void setDefaultLanguage(const std::string &mDefaultLanguage);
+        void setDefaultLanguage(const std::string &t_defaultLanguage);
 
         const std::string &getLocalizedTitle() const;
 
-        void setLocalizedTitle(const std::string &mLocalizedTitle);
+        void setLocalizedTitle(const std::string &t_localizedTitle);
 
         const std::string &getLocalizedDescription() const;
 
-        void setLocalizedDescription(const std::string &mLocalizedDescription);
+        void setLocalizedDescription(const std::string &t_localizedDescription);
 
         const std::string &getDefaultAudioLanguage() const;
 
-        void setDefaultAudioLanguage(const std::string &mDefaultAudioLanguage);
+        void setDefaultAudioLanguage(const std::string &t_defaultAudioLanguage);
 
         const std::string &getDuration() const;
 
-        void setDuration(const std::string &mDuration);
+        void setDuration(const std::string &t_duration);
 
-        bool isMIs3D() const;
+        bool is3D() const;
 
-        void setIs3D(bool mIs3D);
+        void setIs3D(bool t_is3D);
 
-        bool isMIs2D() const;
+        bool is2D() const;
 
-        void setIs2D(bool mIs2D);
+        void setIs2D(bool t_is2D);
 
-        bool isMIsHd() const;
+        bool isHD() const;
 
-        void setIsHd(bool mIsHd);
+        void setIsHd(bool t_isHD);
 
-        bool isMHasCaptions() const;
+        bool hasCaptions() const;
 
-        void setHasCaptions(bool mHasCaptions);
+        void setHasCaptions(bool t_hasCaptions);
 
-        bool isMIsLicensedContent() const;
+        bool isLicensedContent() const;
 
-        void setIsLicensedContent(bool mIsLicensedContent);
+        void setIsLicensedContent(bool t_isLicensedContent);
 
         const std::list<std::string> &getRegionRestrictionWhitelist() const;
 
-        void setRegionRestrictionWhitelist(const std::list<std::string> &mRegionRestrictionWhitelist);
+        void setRegionRestrictionWhitelist(const std::list<std::string> &t_regionRestrictionWhitelist);
 
         const std::list<std::string> &getRegionRestrictionBlacklist() const;
 
-        void setRegionRestrictionBlacklist(const std::list<std::string> &mRegionRestrictionBlacklist);
+        void setRegionRestrictionBlacklist(const std::list<std::string> &t_regionRestrictionBlacklist);
 
-        bool isMIs360() const;
+        bool is360() const;
 
-        void setIs360(bool mIs360);
+        void setIs360(bool t_is360);
 
-        bool isMIsRectanguar() const;
+        bool isRectanguar() const;
 
-        void setIsRectanguar(bool mIsRectanguar);
+        void setIsRectanguar(bool t_isRectanguar);
 
-        bool isMHasCustomThumbnail() const;
+        bool hasCustomThumbnail() const;
 
-        void setHasCustomThumbnail(bool mHasCustomThumbnail);
+        void setHasCustomThumbnail(bool t_hasCustomThumbnail);
 
         const std::string &getUploadStatus() const;
 
-        void setUploadStatus(const std::string &mUploadStatus);
+        void setUploadStatus(const std::string &t_uploadStatus);
 
         const std::string &getFailureReason() const;
 
-        void setFailureReason(const std::string &mFailureReason);
+        void setFailureReason(const std::string &t_failureReason);
 
         const std::string &getRejectionReason() const;
 
-        void setRejectionReason(const std::string &mRejectionReason);
+        void setRejectionReason(const std::string &t_rejectionReason);
 
         const std::string &getPrivacyStatus() const;
 
-        void setPrivacyStatus(const std::string &mPrivacyStatus);
+        void setPrivacyStatus(const std::string &t_privacyStatus);
 
         const std::string &getPublishAt() const;
 
-        void setPublishAt(const std::string &mPublishAt);
+        void setPublishAt(const std::string &t_publishAt);
 
         const std::string &getLicense() const;
 
-        void setLicense(const std::string &mLicense);
+        void setLicense(const std::string &t_license);
 
-        bool isMIsEmbeddable() const;
+        bool isEmbeddable() const;
 
-        void setIsEmbeddable(bool mIsEmbeddable);
+        void setIsEmbeddable(bool t_isEmbeddable);
 
-        bool isMPublicStatsViewable() const;
+        bool isPublicStatsViewable() const;
 
-        void setPublicStatsViewable(bool mPublicStatsViewable);
+        void setPublicStatsViewable(bool t_isPublicStatsViewable);
 
         unsigned long getViewCount() const;
 
-        void setViewCount(unsigned long mViewCount);
+        void setViewCount(unsigned long t_viewCount);
 
         unsigned long getLikeCount() const;
 
-        void setLikeCount(unsigned long mLikeCount);
+        void setLikeCount(unsigned long t_likeCount);
 
         unsigned long getDislikeCount() const;
 
-        void setDislikeCount(unsigned long mDislikeCount);
+        void setDislikeCount(unsigned long t_dislikeCount);
 
         unsigned long getCommentCount() const;
 
-        void setCommentCount(unsigned long commentCount);
+        void setCommentCount(unsigned long t_commentCount);
 
         const player_t &getPlayer() const;
 
-        void setPlayer(const player_t &mPlayer);
+        void setPlayer(const player_t &t_player);
 
         const std::list<std::string> &getTopicCategories() const;
 
-        void setTopicCategories(const std::list<std::string> &mTopicCategories);
+        void setTopicCategories(const std::list<std::string> &t_topicCategories);
 
         const std::string &getLocation() const;
 
-        void setLocation(const std::string &mLocation);
+        void setLocation(const std::string &t_location);
 
         const std::string &getRecordingDate() const;
 
-        void setRecordingDate(const std::string &mRecordingDate);
+        void setRecordingDate(const std::string &t_recordingDate);
 
         const std::string &getFileName() const;
 
-        void setFileName(const std::string &mFileName);
+        void setFileName(const std::string &t_fileName);
 
         unsigned long getFileSize() const;
 
-        void setFileSize(unsigned long mFileSize);
+        void setFileSize(unsigned long t_fileSize);
 
         const std::string &getFileType() const;
 
-        void setFileType(const std::string &mFileType);
+        void setFileType(const std::string &t_fileType);
 
         const std::string &getContainer() const;
 
-        void setContainer(const std::string &mContainer);
+        void setContainer(const std::string &t_container);
 
         const std::list<videoStream_t> &getVideoStreams() const;
 
-        void setVideoStreams(const std::list<videoStream_t> &mVideoStreams);
+        void setVideoStreams(const std::list<videoStream_t> &t_videoStreams);
 
         const std::list<audioStream_t> &getAudioStreams() const;
 
-        void setAudioStreams(const std::list<audioStream_t> &mAudioStreams);
+        void setAudioStreams(const std::list<audioStream_t> &t_audioStreams);
 
         unsigned long getDurationMs() const;
 
-        void setDurationMs(unsigned long mDurationMs);
+        void setDurationMs(unsigned long t_durationMs);
 
         unsigned long getBitrateBps() const;
 
-        void setBitrateBps(unsigned long mBitrateBps);
+        void setBitrateBps(unsigned long t_bitrateBps);
 
         const std::string &getCreationTime() const;
 
-        void setCreationTime(const std::string &mCreationTime);
+        void setCreationTime(const std::string &t_creationTime);
 
         const std::string &getProcessingStatus() const;
 
-        void setProcessingStatus(const std::string &mProcessingStatus);
+        void setProcessingStatus(const std::string &t_processingStatus);
 
         const processingProgress_t &getProcessingProgress() const;
 
-        void setProcessingProgress(const processingProgress_t &mProcessingProgress);
+        void setProcessingProgress(const processingProgress_t &t_processingProgress);
 
         const std::string &getProcessingFailureReason() const;
 
-        void setProcessingFailureReason(const std::string &mProcessingFailureReason);
+        void setProcessingFailureReason(const std::string &t_processingFailureReason);
 
         const std::string &getProcessingIssuesAvailability() const;
 
-        void setProcessingIssuesAvailability(const std::string &mProcessingIssuesAvailability);
+        void setProcessingIssuesAvailability(const std::string &t_processingIssuesAvailability);
 
         const std::string &getTagSuggestionsAvailability() const;
 
-        void setTagSuggestionsAvailability(const std::string &mTagSuggestionsAvailability);
+        void setTagSuggestionsAvailability(const std::string &t_tagSuggestionsAvailability);
 
         const std::string &getEditorSuggestionsAvailability() const;
 
-        void setEditorSuggestionsAvailability(const std::string &mEditorSuggestionsAvailability);
+        void setEditorSuggestionsAvailability(const std::string &t_editorSuggestionsAvailability);
 
         const std::string &getThumbnailsAvailability() const;
 
-        void setThumbnailsAvailability(const std::string &mThumbnailsAvailability);
+        void setThumbnailsAvailability(const std::string &t_thumbnailsAvailability);
 
         const std::list<std::string> &getProcessingErrors() const;
 
-        void setProcessingErrors(const std::list<std::string> &mProcessingErrors);
+        void setProcessingErrors(const std::list<std::string> &t_processingErrors);
 
         const std::list<std::string> &getProcessingWarnings() const;
 
-        void setProcessingWarnings(const std::list<std::string> &mProcessingWarnings);
+        void setProcessingWarnings(const std::list<std::string> &t_processingWarnings);
 
         const std::list<std::string> &getProcessingHints() const;
 
-        void setProcessingHints(const std::list<std::string> &mProcessingHints);
+        void setProcessingHints(const std::list<std::string> &t_processingHints);
 
         const std::list<tagSuggestions_t> &getTagSuggestions() const;
 
-        void setTagSuggestions(const std::list<tagSuggestions_t> &mTagSuggestions);
+        void setTagSuggestions(const std::list<tagSuggestions_t> &t_tagSuggestions);
 
         const std::list<std::string> &getEditorSuggestions() const;
 
-        void setEditorSuggestions(const std::list<std::string> &mEditorSuggestions);
+        void setEditorSuggestions(const std::list<std::string> &t_editorSuggestions);
 
         const std::list<liveStreamingDetails_t> &getLiveStreamingDetails() const;
 
-        void setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &mLiveStreamingDetails);
+        void setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &t_liveStreamingDetails);
 
         const std::list<localization_t> &getLocalizations() const;
 
-        void setLocalizations(const std::list<localization_t> &mLocalizations);
+        void setLocalizations(const std::list<localization_t> &t_localizations);
 
     private:
         /**

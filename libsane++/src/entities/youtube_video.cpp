@@ -815,9 +815,139 @@ namespace sane {
 
     void YoutubeVideo::print(int indentationSpacing = 0) { // FIXME: IMPLEMENT
         std::string indentation(indentationSpacing, ' ');
+        std::string indentation2x = indentation + indentation;
+        std::string indentation3x = indentation + indentation + indentation;
 
-//        std::cout << indentation << "Title: " << getTitle() << std::endl;
-//        std::cout << indentation << "ID: " << getId() << std::endl;
+        std::cout << indentation << "ID: " << getId() << std::endl;
+        std::cout << indentation << "PublishedAt: " << getPublishedAt() << std::endl;
+        std::cout << indentation << "Channel ID: " << getChannelId() << std::endl;
+        std::cout << indentation << "Channel Title: " << getChannelTitle() << std::endl;
+        std::cout << indentation << "Description: " << getDescription() << std::endl;
+        std::cout << indentation << "Thumbnails: " << std::endl;
+        // For each category/key
+        for (auto const& thumbnail : getThumbnails()) {
+            // Category:
+            std::cout << indentation2x << thumbnail.first << ":" << std::endl;
+            //      Contents...
+            std::cout << indentation3x << "Dimensions: " << thumbnail.second.width << "x" << thumbnail.second.height
+                      << std::endl;
+            std::cout << indentation3x << "URL:        " << thumbnail.second.url << std::endl;
+        }
+        std::cout << indentation << "Tags: " << std::endl;
+        for (auto const& tag : getTags()) {
+            std::cout << indentation2x << tag;
+        }
+        std::cout << indentation << "Category ID: " << getCategoryId() << std::endl;
+        std::cout << indentation << "Live Broadcast Content: " << getLiveBroadcastContent() << std::endl;
+        std::cout << indentation << "Default Language: " << getDefaultLanguage() << std::endl;
+        std::cout << indentation << "Localized Title: " << getLocalizedTitle() << std::endl;
+        std::cout << indentation << "Localized Description: " << getLocalizedDescription() << std::endl;
+        std::cout << indentation << "Default Audio Language: " << getDefaultAudioLanguage() << std::endl;
+        std::cout << indentation << "Duration: " << getDuration() << std::endl;
+        std::cout << indentation << "Is 2-Dimensional: " << is2D() << std::endl;
+        std::cout << indentation << "Is 3-Dimensional: " << is3D() << std::endl;
+        std::cout << indentation << "Is HD: " << isHD() << std::endl;
+        std::cout << indentation << "Is Rectangular: " << isRectanguar() << std::endl;
+        std::cout << indentation << "Is 360 Degrees: " << is360() << std::endl;
+        std::cout << indentation << "Has Captions: " << hasCaptions() << std::endl;
+        std::cout << indentation << "Is Licensed Content: " << isLicensedContent() << std::endl;
+        std::cout << indentation << "Region Restriction: " << std::endl;
+        std::cout << indentation2x << "Whitelist: " << std::endl;
+        for (auto const& country : getRegionRestrictionWhitelist()) {
+            std::cout << indentation3x << country << std::endl;
+        }
+        std::cout << indentation2x << "Blacklist: " << std::endl;
+        for (auto const& country : getRegionRestrictionBlacklist()) {
+            std::cout << indentation3x << country << std::endl;
+        }
+        std::cout << indentation << "Has Custom Thumbnail: " << hasCustomThumbnail() << std::endl;
+        std::cout << indentation << "Upload Status: " << getUploadStatus() << std::endl;
+        std::cout << indentation << "Failure Reason: " << getFailureReason() << std::endl;
+        std::cout << indentation << "Rejection Reason: " << getRejectionReason() << std::endl;
+        std::cout << indentation << "Privacy Status: " << getPrivacyStatus() << std::endl;
+        std::cout << indentation << "Publish At: " << getPublishAt() << std::endl;
+        std::cout << indentation << "License: " << getLicense() << std::endl;
+        std::cout << indentation << "Is Embeddable: " << isEmbeddable() << std::endl;
+        std::cout << indentation << "Public Stats Viewable: " << isPublicStatsViewable() << std::endl;
+        std::cout << indentation << "Views: " << getViewCount() << std::endl;
+        std::cout << indentation << "Likes: " << getLikeCount() << std::endl;
+        std::cout << indentation << "Dislikes: " << getDislikeCount() << std::endl;
+        std::cout << indentation << "Comments: " << getCommentCount() << std::endl;
+        std::cout << indentation << "Player: " << std::endl;
+        player_t player = getPlayer();
+        std::cout << indentation2x << "Embed Dimensions: " << player.embedWidth << "x" << player.embedHeight
+                  << std::endl;
+        std::cout << indentation << "Embed HTML: " << player.embedHtml << std::endl;
+        std::cout << indentation << "Topic Categories: " << std::endl;
+        for (auto const& topicCat : getTopicCategories()) {
+            std::cout << indentation2x << topicCat << std::endl;
+        }
+        std::cout << indentation << "Location: " << getLocation() << std::endl;
+        std::cout << indentation << "Recording Date: " << getRecordingDate() << std::endl;
+        std::cout << indentation << "Filename: " << getFileName() << std::endl;
+        std::cout << indentation << "Filesize: " << getFileSize() << std::endl;
+        std::cout << indentation << "Filetype: " << getFileType() << std::endl;
+        std::cout << indentation << "Container: " << getContainer() << std::endl;
+        std::cout << indentation << "Video Streams: " << std::endl;
+        for (auto const& stream : getVideoStreams()) {
+            std::cout << indentation2x << stream.codec << " " << stream.vendor << " " << stream.widthPixels <<  "x" << stream.heightPixels
+                      << "p" << stream.frameRateFps << " (AR: " << stream.aspectRatio << ", Rotation; "
+                      << stream.rotation << ") @ " << stream.bitrateBps << "Bps" << "." << std::endl;
+        }
+        std::cout << indentation << "Audio Streams: " << std::endl;
+        for (auto const& stream : getAudioStreams()) {
+            std::cout << indentation2x << stream.codec << " " << stream.vendor << " channels: " << stream.channelCount
+                      << " @ " << stream.bitrateBps << "Bps" << "." << std::endl;
+        }
+        std::cout << indentation << "Duration (ms): " << getDurationMs() << std::endl;
+        std::cout << indentation << "Bitrate (Bps): " << getBitrateBps() << std::endl;
+        std::cout << indentation << "Creation Time: " << getCreationTime() << std::endl;
+        std::cout << indentation << "Processing Status: " << getProcessingStatus() << std::endl;
+        std::cout << indentation << "Processing Failure Reason: " << getProcessingFailureReason() << std::endl;
+        std::cout << indentation << "Processing Issues Availability: " << getProcessingIssuesAvailability()
+                  << std::endl;
+        std::cout << indentation << "Tag Suggestions Availability: " << getTagSuggestionsAvailability() << std::endl;
+        std::cout << indentation << "Editor Suggestions Availability: " << getEditorSuggestionsAvailability()
+                  << std::endl;
+        std::cout << indentation << "Thumbnails Availability: " << getThumbnailsAvailability() << std::endl;
+        std::cout << indentation << "Processing Warnings: " << std::endl;
+        for (auto const& warning : getProcessingWarnings()) {
+            std::cout << indentation2x << warning << std::endl;
+        }
+        std::cout << indentation << "Processing Errors: " << std::endl;
+        for (auto const& error : getProcessingErrors()) {
+            std::cout << indentation2x << error << std::endl;
+        }
+        std::cout << indentation << "Processing Hints:: " << std::endl;
+        for (auto const& hint : getProcessingHints()) {
+            std::cout << indentation2x << hint << std::endl;
+        }
+        std::cout << indentation << "Tag Suggestions: " << std::endl;
+        for (auto const& tagSuggestion : getTagSuggestions()) {
+            std::cout << indentation2x << "Tag : " << tagSuggestion.tag << std::endl;
+            std::cout << indentation2x << "Relevant video categories: " << std::endl;
+            for (auto const& catRestrict : tagSuggestion.categoryRestricts) {
+                std::cout << indentation3x << catRestrict << std::endl;
+            }
+        }
+        std::cout << indentation << "Editor Suggestions: " << std::endl;
+        for (auto const& suggestion : getEditorSuggestions()) {
+            std::cout << indentation2x << suggestion << std::endl;
+        }
+        std::cout << indentation << "Live Streaming Details: " << std::endl;
+        for (auto const& detail : getLiveStreamingDetails()) {
+            std::cout << indentation2x << "Active LiveChat ID:   " << detail.activeLiveChatId << std::endl;
+            std::cout << indentation2x << "Concurrent Viewers:   " << detail.concurrentViewers << std::endl;
+            std::cout << indentation2x << "Scheduled Start Time: " << detail.scheduledStartTime << std::endl;
+            std::cout << indentation2x << "Actual Start Time:    " << detail.actualStartTime << std::endl;
+            std::cout << indentation2x << "Scheduled End Time:   " << detail.scheduledEndTime << std::endl;
+            std::cout << indentation2x << "Actual End Time:      " << detail.actualEndTime << std::endl;
+        }
+        std::cout << indentation << "Localizations: " << std::endl;
+        for (auto const& localization : getLocalizations()) {
+            std::cout << indentation2x << "Title:       " << localization.title << std::endl;
+            std::cout << indentation2x << "Description: " << localization.description << std::endl;
+        }
     }
 
     void YoutubeVideo::addFromJson(nlohmann::json t_json) {

@@ -97,12 +97,20 @@ namespace sane {
         m_publishedAt = t_publishedAt;
     }
 
+    void YoutubeVideo::setPublishedAt(nlohmann::json &t_publishedAt) {
+        assignJsonStringValue(m_publishedAt, t_publishedAt);
+    }
+
     const std::string &YoutubeVideo::getChannelId() const {
         return m_channelId;
     }
 
     void YoutubeVideo::setChannelId(const std::string &t_channelId) {
         m_channelId = t_channelId;
+    }
+
+    void YoutubeVideo::setChannelId(nlohmann::json &t_channelId) {
+        assignJsonStringValue(m_channelId, t_channelId);
     }
 
     const std::string &YoutubeVideo::getTitle() const {
@@ -113,12 +121,20 @@ namespace sane {
         m_title = t_title;
     }
 
+    void YoutubeVideo::setTitle(nlohmann::json &t_title) {
+        assignJsonStringValue(m_title, t_title);
+    }
+
     const std::string &YoutubeVideo::getDescription() const {
         return m_description;
     }
 
     void YoutubeVideo::setDescription(const std::string &t_description) {
         m_description = t_description;
+    }
+
+    void YoutubeVideo::setDescription(nlohmann::json &t_description) {
+        assignJsonStringValue(m_description, t_description);
     }
 
     const std::map<std::string, thumbnail_t> &YoutubeVideo::getThumbnails() const {
@@ -178,6 +194,10 @@ namespace sane {
         m_channelTitle = t_channelTitle;
     }
 
+    void YoutubeVideo::setChannelTitle(nlohmann::json &t_channelTitle) {
+        assignJsonStringValue(m_channelTitle, t_channelTitle);
+    }
+
     const std::list<std::string> &YoutubeVideo::getTags() const {
         return m_tags;
     }
@@ -194,12 +214,20 @@ namespace sane {
         m_categoryId = t_categoryId;
     }
 
+    void YoutubeVideo::setCategoryId(nlohmann::json &t_categoryId) {
+        assignJsonStringValue(m_categoryId, t_categoryId);
+    }
+
     const std::string &YoutubeVideo::getLiveBroadcastContent() const {
         return m_liveBroadcastContent;
     }
 
     void YoutubeVideo::setLiveBroadcastContent(const std::string &t_liveBroadcastContent) {
         m_liveBroadcastContent = t_liveBroadcastContent;
+    }
+
+    void YoutubeVideo::setLiveBroadcastContent(nlohmann::json &t_liveBroadcastContent) {
+        assignJsonStringValue(m_liveBroadcastContent, t_liveBroadcastContent);
     }
 
     const std::string &YoutubeVideo::getDefaultLanguage() const {
@@ -218,12 +246,20 @@ namespace sane {
         m_localizedTitle = t_localizedTitle;
     }
 
+    void YoutubeVideo::setLocalizedTitle(nlohmann::json &t_localizedTitle) {
+        assignJsonStringValue(m_localizedTitle, t_localizedTitle);
+    }
+
     const std::string &YoutubeVideo::getLocalizedDescription() const {
         return m_localizedDescription;
     }
 
     void YoutubeVideo::setLocalizedDescription(const std::string &t_localizedDescription) {
         m_localizedDescription = t_localizedDescription;
+    }
+
+    void YoutubeVideo::setLocalizedDescription(nlohmann::json &t_localizedDescription) {
+        assignJsonStringValue(m_localizedDescription, t_localizedDescription);
     }
 
     const std::string &YoutubeVideo::getDefaultAudioLanguage() const {
@@ -658,7 +694,7 @@ namespace sane {
                 setChannelId(snippet["channelId"]);
                 setChannelTitle(snippet["channelTitle"]);
                 setDescription(snippet["description"]);
-                setCategoryId(snippet["id"]);
+                setCategoryId(snippet["categoryId"]);
                 setLiveBroadcastContent(snippet["liveBroadcastContent"]);
                 setPublishedAt(snippet["publishedAt"]);
 

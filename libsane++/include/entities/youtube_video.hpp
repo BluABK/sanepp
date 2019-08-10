@@ -16,8 +16,8 @@
 namespace sane {
     struct thumbnail_t {
         std::string url;
-        unsigned int width{};
         unsigned int height{};
+        unsigned int width{};
     };
 
     struct videoStream_t {
@@ -131,7 +131,8 @@ namespace sane {
         }
 
         void assignJsonStringValue(std::string &stringToAssignValue,
-                                   nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
+                                   nlohmann::json &unknownJsonTypeValue,
+                                   nlohmann::json t_json = nlohmann::json::object());
 
         void addFromJson(nlohmann::json t_json);
 
@@ -158,6 +159,8 @@ namespace sane {
 
         void setId(nlohmann::json t_id, nlohmann::json t_json = nlohmann::json::object());
 
+        void setId(const std::string &t_id);
+
         const std::string &getId() const;
 
         const std::string &getPublishedAt() const;
@@ -179,6 +182,8 @@ namespace sane {
         const std::map<std::string, thumbnail_t> &getThumbnails() const;
 
         void setThumbnails(const std::map<std::string, thumbnail_t> &t_thumbnails);
+
+        void setThumbnails(nlohmann::json &t_thumbnails);
 
         const std::string &getChannelTitle() const;
 

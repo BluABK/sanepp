@@ -14,10 +14,10 @@ namespace sane {
      *
      * @param stringToAssignValue   String to assign a value (modified directly).
      * @param unknownJsonTypeValue  The undetermined JSON value to assign the string.
-     * @param fullJson              The complete JSON object, for use in debugging/error reporting.
+     * @param fullJson              OPTIONAL: The complete JSON object, for use in debugging/error reporting.
      */
     void YoutubeVideo::assignJsonStringValue(std::string &stringToAssignValue,
-                                               nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json) {
+                                               nlohmann::json &unknownJsonTypeValue, nlohmann::json t_json) {
         if (unknownJsonTypeValue.is_null()) {
             addWarning("WARNING: YoutubeVideo::addFromJson." + std::string(GET_VARIABLE_NAME(stringToAssignValue))
                        + " is NULL not string, setting '" + MISSING_VALUE + "' string in its stead!", t_json);
@@ -81,6 +81,10 @@ namespace sane {
         assignJsonStringValue(m_id, t_id, t_json);
     }
 
+    void YoutubeVideo::setId(const std::string &t_id) {
+        m_id = t_id;
+    }
+
     const std::string &YoutubeVideo::getId() const {
         return m_id;
     }
@@ -123,6 +127,47 @@ namespace sane {
 
     void YoutubeVideo::setThumbnails(const std::map<std::string, thumbnail_t> &t_thumbnails) {
         m_thumbnails = t_thumbnails;
+    }
+
+    void YoutubeVideo::setThumbnails(nlohmann::json &t_thumbnails) {
+        // Define variables.
+        std::map<std::string, thumbnail_t> thumbnails;
+
+        // Create each thumbnail struct.
+        thumbnail_t defaultThumbnail;
+        assignJsonStringValue(defaultThumbnail.url, t_thumbnails["default"]);
+        defaultThumbnail.height  = t_thumbnails["default"]["height"].get<unsigned int>();
+        defaultThumbnail.width   = t_thumbnails["default"]["width"].get<unsigned int>();
+
+        thumbnail_t highThumbnail;
+        assignJsonStringValue(highThumbnail.url, t_thumbnails["high"]);
+        highThumbnail.height     = t_thumbnails["high"]["height"].get<unsigned int>();
+        highThumbnail.width      = t_thumbnails["high"]["width"].get<unsigned int>();
+
+        thumbnail_t mediumThumbnail;
+        assignJsonStringValue(mediumThumbnail.url, t_thumbnails["medium"]);
+        mediumThumbnail.height   = t_thumbnails["medium"]["height"].get<unsigned int>();
+        mediumThumbnail.width    = t_thumbnails["medium"]["width"].get<unsigned int>();
+
+        thumbnail_t standardThumbnail;
+        assignJsonStringValue(standardThumbnail.url, t_thumbnails["standard"]);
+        standardThumbnail.height = t_thumbnails["standard"]["height"].get<unsigned int>();
+        standardThumbnail.width  = t_thumbnails["standard"]["width"].get<unsigned int>();
+
+        thumbnail_t maxresThumbnail;
+        assignJsonStringValue(maxresThumbnail.url, t_thumbnails["maxres"]);
+        maxresThumbnail.height  = t_thumbnails["maxres"]["height"].get<unsigned int>();
+        maxresThumbnail.width   = t_thumbnails["maxres"]["width"].get<unsigned int>();
+
+        // Add thumbnail structs to map.
+        thumbnails["default"] = defaultThumbnail;
+        thumbnails["high"] = highThumbnail;
+        thumbnails["medium"] = mediumThumbnail;
+        thumbnails["standard"] = standardThumbnail;
+        thumbnails["maxres"] = maxresThumbnail;
+
+        // Finally assign the thumbnails map to the object property.
+        m_thumbnails = thumbnails;
     }
 
     const std::string &YoutubeVideo::getChannelTitle() const {
@@ -607,62 +652,80 @@ namespace sane {
 
             // Part: Snippet.
             if (t_json.find("snippet") != t_json.end()) {
+                nlohmann::json snippet = t_json["snippet"];
+
+                setTitle(snippet["title"]);
+                setChannelId(snippet["channelId"]);
+                setChannelTitle(snippet["channelTitle"]);
+                setDescription(snippet["description"]);
+                setCategoryId(snippet["id"]);
+                setLiveBroadcastContent(snippet["liveBroadcastContent"]);
+                setPublishedAt(snippet["publishedAt"]);
+
+                if (snippet.find("localized") != snippet.end()) {
+                    setLocalizedTitle(snippet["localized"]["title"]);
+                    setLocalizedDescription(snippet["localized"]["description"]);
+                }
+
+                if (snippet.find("thumbnails") != snippet.end()) {
+                    setThumbnails(snippet["thumbnails"]);
+                }
 
             }
 
             // Part: Content details.
             if (t_json.find("contentDetails") != t_json.end()) {
-
+                nlohmann::json contentDetails = t_json["contentDetails"];
             }
 
             // Part: Status.
             if (t_json.find("status") != t_json.end()) {
-
+                nlohmann::json status = t_json["status"];
             }
 
             // Part: Statistics
             if (t_json.find("statistics") != t_json.end()) {
-
+                nlohmann::json statistics = t_json["statistics"];
             }
 
             // Part: Player
             if (t_json.find("player") != t_json.end()) {
-
+                nlohmann::json player = t_json["player"];
             }
 
             // Part: Topic details
             if (t_json.find("topicDetails") != t_json.end()) {
-
+                nlohmann::json topicDetails = t_json["topicDetails"];
             }
 
             // Part: Recording details.
             if (t_json.find("recordingDetails") != t_json.end()) {
-
+                nlohmann::json recordingDetails = t_json["recordingDetails"];
             }
 
             // Part: File details.
             if (t_json.find("fileDetails") != t_json.end()) {
-
+                nlohmann::json fileDetails = t_json["fileDetails"];
             }
 
             // Part: Processing details.
             if (t_json.find("processingDetails") != t_json.end()) {
-
+                nlohmann::json processingDetails = t_json["processingDetails"];
             }
 
             // Part: Suggestions
             if (t_json.find("suggestions") != t_json.end()) {
-
+                nlohmann::json suggestions = t_json["suggestions"];
             }
 
             // Part: Live streaming details.
             if (t_json.find("liveStreamingDetails") != t_json.end()) {
-
+                nlohmann::json liveStreamingDetails = t_json["liveStreamingDetails"];
             }
 
             // Part: Localizations.
             if (t_json.find("localizations") != t_json.end()) {
-
+                nlohmann::json localizations = t_json["localizations"];
             }
         } catch (nlohmann::detail::type_error &exc) {
             addError("Skipping YoutubeVideo::addFromJson due to Exception: " + std::string(exc.what()), t_json);

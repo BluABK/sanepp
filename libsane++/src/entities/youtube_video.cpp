@@ -77,8 +77,8 @@ namespace sane {
 
     // START: Getters & Setters.
 
-    void YoutubeVideo::setId(nlohmann::json t_id, nlohmann::json t_json) {
-        assignJsonStringValue(m_id, t_id, t_json);
+    void YoutubeVideo::setId(nlohmann::json t_id) {
+        assignJsonStringValue(m_id, t_id);
     }
 
     void YoutubeVideo::setId(const std::string &t_id) {

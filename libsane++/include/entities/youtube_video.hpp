@@ -157,7 +157,7 @@ namespace sane {
 
         // START: Getters & Setters.
 
-        void setId(nlohmann::json t_id, nlohmann::json t_json = nlohmann::json::object());
+        void setId(nlohmann::json t_id);
 
         void setId(const std::string &t_id);
 

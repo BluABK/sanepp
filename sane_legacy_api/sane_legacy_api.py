@@ -1022,7 +1022,7 @@ def youtube_api_videos_list():
     :return:
     """
     # Get an authenticated API key object
-    youtube_auth = load_key()
+    youtube_auth = load_youtube_resource_oauth()
 
     # Strip out empty kwargs.
     kwargs = remove_empty_kwargs(**request.args)

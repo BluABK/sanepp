@@ -130,9 +130,49 @@ namespace sane {
             addFromJson(t_data);
         }
 
+        void assignJsonStringValue(std::string &stringToAssignValue,
+                                   nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
+
         void addFromJson(nlohmann::json t_json);
 
+        void print(int indentationSpacing);
+
+        // Each error/warning map consists of ["error"] and ["json"]
+        void addError(const std::string &t_errorMsg, nlohmann::json &t_json);
+
+        void addWarning(const std::string &t_warningMsg, nlohmann::json &t_json);
+
+        std::list<std::map<std::string, nlohmann::json>> getErrors();
+
+        std::list<std::map<std::string, nlohmann::json>> getWarnings();
+
+        void clearWarnings();
+
+        void clearErrors();
+
+        void clearErrorsAndWarnings();
+
+        bool wasAborted();
+
+        void setId(nlohmann::json t_id, nlohmann::json t_json = nlohmann::json::object());
+
     private:
+        /**
+         * Entity Internal.
+         */
+        // Track errors that occur
+        std::list<std::map<std::string, nlohmann::json>> m_errors;
+
+        // Track warnings that occur
+        std::list<std::map<std::string, nlohmann::json>> m_warnings;
+
+        // Indicate whether the operation was aborted
+        bool m_aborted = false;
+
+        /**
+         * YouTube properties:
+         */
+
         std::string m_id;
 
         /**
@@ -387,7 +427,4 @@ namespace sane {
 
     };
 } // namespace sane
-
-
-
 #endif //SANE_YOUTUBE_VIDEO_HPP

@@ -34,13 +34,29 @@ namespace sane {
         }
     }
 
-    bool YoutubeVideo::getJsonBoolValue(nlohmann::json &t_bool) {
+    bool YoutubeVideo::isBool(nlohmann::json &t_bool) {
         if (!t_bool.empty()) {
             if (t_bool.is_boolean()) {
-                return t_bool.get<bool>();
-            } else if (t_bool.is_string())
-                return t_bool.get<std::string>() == "true";
+                return true;
+            } else if (t_bool.is_string()) {
+                if (t_bool.get<std::string>() == "true" or t_bool.get<std::string>() == "false") {
+                    return true;
+                }
+            }
         }
+        return false;
+    }
+
+    bool YoutubeVideo::getJsonBoolValue(nlohmann::json &t_bool) {
+        if (t_bool.is_boolean()) {
+            return t_bool.get<bool>();
+        } else if (t_bool.is_string()) {
+            return t_bool.get<std::string>() == "true";
+        } else {
+            addError("Called getJsonBoolValue with invalid bool, forced to return false!", t_bool);
+            return false;
+        }
+
     }
 
     void YoutubeVideo::addError(const std::string &t_errorMsg, nlohmann::json &t_json) {
@@ -380,7 +396,9 @@ namespace sane {
     }
 
     void YoutubeVideo::setHasCaptions(nlohmann::json &t_hasCaptions) {
-        setHasCaptions(getJsonBoolValue(t_hasCaptions));
+        if (isBool(t_hasCaptions)) {
+            setHasCaptions(getJsonBoolValue(t_hasCaptions));
+        }
     }
 
     bool YoutubeVideo::isLicensedContent() const {
@@ -392,7 +410,9 @@ namespace sane {
     }
 
     void YoutubeVideo::setIsLicensedContent(nlohmann::json &t_isLicensedContent) {
-        setIsLicensedContent(getJsonBoolValue(t_isLicensedContent));
+        if (isBool(t_isLicensedContent)) {
+            setIsLicensedContent(getJsonBoolValue(t_isLicensedContent));
+        }
     }
 
     const std::list<std::string> &YoutubeVideo::getRegionRestrictionWhitelist() const {
@@ -474,7 +494,9 @@ namespace sane {
     }
 
     void YoutubeVideo::setHasCustomThumbnail(nlohmann::json &t_hasCustomThumbnail) {
-        setHasCustomThumbnail(getJsonBoolValue(t_hasCustomThumbnail));
+        if (isBool(t_hasCustomThumbnail)) {
+            setHasCustomThumbnail(getJsonBoolValue(t_hasCustomThumbnail));
+        }
     }
 
     const std::string &YoutubeVideo::getUploadStatus() const {

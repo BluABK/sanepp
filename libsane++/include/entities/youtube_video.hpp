@@ -134,6 +134,8 @@ namespace sane {
                                    nlohmann::json &unknownJsonTypeValue,
                                    nlohmann::json t_json = nlohmann::json::object());
 
+        bool isBool(nlohmann::json &t_bool);
+
         bool getJsonBoolValue(nlohmann::json &t_bool);
 
         void addFromJson(nlohmann::json t_json);

@@ -3,6 +3,8 @@
 
 #endif //SANE_COMMON_HPP
 
+#define GET_VARIABLE_NAME(Variable) (#Variable)
+
 #define MISSING_VALUE "N/A"
 #define YOUTUBE_CHANNEL_PREFIX "UC"
 #define YOUTUBE_UPLOADS_PLAYLIST_PREFIX "UU"

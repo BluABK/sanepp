@@ -59,7 +59,12 @@ add_executable(sane++_cli cli/src/main.cpp
         cli/src/json_commands.cpp
         cli/src/print_functions.cpp
         libsane++/src/youtube/subfeed.cpp
-        libsane++/include/youtube/subfeed.hpp libsane++/src/entities/youtube_video.cpp libsane++/include/entities/youtube_video.hpp libsane++/include/entities/common.hpp libsane++/include/types.hpp)
+        libsane++/include/youtube/subfeed.hpp
+        libsane++/src/entities/youtube_video.cpp
+        libsane++/include/entities/youtube_video.hpp
+        libsane++/include/entities/common.hpp
+#        libsane++/include/types.hpp
+        )
 
 # API Handler
 target_link_libraries (sane++_cli -lcurl)
@@ -83,7 +88,12 @@ add_executable(sane++_gui gui/src/main.cpp
         libsane++/src/api_handler/entity_response.cpp
         libsane++/src/api_handler/json_response.cpp
         libsane++/src/youtube/subfeed.cpp
-        libsane++/include/youtube/subfeed.hpp libsane++/src/entities/youtube_video.cpp libsane++/include/entities/youtube_video.hpp libsane++/include/entities/common.hpp libsane++/include/types.hpp)
+        libsane++/include/youtube/subfeed.hpp
+        libsane++/src/entities/youtube_video.cpp
+        libsane++/include/entities/youtube_video.hpp
+        libsane++/include/entities/common.hpp
+#        libsane++/include/types.hpp
+        )
 
 # API Handler
 target_link_libraries (sane++_gui -lcurl)
@@ -140,7 +150,12 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
             cli/src/json_commands.cpp
             cli/src/print_functions.cpp
             libsane++/src/youtube/subfeed.cpp
-            libsane++/include/youtube/subfeed.hpp libsane++/src/entities/youtube_video.cpp libsane++/include/entities/youtube_video.hpp libsane++/include/entities/common.hpp libsane++/include/types.hpp)
+            libsane++/include/youtube/subfeed.hpp
+            libsane++/src/entities/youtube_video.cpp
+            libsane++/include/entities/youtube_video.hpp
+            libsane++/include/entities/common.hpp
+#            libsane++/include/types.hpp
+            )
 
     # API Handler
     target_link_libraries(travis_test_all -lcurl)
@@ -184,7 +199,12 @@ else()
             cli/src/json_commands.cpp
             cli/src/print_functions.cpp
             libsane++/src/youtube/subfeed.cpp
-            libsane++/include/youtube/subfeed.hpp libsane++/src/entities/youtube_video.cpp libsane++/include/entities/youtube_video.hpp libsane++/include/entities/common.hpp libsane++/include/types.hpp)
+            libsane++/include/youtube/subfeed.hpp
+            libsane++/src/entities/youtube_video.cpp
+            libsane++/include/entities/youtube_video.hpp
+            libsane++/include/entities/common.hpp
+#            libsane++/include/types.hpp
+            )
 
     # API Handler
     target_link_libraries(test_all -lcurl)

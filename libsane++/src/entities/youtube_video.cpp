@@ -206,6 +206,20 @@ namespace sane {
         m_tags = t_tags;
     }
 
+    void YoutubeVideo::setTags(nlohmann::json &t_tags) {
+        std::list<std::string> tags;
+
+        if (t_tags.empty()) {
+            return;
+        }
+
+        for (nlohmann::json tag : t_tags.items()) {
+            tags.push_back(tag.get<std::string>());
+        }
+
+        m_tags = tags;
+    }
+
     const std::string &YoutubeVideo::getCategoryId() const {
         return m_categoryId;
     }
@@ -693,6 +707,7 @@ namespace sane {
                 setTitle(snippet["title"]);
                 setChannelId(snippet["channelId"]);
                 setChannelTitle(snippet["channelTitle"]);
+                setTags(snippet["tags"]);
                 setDescription(snippet["description"]);
                 setCategoryId(snippet["categoryId"]);
                 setLiveBroadcastContent(snippet["liveBroadcastContent"]);

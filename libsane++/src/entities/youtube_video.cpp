@@ -700,6 +700,15 @@ namespace sane {
         m_recordingDate = t_recordingDate;
     }
 
+    void YoutubeVideo::setRecordingDate(nlohmann::json &t_recordingDate) {
+        int rc = assignJsonStringValue(m_recordingDate, t_recordingDate);
+
+        if (rc != JSON_VALUE_OK) {
+            addError("setRecordingDate: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                    t_recordingDate);
+        }
+    }
+
     const std::string &YoutubeVideo::getFileName() const {
         return m_fileName;
     }

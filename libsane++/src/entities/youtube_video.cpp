@@ -692,14 +692,6 @@ namespace sane {
         m_topicCategories = categories;
     }
 
-    const std::string &YoutubeVideo::getLocation() const {
-        return m_location;
-    }
-
-    void YoutubeVideo::setLocation(const std::string &t_location) {
-        m_location = t_location;
-    }
-
     const std::string &YoutubeVideo::getRecordingDate() const {
         return m_recordingDate;
     }
@@ -1055,9 +1047,6 @@ namespace sane {
                 std::cout << indentation2x << topicCat << std::endl;
             }
         }
-        if (!getLocation().empty() or t_printFullInfo) {
-            std::cout << indentation << "Location: " << getLocation() << std::endl;
-        }
         if (!getRecordingDate().empty() or t_printFullInfo) {
             std::cout << indentation << "Recording Date: " << getRecordingDate() << std::endl;
         }
@@ -1310,6 +1299,8 @@ namespace sane {
             if (t_json.find("recordingDetails") != t_json.end()) {
                 nlohmann::json recordingDetails = t_json["recordingDetails"];
                 hasPartRecordingDetails = true;
+
+                setRecordingDate(recordingDetails["recordingDate"]);
             }
 
             // Part: File details.

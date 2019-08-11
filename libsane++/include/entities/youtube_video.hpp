@@ -387,12 +387,6 @@ namespace sane {
 
         void setTopicCategories(nlohmann::json &t_topicCategories);
 
-        const std::string &getLocation() const;
-
-        void setLocation(const std::string &t_location);
-
-        void setLocation(nlohmann::json &t_location);
-
         const std::string &getRecordingDate() const;
 
         void setRecordingDate(const std::string &t_recordingDate);
@@ -707,8 +701,6 @@ namespace sane {
          *
          * Information about the location, date and address where the video was recorded.
          * */
-        // The geolocation information associated with the video.
-        std::string m_location;
         // The date and time when the video was recorded. The value is specified in ISO 8601.
         std::string m_recordingDate; // TODO: Make it proper datetime type?
 

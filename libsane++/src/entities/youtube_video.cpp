@@ -507,12 +507,20 @@ namespace sane {
         m_uploadStatus = t_uploadStatus;
     }
 
+    void YoutubeVideo::setUploadStatus(nlohmann::json &t_uploadStatus) {
+        assignJsonStringValue(m_uploadStatus, t_uploadStatus);
+    }
+
     const std::string &YoutubeVideo::getFailureReason() const {
         return m_failureReason;
     }
 
     void YoutubeVideo::setFailureReason(const std::string &t_failureReason) {
         m_failureReason = t_failureReason;
+    }
+
+    void YoutubeVideo::setFailureReason(nlohmann::json &t_failureReason) {
+        assignJsonStringValue(m_failureReason, t_failureReason);
     }
 
     const std::string &YoutubeVideo::getRejectionReason() const {
@@ -523,12 +531,20 @@ namespace sane {
         m_rejectionReason = t_rejectionReason;
     }
 
+    void YoutubeVideo::setRejectionReason(nlohmann::json &t_rejectionReason) {
+        assignJsonStringValue(m_rejectionReason, t_rejectionReason);
+    }
+
     const std::string &YoutubeVideo::getPrivacyStatus() const {
         return m_privacyStatus;
     }
 
     void YoutubeVideo::setPrivacyStatus(const std::string &t_privacyStatus) {
         m_privacyStatus = t_privacyStatus;
+    }
+
+    void YoutubeVideo::setPrivacyStatus(nlohmann::json &t_privacyStatus) {
+        assignJsonStringValue(m_privacyStatus, t_privacyStatus);
     }
 
     const std::string &YoutubeVideo::getPublishAt() const {
@@ -539,12 +555,20 @@ namespace sane {
         m_publishAt = t_publishAt;
     }
 
+    void YoutubeVideo::setPublishAt(nlohmann::json &t_publishAt) {
+        assignJsonStringValue(m_publishAt, t_publishAt);
+    }
+
     const std::string &YoutubeVideo::getLicense() const {
         return m_license;
     }
 
     void YoutubeVideo::setLicense(const std::string &t_license) {
         m_license = t_license;
+    }
+
+    void YoutubeVideo::setLicense(nlohmann::json &t_license) {
+        assignJsonStringValue(m_license, t_license);
     }
 
     bool YoutubeVideo::isEmbeddable() const {
@@ -555,12 +579,24 @@ namespace sane {
         m_isEmbeddable = t_isEmbeddable;
     }
 
+    void YoutubeVideo::setIsEmbeddable(nlohmann::json &t_isEmbeddable) {
+        if (isBool(t_isEmbeddable)) {
+            setIsEmbeddable(getJsonBoolValue(t_isEmbeddable));
+        }
+    }
+
     bool YoutubeVideo::isPublicStatsViewable() const {
         return m_publicStatsViewable;
     }
 
     void YoutubeVideo::setPublicStatsViewable(bool t_isPublicStatsViewable) {
         m_publicStatsViewable = t_isPublicStatsViewable;
+    }
+
+    void YoutubeVideo::setPublicStatsViewable(nlohmann::json &t_isPublicStatsViewable) {
+        if (isBool(t_isPublicStatsViewable)) {
+            setPublicStatsViewable(getJsonBoolValue(t_isPublicStatsViewable));
+        }
     }
 
     unsigned long YoutubeVideo::getViewCount() const {
@@ -1178,6 +1214,19 @@ namespace sane {
             if (t_json.find("status") != t_json.end()) {
                 nlohmann::json status = t_json["status"];
                 hasPartStatus = true;
+
+                setUploadStatus(status["uploadStatus"]);
+                if (status.find("failureReason") != status.end()) {
+                    setFailureReason(status["failureReason"]);
+                }
+                if (status.find("rejectionReason") != status.end()) {
+                    setRejectionReason(status["rejectionReason"]);
+                }
+                setPrivacyStatus(status["privacyStatus"]);
+                setPublishAt(status["publishAt"]);
+                setLicense(status["license"]);
+                setIsEmbeddable(status["embeddable"]);
+                setPublicStatsViewable(status["publicStatsViewable"]);
             }
 
             // Part: Statistics

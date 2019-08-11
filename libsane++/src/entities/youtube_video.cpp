@@ -6,14 +6,14 @@ namespace sane {
     // An empty constructor if you want to populate it later.
     YoutubeVideo::YoutubeVideo() = default;
 
-    void YoutubeVideo::addError(const std::string &t_errorMsg, nlohmann::json &t_json) {
+    void YoutubeVideo::addError(const std::string &t_errorMsg, nlohmann::json t_json) {
         std::map<std::string, nlohmann::json> _;
         _[t_errorMsg] = t_json;
 
         m_errors.push_back(_);
     }
 
-    void YoutubeVideo::addWarning(const std::string &t_warningMsg, nlohmann::json &t_json) {
+    void YoutubeVideo::addWarning(const std::string &t_warningMsg, nlohmann::json t_json) {
         std::map<std::string, nlohmann::json> _;
         _[t_warningMsg] = t_json;
 
@@ -30,7 +30,7 @@ namespace sane {
             // For message, JSON in map
             for (auto const& map : item) {
                 std::cout << std::string(indent, ' ') << map.first << std::endl;
-                if (withJson) {
+                if (withJson and !map.second.empty()) {
                     std::cout << map.second.dump(jsonIndent) << std::endl;
                 }
             }
@@ -47,7 +47,7 @@ namespace sane {
             // For message, JSON in map
             for (auto const& map : item) {
                 std::cout << std::string(indent, ' ') << map.first << std::endl;
-                if (withJson) {
+                if (withJson and !map.second.empty()) {
                     std::cout << map.second.dump(jsonIndent) << std::endl;
                 }
             }
@@ -581,6 +581,8 @@ namespace sane {
     void YoutubeVideo::setViewCount(nlohmann::json &t_viewCount) {
         if (isDigits(t_viewCount)) {
             setViewCount(getJsonULongValue(t_viewCount));
+        } else if (t_viewCount.is_null() or t_viewCount.get<std::string>() == "null"){
+            addWarning("setViewCount: Got null string.");
         } else {
             addError("setViewCount called with invalid parameter! Type: " +
                      std::string(t_viewCount.type_name()) + ", Value: " + t_viewCount.dump(), t_viewCount);
@@ -598,6 +600,8 @@ namespace sane {
     void YoutubeVideo::setLikeCount(nlohmann::json &t_likeCount) {
         if (isDigits(t_likeCount)) {
             setLikeCount(getJsonULongValue(t_likeCount));
+        } else if (t_likeCount.is_null() or t_likeCount.get<std::string>() == "null"){
+            addWarning("setLikeCount: Got null string.");
         } else {
             addError("setLikeCount called with invalid parameter! Type: " +
                      std::string(t_likeCount.type_name()) + ", Value: " + t_likeCount.dump(), t_likeCount);
@@ -615,6 +619,8 @@ namespace sane {
     void YoutubeVideo::setDislikeCount(nlohmann::json &t_dislikeCount) {
         if (isDigits(t_dislikeCount)) {
             setDislikeCount(getJsonULongValue(t_dislikeCount));
+        } else if (t_dislikeCount.is_null() or t_dislikeCount.get<std::string>() == "null"){
+            addWarning("setDislikeCount: Got null string.");
         } else {
             addError("setDislikeCount called with invalid parameter! Type: " +
                      std::string(t_dislikeCount.type_name()) + ", Value: " + t_dislikeCount.dump(), t_dislikeCount);
@@ -632,6 +638,8 @@ namespace sane {
     void YoutubeVideo::setCommentCount(nlohmann::json &t_commentCount) {
         if (isDigits(t_commentCount)) {
             setCommentCount(getJsonULongValue(t_commentCount));
+        } else if (t_commentCount.is_null() or t_commentCount.get<std::string>() == "null"){
+            addWarning("setCommentCount: Got null string.");
         } else {
             addError("setCommentCount called with invalid parameter! Type: " +
                      std::string(t_commentCount.type_name()) + ", Value: " + t_commentCount.dump(), t_commentCount);
@@ -704,8 +712,12 @@ namespace sane {
         int rc = assignJsonStringValue(m_recordingDate, t_recordingDate);
 
         if (rc != JSON_VALUE_OK) {
-            addError("setRecordingDate: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                    t_recordingDate);
+            if (rc == JSON_VALUE_NULL) {
+                addWarning("setRecordingDate: Got null string.");
+            } else {
+                addError("setRecordingDate: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         t_recordingDate);
+            }
         }
     }
 
@@ -721,8 +733,12 @@ namespace sane {
         int rc = assignJsonStringValue(m_fileName, t_fileName);
 
         if (rc != JSON_VALUE_OK) {
-            addError("setFileName: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                     t_fileName);
+            if (rc == JSON_VALUE_NULL) {
+                addWarning("setFileName: Got null string.");
+            } else {
+                addError("setFileName: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         t_fileName);
+            }
         }
     }
 
@@ -737,6 +753,8 @@ namespace sane {
     void YoutubeVideo::setFileSize(nlohmann::json &t_fileSize) {
         if (isDigits(t_fileSize)) {
             setFileSize(getJsonULongValue(t_fileSize));
+        } else if (t_fileSize.is_null() or t_fileSize.get<std::string>() == "null"){
+            addWarning("setFileSize: Got null string.");
         } else {
             addError("setFileSize called with invalid parameter! Type: " +
                      std::string(t_fileSize.type_name()) + ", Value: " + t_fileSize.dump(), t_fileSize);
@@ -755,8 +773,12 @@ namespace sane {
         int rc = assignJsonStringValue(m_fileType, t_fileType);
 
         if (rc != JSON_VALUE_OK) {
-            addError("setFileType: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                     t_fileType);
+            if (rc == JSON_VALUE_NULL) {
+                addWarning("setFileType: Got null string.");
+            } else {
+                addError("setFileType: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         t_fileType);
+            }
         }
     }
 
@@ -772,8 +794,12 @@ namespace sane {
         int rc = assignJsonStringValue(m_container, t_container);
 
         if (rc != JSON_VALUE_OK) {
-            addError("setContainer: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                     t_container);
+            if (rc == JSON_VALUE_NULL) {
+                addWarning("setContainer: Got null string.");
+            } else {
+                addError("setContainer: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         t_container);
+            }
         }
     }
 
@@ -801,19 +827,34 @@ namespace sane {
             stream.aspectRatio = item["aspectRatio"].get<double>();
             int rc = assignJsonStringValue(stream.codec, item["codec"]);
             if (rc != JSON_VALUE_OK) {
-                addError("setVideoStreams codec: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         item["codec"]);
+                if (rc == JSON_VALUE_NULL) {
+                    addWarning("setVideoStreams codec: Got null string.");
+                } else {
+                    addError("setVideoStreams codec: assignJsonStringValue returned non-zero value: " +
+                             std::to_string(rc),
+                             item["codec"]);
+                }
             }
             if (isDigits(item["bitrateBps"])) { stream.bitrateBps = getJsonULongValue(item["bitrateBps"]); }
             rc = assignJsonStringValue(stream.rotation, item["rotation"]);
             if (rc != JSON_VALUE_OK) {
-                addError("setVideoStreams rotation: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         item["rotation"]);
+                if (rc == JSON_VALUE_NULL) {
+                    addWarning("setVideoStreams rotation: Got null string.");
+                } else {
+                    addError("setVideoStreams rotation: assignJsonStringValue returned non-zero value: " +
+                             std::to_string(rc),
+                             item["rotation"]);
+                }
             }
             rc = assignJsonStringValue(stream.vendor, item["vendor"]);
             if (rc != JSON_VALUE_OK) {
-                addError("setVideoStreams vendor: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         item["vendor"]);
+                if (rc == JSON_VALUE_NULL) {
+                    addWarning("setVideoStreams vendor: Got null string.");
+                } else {
+                    addError("setVideoStreams vendor: assignJsonStringValue returned non-zero value: " +
+                             std::to_string(rc),
+                             item["vendor"]);
+                }
             }
 
             streams.push_back(stream);
@@ -844,14 +885,24 @@ namespace sane {
             if (isDigits(item["channelCount"])) { stream.channelCount = item["channelCount"].get<unsigned int>(); }
             int rc = assignJsonStringValue(stream.codec, item["codec"]);
             if (rc != JSON_VALUE_OK) {
-                addError("setAudioStreams codec: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         item["codec"]);
+                if (rc == JSON_VALUE_NULL) {
+                    addWarning("setAudioStreams codec: Got null string.");
+                } else {
+                    addError("setAudioStreams codec: assignJsonStringValue returned non-zero value: " +
+                             std::to_string(rc),
+                             item["codec"]);
+                }
             }
             if (isDigits(item["bitrateBps"])) { stream.bitrateBps = getJsonULongValue(item["bitrateBps"]); }
             rc = assignJsonStringValue(stream.vendor, item["vendor"]);
             if (rc != JSON_VALUE_OK) {
-                addError("setAudioStreams vendor: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         item["vendor"]);
+                if (rc == JSON_VALUE_NULL) {
+                    addWarning("setAudioStreams vendor: Got null string.");
+                } else {
+                    addError("setAudioStreams vendor: assignJsonStringValue returned non-zero value: " +
+                             std::to_string(rc),
+                             item["vendor"]);
+                }
             }
 
             streams.push_back(stream);
@@ -872,6 +923,8 @@ namespace sane {
     void YoutubeVideo::setDurationMs(nlohmann::json &t_durationMs) {
         if (isDigits(t_durationMs)) {
             m_durationMs = getJsonULongValue(t_durationMs);
+        } else if (t_durationMs.is_null() or t_durationMs.get<std::string>() == "null"){
+            addWarning("setDurationMs: Got null string.");
         } else{
             addError("setDurationMs called with invalid parameter! Type: " +
                      std::string(t_durationMs.type_name()) + ", Value: " + t_durationMs.dump(), t_durationMs);
@@ -889,7 +942,9 @@ namespace sane {
     void YoutubeVideo::setBitrateBps(nlohmann::json &t_bitrateBps) {
         if (isDigits(t_bitrateBps)) {
             m_bitrateBps = getJsonULongValue(t_bitrateBps);
-        } else{
+        } else if (t_bitrateBps.is_null() or t_bitrateBps.get<std::string>() == "null"){
+            addWarning("setBitrateBps: Got null string.");
+        } else {
             addError("setBitrateBps called with invalid parameter! Type: " +
                      std::string(t_bitrateBps.type_name()) + ", Value: " + t_bitrateBps.dump(), t_bitrateBps);
         }
@@ -906,8 +961,12 @@ namespace sane {
     void YoutubeVideo::setCreationTime(nlohmann::json & t_creationTime) {
         int rc = assignJsonStringValue(m_creationTime, t_creationTime);
         if (rc != JSON_VALUE_OK) {
-            addError("setCreationTime: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                     t_creationTime);
+            if (rc == JSON_VALUE_NULL) {
+                addWarning("setCreationTime: Got null string.");
+            } else {
+                addError("setCreationTime: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         t_creationTime);
+            }
         }
     }
 

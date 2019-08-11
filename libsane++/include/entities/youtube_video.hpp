@@ -135,9 +135,9 @@ namespace sane {
         void print(int t_indentationSpacing, bool t_printFullInfo=false);
 
         // Each error/warning map has error message as key and JSON as value.
-        void addError(const std::string &t_errorMsg, nlohmann::json &t_json);
+        void addError(const std::string &t_errorMsg, nlohmann::json t_json = nlohmann::json::object());
 
-        void addWarning(const std::string &t_warningMsg, nlohmann::json &t_json);
+        void addWarning(const std::string &t_warningMsg, nlohmann::json t_json = nlohmann::json::object());
 
         std::list<std::map<std::string, nlohmann::json>> getErrors();
 

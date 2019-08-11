@@ -579,12 +579,10 @@ namespace sane {
     }
 
     void YoutubeVideo::setViewCount(nlohmann::json &t_viewCount) {
-        if (t_viewCount.is_string()) {
-            m_viewCount = std::stoul(t_viewCount.get<std::string>());
-        } else if (t_viewCount.is_number()) {
-            m_viewCount = t_viewCount.get<unsigned long>();
+        if (isDigits(t_viewCount)) {
+            setViewCount(getJsonULongValue(t_viewCount));
         } else {
-            addError("ERROR: setViewCount called with invalid parameter! Type: " +
+            addError("setViewCount called with invalid parameter! Type: " +
                      std::string(t_viewCount.type_name()) + ", Value: " + t_viewCount.dump(), t_viewCount);
         }
     }
@@ -598,12 +596,10 @@ namespace sane {
     }
 
     void YoutubeVideo::setLikeCount(nlohmann::json &t_likeCount) {
-        if (t_likeCount.is_string()) {
-            m_likeCount = std::stoul(t_likeCount.get<std::string>());
-        } else if (t_likeCount.is_number()) {
-            m_likeCount = t_likeCount.get<unsigned long>();
+        if (isDigits(t_likeCount)) {
+            setLikeCount(getJsonULongValue(t_likeCount));
         } else {
-            addError("ERROR: setLikeCount called with invalid parameter! Type: " +
+            addError("setLikeCount called with invalid parameter! Type: " +
                      std::string(t_likeCount.type_name()) + ", Value: " + t_likeCount.dump(), t_likeCount);
         }
     }
@@ -617,12 +613,10 @@ namespace sane {
     }
 
     void YoutubeVideo::setDislikeCount(nlohmann::json &t_dislikeCount) {
-        if (t_dislikeCount.is_string()) {
-            m_dislikeCount = std::stoul(t_dislikeCount.get<std::string>());
-        } else if (t_dislikeCount.is_number()) {
-            m_dislikeCount = t_dislikeCount.get<unsigned long>();
+        if (isDigits(t_dislikeCount)) {
+            setDislikeCount(getJsonULongValue(t_dislikeCount));
         } else {
-            addError("ERROR: setDislikeCount called with invalid parameter! Type: " +
+            addError("setDislikeCount called with invalid parameter! Type: " +
                      std::string(t_dislikeCount.type_name()) + ", Value: " + t_dislikeCount.dump(), t_dislikeCount);
         }
     }
@@ -636,12 +630,10 @@ namespace sane {
     }
 
     void YoutubeVideo::setCommentCount(nlohmann::json &t_commentCount) {
-        if (t_commentCount.is_string()) {
-            m_commentCount = std::stoul(t_commentCount.get<std::string>());
-        } else if (t_commentCount.is_number()) {
-            m_commentCount = t_commentCount.get<unsigned long>();
+        if (isDigits(t_commentCount)) {
+            setCommentCount(getJsonULongValue(t_commentCount));
         } else {
-            addError("ERROR: setCommentCount called with invalid parameter! Type: " +
+            addError("setCommentCount called with invalid parameter! Type: " +
                      std::string(t_commentCount.type_name()) + ", Value: " + t_commentCount.dump(), t_commentCount);
         }
     }
@@ -652,6 +644,34 @@ namespace sane {
 
     void YoutubeVideo::setPlayer(const player_t &t_player) {
         m_player = t_player;
+    }
+
+    void YoutubeVideo::setPlayer(nlohmann::json &t_player) {
+        player_t player;
+
+        assignJsonStringValue(player.embedHtml, t_player["embedHtml"]);
+
+        if (t_player.find("embedWidth") != t_player.end()) {
+            nlohmann::json embedWidth = t_player["embedWidth"];
+            if (isDigits(embedWidth)) {
+                player.embedWidth = getJsonLongValue(embedWidth);
+            } else {
+                addError("Player: Attempted to set non-long embedWidth! Type: " +
+                         std::string(embedWidth.type_name()) + ", Value: " + embedWidth.dump(), embedWidth);
+            }
+        }
+
+        if (t_player.find("embedHeight") != t_player.end()) {
+            nlohmann::json embedHeight = t_player["embedHeight"];
+            if (isDigits(embedHeight)) {
+                player.embedHeight = getJsonLongValue(embedHeight);
+            } else {
+                addError("Player: Attempted to set non-long embedHeight! Type: " +
+                         std::string(embedHeight.type_name()) + ", Value: " + embedHeight.dump(), embedHeight);
+            }
+        }
+
+        m_player = player;
     }
 
     const std::list<std::string> &YoutubeVideo::getTopicCategories() const {
@@ -1262,6 +1282,8 @@ namespace sane {
             if (t_json.find("player") != t_json.end()) {
                 nlohmann::json player = t_json["player"];
                 hasPartPlayer = true;
+
+                setPlayer(player);
             }
 
             // Part: Topic details

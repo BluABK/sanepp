@@ -144,7 +144,10 @@ namespace sane {
         addCommand(LIST_VIDEO_CATEGORIES_JSON, "Returns a list of categories that can be associated with "
                                                "YouTube videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
         addCommand(PRINT_VIDEOS_JSON, "Returns a list of videos.", "PART... FILTER [PARAM...]", JSON_CATEGORY);
-        addCommand(PRINT_VIDEOS, "Returns a list of videos.", "PART... FILTER [PARAM...]", ENTITY_CATEGORY);
+        addCommand(PRINT_VIDEOS, "Prints a list of videos and their valid info.", "PART... FILTER [PARAM...]",
+                ENTITY_CATEGORY);
+        addCommand(PRINT_FULL_VIDEOS, "Prints a list of videos and all their info.", "PART... FILTER [PARAM...]",
+                ENTITY_CATEGORY);
         addCommand(PRINT_PLAYLIST_ITEMS, "Prints a table of playlist videos.", "PLAYLIST_ID [PARAM...]", UNCATEGORISED);
 
         // Instantiate the API Handler.
@@ -276,6 +279,8 @@ namespace sane {
             printVideosJsonFromApi(args);
         } else if (command == PRINT_VIDEOS) {
             printVideosFromApi(args);
+        } else if (command == PRINT_FULL_VIDEOS) {
+            printVideosFromApi(args, PRINT_FULL_INFO);
         } else if (command == PRINT_PLAYLIST_ITEMS) {
             if (args.size() == 1) {
                 // Has playlist ID

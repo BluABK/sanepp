@@ -12,6 +12,8 @@
 #include <db_handler/db_youtube_channels.hpp>
 
 #define DEFAULT_INDENT  4
+#define PRINT_FULL_INFO true
+#define PRINT_ONLY_VALID_INFO false
 
 // Command categories
 #define UNCATEGORISED   -1
@@ -123,7 +125,7 @@ namespace sane {
 
         void printVideosJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
-        void printVideosFromApi(const std::vector<std::string> &t_input);
+        void printVideosFromApi(const std::vector<std::string> &t_input, bool t_printFullInfo = false);
 
     private:
         // Internal
@@ -198,6 +200,7 @@ namespace sane {
         // Videos
         // -- Entity
         const std::string PRINT_VIDEOS = "print-videos";
+        const std::string PRINT_FULL_VIDEOS = "print-videos-full";
         // -- JSON
         const std::string PRINT_VIDEOS_JSON = "print-videos-json";
 

@@ -813,10 +813,10 @@ namespace sane {
 
     // END: Getters & Setters.
 
-    void YoutubeVideo::print(int indentationSpacing = 0) { // FIXME: IMPLEMENT
-        std::string indentation(indentationSpacing, ' ');
-        std::string indentation2x = indentation + indentation;
-        std::string indentation3x = indentation + indentation + indentation;
+    void YoutubeVideo::print(int t_indentationSpacing = 0, bool t_printFullInfo) { // FIXME: IMPLEMENT
+        std::string indentation(t_indentationSpacing, ' ');
+        std::string indentation2x(2 * t_indentationSpacing, ' ');
+        std::string indentation3x(3 * t_indentationSpacing, ' ');
 
         // Print boolean values instead of ints.
         std::cout << std::boolalpha;

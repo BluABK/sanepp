@@ -140,7 +140,7 @@ namespace sane {
 
         void addFromJson(nlohmann::json t_json);
 
-        void print(int indentationSpacing);
+        void print(int t_indentationSpacing, bool t_printFullInfo=false);
 
         // Each error/warning map consists of ["error"] and ["json"]
         void addError(const std::string &t_errorMsg, nlohmann::json &t_json);

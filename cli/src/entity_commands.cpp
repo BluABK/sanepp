@@ -80,13 +80,13 @@ namespace sane {
         }
     }
 
-    void CLI::printVideosFromApi(const std::vector<std::string> &t_input) {
+    void CLI::printVideosFromApi(const std::vector<std::string> &t_input, bool t_printFullInfo) {
         nlohmann::json videosJson = listVideosJsonFromApi(t_input);
         if (!videosJson.empty() and videosJson.find("items") != videosJson.end()) {
             for (nlohmann::json videoItemJson : videosJson["items"]) {
                 std::shared_ptr<YoutubeVideo> video = std::make_shared<YoutubeVideo>(videoItemJson);
 
-                video->print(DEFAULT_INDENT);
+                video->print(DEFAULT_INDENT, t_printFullInfo);
             }
 //            std::cout << videoJson.dump(DEFAULT_INDENT);
         }

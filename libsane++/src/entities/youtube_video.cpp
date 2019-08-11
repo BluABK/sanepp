@@ -174,29 +174,31 @@ namespace sane {
         // Define variables.
         std::map<std::string, thumbnail_t> thumbnails;
 
+        std::cout << t_thumbnails.dump(4) << std::endl;
+
         // Create each thumbnail struct.
         thumbnail_t defaultThumbnail;
-        assignJsonStringValue(defaultThumbnail.url, t_thumbnails["default"]);
+        assignJsonStringValue(defaultThumbnail.url, t_thumbnails["default"]["url"]);
         defaultThumbnail.height  = t_thumbnails["default"]["height"].get<unsigned int>();
         defaultThumbnail.width   = t_thumbnails["default"]["width"].get<unsigned int>();
 
         thumbnail_t highThumbnail;
-        assignJsonStringValue(highThumbnail.url, t_thumbnails["high"]);
+        assignJsonStringValue(highThumbnail.url, t_thumbnails["high"]["url"]);
         highThumbnail.height     = t_thumbnails["high"]["height"].get<unsigned int>();
         highThumbnail.width      = t_thumbnails["high"]["width"].get<unsigned int>();
 
         thumbnail_t mediumThumbnail;
-        assignJsonStringValue(mediumThumbnail.url, t_thumbnails["medium"]);
+        assignJsonStringValue(mediumThumbnail.url, t_thumbnails["medium"]["url"]);
         mediumThumbnail.height   = t_thumbnails["medium"]["height"].get<unsigned int>();
         mediumThumbnail.width    = t_thumbnails["medium"]["width"].get<unsigned int>();
 
         thumbnail_t standardThumbnail;
-        assignJsonStringValue(standardThumbnail.url, t_thumbnails["standard"]);
+        assignJsonStringValue(standardThumbnail.url, t_thumbnails["standard"]["url"]);
         standardThumbnail.height = t_thumbnails["standard"]["height"].get<unsigned int>();
         standardThumbnail.width  = t_thumbnails["standard"]["width"].get<unsigned int>();
 
         thumbnail_t maxresThumbnail;
-        assignJsonStringValue(maxresThumbnail.url, t_thumbnails["maxres"]);
+        assignJsonStringValue(maxresThumbnail.url, t_thumbnails["maxres"]["url"]);
         maxresThumbnail.height  = t_thumbnails["maxres"]["height"].get<unsigned int>();
         maxresThumbnail.width   = t_thumbnails["maxres"]["width"].get<unsigned int>();
 

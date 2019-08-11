@@ -86,9 +86,23 @@ namespace sane {
             for (nlohmann::json videoItemJson : videosJson["items"]) {
                 std::shared_ptr<YoutubeVideo> video = std::make_shared<YoutubeVideo>(videoItemJson);
 
+                std::list<std::map<std::string, nlohmann::json>> warnings = video->getWarnings();
+                std::list<std::map<std::string, nlohmann::json>> errors = video->getErrors();
+
+                // Print video info.
                 video->print(DEFAULT_INDENT, t_printFullInfo);
+
+                // Print any warnings and errors.
+                if (!warnings.empty()) {
+                    std::cout << "\nWarnings:" << std::endl;
+                    video->printWarnings(DEFAULT_INDENT, true);
+                }
+                if (!errors.empty()) {
+                    std::cout << "\nErrors:" << std::endl;
+                    video->printErrors(DEFAULT_INDENT, true);
+                }
+
             }
-//            std::cout << videoJson.dump(DEFAULT_INDENT);
         }
     }
 } // namespace sane

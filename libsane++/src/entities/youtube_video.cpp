@@ -61,16 +61,14 @@ namespace sane {
 
     void YoutubeVideo::addError(const std::string &t_errorMsg, nlohmann::json &t_json) {
         std::map<std::string, nlohmann::json> _;
-        _["error"] = t_errorMsg;
-        _["json"] = t_json;
+        _[t_errorMsg] = t_json;
 
         m_errors.push_back(_);
     }
 
     void YoutubeVideo::addWarning(const std::string &t_warningMsg, nlohmann::json &t_json) {
         std::map<std::string, nlohmann::json> _;
-        _["error"] = t_warningMsg;
-        _["json"] = t_json;
+        _[t_warningMsg] = t_json;
 
         m_warnings.push_back(_);
     }
@@ -79,8 +77,34 @@ namespace sane {
         return m_errors;
     }
 
+    void YoutubeVideo::printErrors(int indent, bool withJson, int jsonIndent) {
+        // For map in list
+        for (auto const& item : getErrors()) {
+            // For message, JSON in map
+            for (auto const& map : item) {
+                std::cout << std::string(indent, ' ') << map.first << std::endl;
+                if (withJson) {
+                    std::cout << map.second.dump(jsonIndent) << std::endl;
+                }
+            }
+        }
+    }
+
     std::list<std::map<std::string, nlohmann::json>> YoutubeVideo::getWarnings() {
         return m_warnings;
+    }
+
+    void YoutubeVideo::printWarnings(int indent, bool withJson, int jsonIndent) {
+        // For map in list
+        for (auto const& item : getWarnings()) {
+            // For message, JSON in map
+            for (auto const& map : item) {
+                std::cout << std::string(indent, ' ') << map.first << std::endl;
+                if (withJson) {
+                    std::cout << map.second.dump(jsonIndent) << std::endl;
+                }
+            }
+        }
     }
 
     bool YoutubeVideo::wasAborted() {
@@ -607,12 +631,36 @@ namespace sane {
         m_viewCount = t_viewCount;
     }
 
+    void YoutubeVideo::setViewCount(nlohmann::json &t_viewCount) {
+        std::cout << t_viewCount.dump() << std::endl;
+        if (t_viewCount.is_string()) {
+            m_viewCount = std::stoul(t_viewCount.get<std::string>());
+        } else if (t_viewCount.is_number()) {
+            m_viewCount = t_viewCount.get<unsigned long>();
+        } else {
+            addError("ERROR: setViewCount called with invalid parameter! Type: " +
+                     std::string(t_viewCount.type_name()) + ", Value: " + t_viewCount.dump(), t_viewCount);
+        }
+    }
+
     unsigned long YoutubeVideo::getLikeCount() const {
         return m_likeCount;
     }
 
     void YoutubeVideo::setLikeCount(unsigned long t_likeCount) {
         m_likeCount = t_likeCount;
+    }
+
+    void YoutubeVideo::setLikeCount(nlohmann::json &t_likeCount) {
+        std::cout << t_likeCount.dump() << std::endl;
+        if (t_likeCount.is_string()) {
+            m_likeCount = std::stoul(t_likeCount.get<std::string>());
+        } else if (t_likeCount.is_number()) {
+            m_likeCount = t_likeCount.get<unsigned long>();
+        } else {
+            addError("ERROR: setLikeCount called with invalid parameter! Type: " +
+                     std::string(t_likeCount.type_name()) + ", Value: " + t_likeCount.dump(), t_likeCount);
+        }
     }
 
     unsigned long YoutubeVideo::getDislikeCount() const {
@@ -623,12 +671,36 @@ namespace sane {
         m_dislikeCount = t_dislikeCount;
     }
 
+    void YoutubeVideo::setDislikeCount(nlohmann::json &t_dislikeCount) {
+        std::cout << t_dislikeCount.dump() << std::endl;
+        if (t_dislikeCount.is_string()) {
+            m_dislikeCount = std::stoul(t_dislikeCount.get<std::string>());
+        } else if (t_dislikeCount.is_number()) {
+            m_dislikeCount = t_dislikeCount.get<unsigned long>();
+        } else {
+            addError("ERROR: setDislikeCount called with invalid parameter! Type: " +
+                     std::string(t_dislikeCount.type_name()) + ", Value: " + t_dislikeCount.dump(), t_dislikeCount);
+        }
+    }
+
     unsigned long YoutubeVideo::getCommentCount() const {
         return m_commentCount;
     }
 
     void YoutubeVideo::setCommentCount(unsigned long t_commentCount) {
         m_commentCount = t_commentCount;
+    }
+
+    void YoutubeVideo::setCommentCount(nlohmann::json &t_commentCount) {
+        std::cout << t_commentCount.dump() << std::endl;
+        if (t_commentCount.is_string()) {
+            m_commentCount = std::stoul(t_commentCount.get<std::string>());
+        } else if (t_commentCount.is_number()) {
+            m_commentCount = t_commentCount.get<unsigned long>();
+        } else {
+            addError("ERROR: setCommentCount called with invalid parameter! Type: " +
+                     std::string(t_commentCount.type_name()) + ", Value: " + t_commentCount.dump(), t_commentCount);
+        }
     }
 
     const player_t &YoutubeVideo::getPlayer() const {
@@ -1236,6 +1308,11 @@ namespace sane {
             if (t_json.find("statistics") != t_json.end()) {
                 nlohmann::json statistics = t_json["statistics"];
                 hasPartStatistics = true;
+
+                setViewCount(statistics["viewCount"]);
+                setLikeCount(statistics["likeCount"]);
+                setDislikeCount(statistics["dislikeCount"]);
+                setCommentCount(statistics["commentCount"]);
             }
 
             // Part: Player

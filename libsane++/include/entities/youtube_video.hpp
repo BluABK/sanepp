@@ -149,7 +149,11 @@ namespace sane {
 
         std::list<std::map<std::string, nlohmann::json>> getErrors();
 
+        void printErrors(int indent = 0, bool withJson = false, int jsonIndent = 0);
+
         std::list<std::map<std::string, nlohmann::json>> getWarnings();
+
+        void printWarnings(int indent = 0, bool withJson = false, int jsonIndent = 0);
 
         void clearWarnings();
 

@@ -297,7 +297,7 @@ namespace sane {
 
         void setIs360(bool t_is360);
 
-        bool isRectanguar() const;
+        bool isRectangular() const;
 
         void setIsRectanguar(bool t_isRectanguar);
 
@@ -628,7 +628,7 @@ namespace sane {
 
         // Projection format of the video.
         bool m_is360 = false;
-        bool m_isRectanguar = false;
+        bool m_isRectangular = false;
 
         // Indicates whether the video uploader has provided a custom thumbnail image for the video.
         // This property is only visible to the video uploader.

@@ -477,12 +477,12 @@ namespace sane {
         m_is360 = t_is360;
     }
 
-    bool YoutubeVideo::isRectanguar() const {
-        return m_isRectanguar;
+    bool YoutubeVideo::isRectangular() const {
+        return m_isRectangular;
     }
 
     void YoutubeVideo::setIsRectanguar(bool t_isRectanguar) {
-        m_isRectanguar = t_isRectanguar;
+        m_isRectangular = t_isRectanguar;
     }
 
     bool YoutubeVideo::hasCustomThumbnail() const {
@@ -847,7 +847,7 @@ namespace sane {
         std::cout << indentation << "Is 2-Dimensional: " << is2D() << std::endl;
         std::cout << indentation << "Is 3-Dimensional: " << is3D() << std::endl;
         std::cout << indentation << "Is HD: " << isHD() << std::endl;
-        std::cout << indentation << "Is Rectangular: " << isRectanguar() << std::endl;
+        std::cout << indentation << "Is Rectangular: " << isRectangular() << std::endl;
         std::cout << indentation << "Is 360 Degrees: " << is360() << std::endl;
         std::cout << indentation << "Has Captions: " << hasCaptions() << std::endl;
         std::cout << indentation << "Is Licensed Content: " << isLicensedContent() << std::endl;

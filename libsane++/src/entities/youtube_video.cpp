@@ -682,6 +682,16 @@ namespace sane {
         m_topicCategories = t_topicCategories;
     }
 
+    void YoutubeVideo::setTopicCategories(nlohmann::json &t_topicCategories) {
+        std::list<std::string> categories;
+
+        for (auto const& category : t_topicCategories) {
+            categories.push_back(category.get<std::string>());
+        }
+
+        m_topicCategories = categories;
+    }
+
     const std::string &YoutubeVideo::getLocation() const {
         return m_location;
     }
@@ -1292,6 +1302,8 @@ namespace sane {
             if (t_json.find("topicDetails") != t_json.end()) {
                 nlohmann::json topicDetails = t_json["topicDetails"];
                 hasPartTopicDetails = true;
+
+                setTopicCategories(topicDetails["topicCategories"]);
             }
 
             // Part: Recording details.

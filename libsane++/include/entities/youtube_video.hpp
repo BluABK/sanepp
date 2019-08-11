@@ -562,6 +562,20 @@ namespace sane {
 
         std::string m_id;
 
+        // Track which parts/scopes have actually been supplied, in order to know which values actually got set.
+        bool hasPartSnippet = false;
+        bool hasPartContentDetails = false;
+        bool hasPartStatus = false;
+        bool hasPartStatistics = false;
+        bool hasPartPlayer = false;
+        bool hasPartTopicDetails = false;
+        bool hasPartRecordingDetails = false;
+        bool hasPartFileDetails = false;
+        bool hasPartProcessingDetails = false;
+        bool hasPartSuggestions = false;
+        bool hasPartLiveStreamingDetails = false;
+        bool hasPartLocalizations = false;
+
         /**
          * SNIPPET
          *

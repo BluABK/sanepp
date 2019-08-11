@@ -818,6 +818,9 @@ namespace sane {
         std::string indentation2x = indentation + indentation;
         std::string indentation3x = indentation + indentation + indentation;
 
+        // Print boolean values instead of ints.
+        std::cout << std::boolalpha;
+
         std::cout << indentation << "ID: " << getId() << std::endl;
         std::cout << indentation << "PublishedAt: " << getPublishedAt() << std::endl;
         std::cout << indentation << "Channel ID: " << getChannelId() << std::endl;

@@ -130,19 +130,11 @@ namespace sane {
             addFromJson(t_data);
         }
 
-        void assignJsonStringValue(std::string &stringToAssignValue,
-                                   nlohmann::json &unknownJsonTypeValue,
-                                   nlohmann::json t_json = nlohmann::json::object());
-
-        bool isBool(nlohmann::json &t_bool);
-
-        bool getJsonBoolValue(nlohmann::json &t_bool);
-
         void addFromJson(nlohmann::json t_json);
 
         void print(int t_indentationSpacing, bool t_printFullInfo=false);
 
-        // Each error/warning map consists of ["error"] and ["json"]
+        // Each error/warning map has error message as key and JSON as value.
         void addError(const std::string &t_errorMsg, nlohmann::json &t_json);
 
         void addWarning(const std::string &t_warningMsg, nlohmann::json &t_json);

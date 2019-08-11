@@ -10,42 +10,14 @@ namespace sane {
     // An empty constructor if you want to populate it later.
     YoutubeChannel::YoutubeChannel() = default;
 
-    /**
-     * Attempts to assign a JSON value to a given string and handle any bogus data.
-     * If the input JSON value isn't a string it sets MISSING_VALUE.
-     *
-     * This function passes stringToAssignValue by reference (directly modifying it).
-     *
-     * @param stringToAssignValue   String to assign a value (modified directly).
-     * @param unknownJsonTypeValue  The undetermined JSON value to assign the string.
-     * @param fullJson              The complete JSON object, for use in debugging/error reporting.
-     */
-    void YoutubeChannel::assignJsonStringValue(std::string &stringToAssignValue,
-            nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json) {
-        if (unknownJsonTypeValue.is_null()) {
-                addWarning("WARNING: YoutubeChannel::addFromJson." + std::string(GET_VARIABLE_NAME(stringToAssignValue))
-                + " is NULL not string, setting '" + MISSING_VALUE + "' string in its stead!", t_json);
-            stringToAssignValue = MISSING_VALUE;
-        }
-        else if (!unknownJsonTypeValue.is_string()) {
-            addWarning("WARNING: YoutubeChannel::addFromJson.favouritesPlaylist is " +
-            std::string(unknownJsonTypeValue.type_name()) + " not string, setting'" +
-            MISSING_VALUE + "' string in its stead!", t_json);
-            stringToAssignValue = MISSING_VALUE;
-        } else {
-            // If it actually is a string, then explicitly cast it.
-            stringToAssignValue = unknownJsonTypeValue.get<std::string>();
-        }
-    }
-
     void YoutubeChannel::addFromJson(nlohmann::json t_json) {
         try {
             // Relevant JSON response values. See header for explanations.
-            assignJsonStringValue(m_id, t_json["snippet"]["resourceId"]["channelId"], t_json);
+            assignJsonStringValue(m_id, t_json["snippet"]["resourceId"]["channelId"]);
 
             // If channel ID is missing, check if this is a Channel resource not a Subscription resource.
             if (getId() == MISSING_VALUE) {
-                assignJsonStringValue(m_id, t_json["id"], t_json);
+                assignJsonStringValue(m_id, t_json["id"]);
             }
 
             // If channelId was valid, strip non-unique channel prefix from its head to produce the actual ID.
@@ -58,19 +30,19 @@ namespace sane {
 
             // Playlists
             std::string _;
-            assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["favorites"], t_json);
+            assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["favorites"]);
             m_hasFavouritesPlaylist = _ != MISSING_VALUE;
-            assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["likes"], t_json);
+            assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["likes"]);
             m_hasLikesPlaylist = _ != MISSING_VALUE;
-            assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["uploads"], t_json);
+            assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["uploads"]);
             m_hasUploadsPlaylist = _ != MISSING_VALUE;
 
-            assignJsonStringValue(m_description, t_json["snippet"]["description"], t_json);
-            assignJsonStringValue(m_publishedAt, t_json["snippet"]["publishedAt"], t_json);
-            assignJsonStringValue(m_thumbnails["default"], t_json["snippet"]["thumbnails"]["default"]["url"], t_json);
-            assignJsonStringValue(m_thumbnails["high"], t_json["snippet"]["thumbnails"]["high"]["url"], t_json);
-            assignJsonStringValue(m_thumbnails["medium"], t_json["snippet"]["thumbnails"]["medium"]["url"], t_json);
-            assignJsonStringValue(m_title, t_json["snippet"]["title"], t_json);
+            assignJsonStringValue(m_description, t_json["snippet"]["description"]);
+            assignJsonStringValue(m_publishedAt, t_json["snippet"]["publishedAt"]);
+            assignJsonStringValue(m_thumbnails["default"], t_json["snippet"]["thumbnails"]["default"]["url"]);
+            assignJsonStringValue(m_thumbnails["high"], t_json["snippet"]["thumbnails"]["high"]["url"]);
+            assignJsonStringValue(m_thumbnails["medium"], t_json["snippet"]["thumbnails"]["medium"]["url"]);
+            assignJsonStringValue(m_title, t_json["snippet"]["title"]);
         } catch (nlohmann::detail::type_error &exc) {
             addError("Skipping YoutubeChannel::addFromJson due to Exception: " + std::string(exc.what()), t_json);
         } catch (const std::exception &exc) {
@@ -281,16 +253,14 @@ namespace sane {
 
     void YoutubeChannel::addError(const std::string &t_errorMsg, nlohmann::json &t_json) {
         std::map<std::string, nlohmann::json> _;
-        _["error"] = t_errorMsg;
-        _["json"] = t_json;
+        _[t_errorMsg] = t_json;
 
         m_errors.push_back(_);
     }
 
     void YoutubeChannel::addWarning(const std::string &t_warningMsg, nlohmann::json &t_json) {
         std::map<std::string, nlohmann::json> _;
-        _["error"] = t_warningMsg;
-        _["json"] = t_json;
+        _[t_warningMsg] = t_json;
 
         m_warnings.push_back(_);
     }
@@ -299,8 +269,34 @@ namespace sane {
         return m_errors;
     }
 
+    void YoutubeChannel::printErrors(int indent, bool withJson, int jsonIndent) {
+        // For map in list
+        for (auto const& item : getErrors()) {
+            // For message, JSON in map
+            for (auto const& map : item) {
+                std::cout << std::string(indent, ' ') << map.first << std::endl;
+                if (withJson) {
+                    std::cout << map.second.dump(jsonIndent) << std::endl;
+                }
+            }
+        }
+    }
+
     std::list<std::map<std::string, nlohmann::json>> YoutubeChannel::getWarnings() {
         return m_warnings;
+    }
+
+    void YoutubeChannel::printWarnings(int indent, bool withJson, int jsonIndent) {
+        // For map in list
+        for (auto const& item : getWarnings()) {
+            // For message, JSON in map
+            for (auto const& map : item) {
+                std::cout << std::string(indent, ' ') << map.first << std::endl;
+                if (withJson) {
+                    std::cout << map.second.dump(jsonIndent) << std::endl;
+                }
+            }
+        }
     }
 
     bool YoutubeChannel::wasAborted() {

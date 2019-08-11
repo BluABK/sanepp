@@ -58,9 +58,6 @@ namespace sane {
                           t_subscribedLocalOverride);
         }
 
-        void assignJsonStringValue(std::string &stringToAssignValue,
-                                   nlohmann::json &unknownJsonTypeValue, nlohmann::json &t_json);
-
         void addFromJson(nlohmann::json t_json);
 
         void addFromValues(const char* t_id, const char* t_uploadsPlaylist,
@@ -82,14 +79,18 @@ namespace sane {
 
         void print(int indentationSpacing);
 
-        // Each error/warning map consists of ["error"] and ["json"]
+        // Each error/warning map has error message as key and JSON as value.
         void addError(const std::string &t_errorMsg, nlohmann::json &t_json);
 
         void addWarning(const std::string &t_warningMsg, nlohmann::json &t_json);
 
         std::list<std::map<std::string, nlohmann::json>> getErrors();
 
+        void printErrors(int indent = 0, bool withJson = false, int jsonIndent = 0);
+
         std::list<std::map<std::string, nlohmann::json>> getWarnings();
+
+        void printWarnings(int indent = 0, bool withJson = false, int jsonIndent = 0);
 
         void clearWarnings();
 

@@ -876,14 +876,17 @@ namespace sane {
             std::cout << indentation << "Thumbnails: " << std::endl;
             // For each category/key
             for (auto const& thumbnail : getThumbnails()) {
-                // Category:
                 if (!thumbnail.first.empty() or t_printFullInfo) {
-                    std::cout << indentation2x << thumbnail.first << ":" << std::endl;
-                    //      Contents...
-                    std::cout << indentation3x << "Dimensions: " << thumbnail.second.width << "x"
-                              << thumbnail.second.height
+                    std::string dimensions = std::to_string(thumbnail.second.width) + "x"
+                                           + std::to_string(thumbnail.second.height);
+                    size_t longestKeyLine = std::string("standard").length();
+                    size_t longestDimensionLine = 10;
+
+                    std::cout << indentation2x << thumbnail.first << ":"
+                              << std::string(longestKeyLine - thumbnail.first.length() + 1, ' ')
+                              << dimensions << std::string(longestDimensionLine - dimensions.length(), ' ')
+                              << thumbnail.second.url
                               << std::endl;
-                    std::cout << indentation3x << "URL:        " << thumbnail.second.url << std::endl;
                 }
             }
         }

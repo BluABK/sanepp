@@ -334,10 +334,10 @@ namespace sane {
         if (!t_dimension.empty() and t_dimension.is_string()) {
             std::string dimension = t_dimension.get<std::string>();
 
-            if (dimension == "2D") {
+            if (dimension == "2d") {
                 setIs2D(true);
                 setIs3D(false);
-            } else if (dimension == "3D") {
+            } else if (dimension == "3d") {
                 setIs2D(false);
                 setIs3D(true);
             } else {

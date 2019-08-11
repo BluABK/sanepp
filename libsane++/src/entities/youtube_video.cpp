@@ -174,8 +174,6 @@ namespace sane {
         // Define variables.
         std::map<std::string, thumbnail_t> thumbnails;
 
-        std::cout << t_thumbnails.dump(4) << std::endl;
-
         // Create each thumbnail struct.
         thumbnail_t defaultThumbnail;
         assignJsonStringValue(defaultThumbnail.url, t_thumbnails["default"]["url"]);

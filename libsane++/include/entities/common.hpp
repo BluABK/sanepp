@@ -28,8 +28,15 @@ namespace sane {
     int assignJsonStringValue(std::string &stringToAssignValue,
                               nlohmann::json &unknownJsonTypeValue);
 
+
     bool isBool(nlohmann::json &t_bool);
 
+    bool isDigits(nlohmann::json &t_json);
+
     bool getJsonBoolValue(nlohmann::json &t_bool);
+
+    long getJsonLongValue(nlohmann::json &t_long);
+
+    unsigned long getJsonULongValue(nlohmann::json &t_ulong);
 } // namespace sane
 #endif //SANE_COMMON_HPP

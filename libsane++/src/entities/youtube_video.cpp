@@ -717,12 +717,30 @@ namespace sane {
         m_fileName = t_fileName;
     }
 
+    void YoutubeVideo::setFileName(nlohmann::json &t_fileName) {
+        int rc = assignJsonStringValue(m_fileName, t_fileName);
+
+        if (rc != JSON_VALUE_OK) {
+            addError("setFileName: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                     t_fileName);
+        }
+    }
+
     unsigned long YoutubeVideo::getFileSize() const {
         return m_fileSize;
     }
 
     void YoutubeVideo::setFileSize(unsigned long t_fileSize) {
         m_fileSize = t_fileSize;
+    }
+
+    void YoutubeVideo::setFileSize(nlohmann::json &t_fileSize) {
+        if (isDigits(t_fileSize)) {
+            setFileSize(getJsonULongValue(t_fileSize));
+        } else {
+            addError("setFileSize called with invalid parameter! Type: " +
+                     std::string(t_fileSize.type_name()) + ", Value: " + t_fileSize.dump(), t_fileSize);
+        }
     }
 
     const std::string &YoutubeVideo::getFileType() const {
@@ -733,12 +751,30 @@ namespace sane {
         m_fileType = t_fileType;
     }
 
+    void YoutubeVideo::setFileType(nlohmann::json &t_fileType) {
+        int rc = assignJsonStringValue(m_fileType, t_fileType);
+
+        if (rc != JSON_VALUE_OK) {
+            addError("setFileType: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                     t_fileType);
+        }
+    }
+
     const std::string &YoutubeVideo::getContainer() const {
         return m_container;
     }
 
     void YoutubeVideo::setContainer(const std::string &t_container) {
         m_container = t_container;
+    }
+
+    void YoutubeVideo::setContainer(nlohmann::json &t_container) {
+        int rc = assignJsonStringValue(m_container, t_container);
+
+        if (rc != JSON_VALUE_OK) {
+            addError("setContainer: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                     t_container);
+        }
     }
 
     const std::list<videoStream_t> &YoutubeVideo::getVideoStreams() const {
@@ -749,12 +785,80 @@ namespace sane {
         m_videoStreams = t_videoStreams;
     }
 
+    void YoutubeVideo::setVideoStreams(nlohmann::json &t_videoStreams) {
+        std::list<videoStream_t> streams;
+
+        if (t_videoStreams.empty()) {
+            return;
+        }
+
+        for (nlohmann::json item : t_videoStreams) {
+            videoStream_t stream;
+
+            if (isDigits(item["widthPixels"])) { stream.widthPixels = item["widthPixels"].get<unsigned int>(); }
+            if (isDigits(item["heightPixels"])) { stream.heightPixels = item["heightPixels"].get<unsigned int>(); }
+            stream.frameRateFps = item["frameRateFps"].get<double>();
+            stream.aspectRatio = item["aspectRatio"].get<double>();
+            int rc = assignJsonStringValue(stream.codec, item["codec"]);
+            if (rc != JSON_VALUE_OK) {
+                addError("setVideoStreams codec: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         item["codec"]);
+            }
+            if (isDigits(item["bitrateBps"])) { stream.bitrateBps = getJsonULongValue(item["bitrateBps"]); }
+            rc = assignJsonStringValue(stream.rotation, item["rotation"]);
+            if (rc != JSON_VALUE_OK) {
+                addError("setVideoStreams rotation: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         item["rotation"]);
+            }
+            rc = assignJsonStringValue(stream.vendor, item["vendor"]);
+            if (rc != JSON_VALUE_OK) {
+                addError("setVideoStreams vendor: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         item["vendor"]);
+            }
+
+            streams.push_back(stream);
+        }
+
+
+        m_videoStreams = streams;
+    }
+
     const std::list<audioStream_t> &YoutubeVideo::getAudioStreams() const {
         return m_audioStreams;
     }
 
     void YoutubeVideo::setAudioStreams(const std::list<audioStream_t> &t_audioStreams) {
         m_audioStreams = t_audioStreams;
+    }
+
+    void YoutubeVideo::setAudioStreams(nlohmann::json &t_audioStreams) {
+        std::list<audioStream_t> streams;
+
+        if (t_audioStreams.empty()) {
+            return;
+        }
+
+        for (nlohmann::json item : t_audioStreams) {
+            audioStream_t stream;
+
+            if (isDigits(item["channelCount"])) { stream.channelCount = item["channelCount"].get<unsigned int>(); }
+            int rc = assignJsonStringValue(stream.codec, item["codec"]);
+            if (rc != JSON_VALUE_OK) {
+                addError("setAudioStreams codec: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         item["codec"]);
+            }
+            if (isDigits(item["bitrateBps"])) { stream.bitrateBps = getJsonULongValue(item["bitrateBps"]); }
+            rc = assignJsonStringValue(stream.vendor, item["vendor"]);
+            if (rc != JSON_VALUE_OK) {
+                addError("setAudioStreams vendor: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                         item["vendor"]);
+            }
+
+            streams.push_back(stream);
+        }
+
+
+        m_audioStreams = streams;
     }
 
     unsigned long YoutubeVideo::getDurationMs() const {
@@ -765,6 +869,15 @@ namespace sane {
         m_durationMs = t_durationMs;
     }
 
+    void YoutubeVideo::setDurationMs(nlohmann::json &t_durationMs) {
+        if (isDigits(t_durationMs)) {
+            m_durationMs = getJsonULongValue(t_durationMs);
+        } else{
+            addError("setDurationMs called with invalid parameter! Type: " +
+                     std::string(t_durationMs.type_name()) + ", Value: " + t_durationMs.dump(), t_durationMs);
+        }
+    }
+
     unsigned long YoutubeVideo::getBitrateBps() const {
         return m_bitrateBps;
     }
@@ -773,12 +886,29 @@ namespace sane {
         m_bitrateBps = t_bitrateBps;
     }
 
+    void YoutubeVideo::setBitrateBps(nlohmann::json &t_bitrateBps) {
+        if (isDigits(t_bitrateBps)) {
+            m_bitrateBps = getJsonULongValue(t_bitrateBps);
+        } else{
+            addError("setBitrateBps called with invalid parameter! Type: " +
+                     std::string(t_bitrateBps.type_name()) + ", Value: " + t_bitrateBps.dump(), t_bitrateBps);
+        }
+    }
+
     const std::string &YoutubeVideo::getCreationTime() const {
         return m_creationTime;
     }
 
     void YoutubeVideo::setCreationTime(const std::string &t_creationTime) {
         m_creationTime = t_creationTime;
+    }
+
+    void YoutubeVideo::setCreationTime(nlohmann::json & t_creationTime) {
+        int rc = assignJsonStringValue(m_creationTime, t_creationTime);
+        if (rc != JSON_VALUE_OK) {
+            addError("setCreationTime: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
+                     t_creationTime);
+        }
     }
 
     const std::string &YoutubeVideo::getProcessingStatus() const {
@@ -984,7 +1114,7 @@ namespace sane {
         if (hasPartContentDetails or t_printFullInfo) {
             std::cout << indentation << "Licensed Content: " << isLicensedContent() << std::endl;
         }
-        if (!getRegionRestrictionWhitelist().empty() or getRegionRestrictionBlacklist().empty() or t_printFullInfo) {
+        if (!getRegionRestrictionWhitelist().empty() or !getRegionRestrictionBlacklist().empty() or t_printFullInfo) {
             std::cout << indentation << "Region Restriction: " << std::endl;
 
             if (!getRegionRestrictionWhitelist().empty() or t_printFullInfo) {
@@ -1316,6 +1446,16 @@ namespace sane {
             if (t_json.find("fileDetails") != t_json.end()) {
                 nlohmann::json fileDetails = t_json["fileDetails"];
                 hasPartFileDetails = true;
+
+                setFileName(fileDetails["fileName"]);
+                setFileSize(fileDetails["fileSize"]);
+                setFileType(fileDetails["fileType"]);
+                setContainer(fileDetails["container"]);
+                setVideoStreams(fileDetails["videoStreams"]);
+                setAudioStreams(fileDetails["audioStreams"]);
+                setDurationMs(fileDetails["durationMs"]);
+                setBitrateBps(fileDetails["bitrateBps"]);
+                setCreationTime(fileDetails["creationTime"]);
             }
 
             // Part: Processing details.

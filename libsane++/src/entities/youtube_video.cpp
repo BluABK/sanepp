@@ -579,7 +579,6 @@ namespace sane {
     }
 
     void YoutubeVideo::setViewCount(nlohmann::json &t_viewCount) {
-        std::cout << t_viewCount.dump() << std::endl;
         if (t_viewCount.is_string()) {
             m_viewCount = std::stoul(t_viewCount.get<std::string>());
         } else if (t_viewCount.is_number()) {
@@ -599,7 +598,6 @@ namespace sane {
     }
 
     void YoutubeVideo::setLikeCount(nlohmann::json &t_likeCount) {
-        std::cout << t_likeCount.dump() << std::endl;
         if (t_likeCount.is_string()) {
             m_likeCount = std::stoul(t_likeCount.get<std::string>());
         } else if (t_likeCount.is_number()) {
@@ -619,7 +617,6 @@ namespace sane {
     }
 
     void YoutubeVideo::setDislikeCount(nlohmann::json &t_dislikeCount) {
-        std::cout << t_dislikeCount.dump() << std::endl;
         if (t_dislikeCount.is_string()) {
             m_dislikeCount = std::stoul(t_dislikeCount.get<std::string>());
         } else if (t_dislikeCount.is_number()) {
@@ -639,7 +636,6 @@ namespace sane {
     }
 
     void YoutubeVideo::setCommentCount(nlohmann::json &t_commentCount) {
-        std::cout << t_commentCount.dump() << std::endl;
         if (t_commentCount.is_string()) {
             m_commentCount = std::stoul(t_commentCount.get<std::string>());
         } else if (t_commentCount.is_number()) {

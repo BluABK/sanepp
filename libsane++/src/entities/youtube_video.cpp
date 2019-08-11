@@ -1032,9 +1032,11 @@ namespace sane {
         if (hasPartPlayer or t_printFullInfo) {
             std::cout << indentation << "Player: " << std::endl;
             player_t player = getPlayer();
-            std::cout << indentation2x << "Embed Dimensions: " << player.embedWidth << "x" << player.embedHeight
-                      << std::endl;
-            std::cout << indentation << "Embed HTML: " << player.embedHtml << std::endl;
+            if (player.embedWidth != 0 and player.embedHeight != 0) {
+                std::cout << indentation2x << "Embed Dimensions: " << player.embedWidth << "x" << player.embedHeight
+                          << std::endl;
+            }
+            std::cout << indentation2x << "Embed HTML: " << player.embedHtml << std::endl;
         }
         if (!getTopicCategories().empty() or t_printFullInfo) {
             std::cout << indentation << "Topic Categories: " << std::endl;

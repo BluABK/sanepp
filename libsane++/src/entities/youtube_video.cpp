@@ -1251,7 +1251,7 @@ namespace sane {
         if (!getFileName().empty() or t_printFullInfo) {
             std::cout << indentation << "Filename: " << getFileName() << std::endl;
         }
-        if (hasPartFileDetails or t_printFullInfo) {
+        if ( (hasPartFileDetails or t_printFullInfo) and getFileSize() != 0) {
             std::cout << indentation << "Filesize: " << getFileSize() << std::endl;
         }
         if (!getFileType().empty() or t_printFullInfo) {
@@ -1277,10 +1277,10 @@ namespace sane {
                           << " @ " << stream.bitrateBps << "Bps" << "." << std::endl;
             }
         }
-        if (hasPartFileDetails or t_printFullInfo) {
+        if ( (hasPartFileDetails or t_printFullInfo) and getDurationMs() != 0 ) {
             std::cout << indentation << "Duration (ms): " << getDurationMs() << std::endl;
         }
-        if (hasPartFileDetails or t_printFullInfo) {
+        if ( (hasPartFileDetails or t_printFullInfo) and getBitrateBps() != 0 ) {
             std::cout << indentation << "Bitrate (Bps): " << getBitrateBps() << std::endl;
         }
         if (!getCreationTime().empty() or t_printFullInfo) {

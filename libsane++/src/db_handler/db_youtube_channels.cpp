@@ -14,8 +14,8 @@ namespace sane {
      * @return          Input string or "NULL" converted to SQLite compatible C-String.
      */
     const char* validateSQLiteInput(const char *t_cString) {
-        // If t_cString is an empty string, nullptr or equals MISSING_VALUE
-        if (strcmp(t_cString, MISSING_VALUE) == 0 or (t_cString && !t_cString[0])) {
+        // If t_cString is an empty string, nullptr
+        if (t_cString && !t_cString[0]) {
             return "NULL";
         } else {
             // Convert the std::string to SQLite3 compatible C-String.

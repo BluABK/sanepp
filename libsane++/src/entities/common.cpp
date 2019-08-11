@@ -5,7 +5,7 @@
 namespace sane {
 /**
  * Attempts to assign a JSON value to a given string and handle any bogus data.
- * If the input JSON value isn't a string it sets MISSING_VALUE.
+ * If the input JSON value isn't a string it does nothing..
  *
  * This function passes stringToAssignValue by reference (directly modifying it).
  *
@@ -17,12 +17,8 @@ namespace sane {
  */
     int assignJsonStringValue(std::string &stringToAssignValue, nlohmann::json &unknownJsonTypeValue) {
         if (unknownJsonTypeValue.is_null()) {
-            stringToAssignValue = MISSING_VALUE;
-
             return JSON_VALUE_NULL;
         } else if (!unknownJsonTypeValue.is_string()) {
-            stringToAssignValue = MISSING_VALUE;
-
             return JSON_VALUE_NOT_STRING;
         } else {
             // If it actually is a string, then explicitly cast it.

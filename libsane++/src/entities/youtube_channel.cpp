@@ -16,12 +16,12 @@ namespace sane {
             assignJsonStringValue(m_id, t_json["snippet"]["resourceId"]["channelId"]);
 
             // If channel ID is missing, check if this is a Channel resource not a Subscription resource.
-            if (getId() == MISSING_VALUE) {
+            if (getId().empty()) {
                 assignJsonStringValue(m_id, t_json["id"]);
             }
 
             // If channelId was valid, strip non-unique channel prefix from its head to produce the actual ID.
-            if (getId() != MISSING_VALUE) {
+            if (!getId().empty()) {
                 m_id = getId().substr(2);
             } else {
                 addError("Missing Channel ID!", t_json);
@@ -31,11 +31,11 @@ namespace sane {
             // Playlists
             std::string _;
             assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["favorites"]);
-            m_hasFavouritesPlaylist = _ != MISSING_VALUE;
+            m_hasFavouritesPlaylist = !_.empty();
             assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["likes"]);
-            m_hasLikesPlaylist = _ != MISSING_VALUE;
+            m_hasLikesPlaylist = !_.empty();
             assignJsonStringValue(_, t_json["contentDetails"]["relatedPlaylists"]["uploads"]);
-            m_hasUploadsPlaylist = _ != MISSING_VALUE;
+            m_hasUploadsPlaylist = !_.empty();
 
             assignJsonStringValue(m_description, t_json["snippet"]["description"]);
             assignJsonStringValue(m_publishedAt, t_json["snippet"]["publishedAt"]);
@@ -134,45 +134,34 @@ namespace sane {
     }
 
     const std::string YoutubeChannel::getFavouritesPlaylist() {
-        if (getId() != MISSING_VALUE and hasFavouritesPlaylist()) {
+        if (!getId().empty() and hasFavouritesPlaylist()) {
             return std::string("FL" + getId());
         } else {
-            return MISSING_VALUE;
+            return {};
         }
     }
 
-//    const char* YoutubeChannel::getFavouritesPlaylistAsCString() {
-//        if (getId() != MISSING_VALUE and hasFavouritesPlaylist()) {
-//            char buf[100];
-//            strcpy(buf, "FL");
-//            strcat(buf, getIdAsCString());
-//            return buf;
-//        } else {
-//            return MISSING_VALUE;
-//        }
-//    }
-
     const std::string YoutubeChannel::getLikesPlaylist() {
-        if (getId() != MISSING_VALUE and hasLikesPlaylist()) {
+        if (!getId().empty() and hasLikesPlaylist()) {
             return std::string("LL" + getId());
         } else {
-            return MISSING_VALUE;
+            return {};
         }
     }
 
     const std::string YoutubeChannel::getUploadsPlaylist() {
-        if (getId() != MISSING_VALUE and hasUploadsPlaylist()) {
+        if (!getId().empty() and hasUploadsPlaylist()) {
             return std::string("UU" + getId());
         } else {
-            return MISSING_VALUE;
+            return {};
         }
     }
 
     const std::string YoutubeChannel::getChannelId() {
-        if (getId() != MISSING_VALUE) {
+        if (!getId().empty()) {
             return std::string("UC" + getId());
         } else {
-            return MISSING_VALUE;
+            return {};
         }
     }
 

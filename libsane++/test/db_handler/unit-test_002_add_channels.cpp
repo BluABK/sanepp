@@ -43,21 +43,24 @@ TEST_CASE ("2: Testing sane::DBHandler: Add YouTube channels to DB") {
         // Create a YoutubeChannel entity based on the above map.
         std::shared_ptr<sane::YoutubeChannel> channelEntity = std::make_shared<sane::YoutubeChannel>(channelMap);
 
+        // Get the thumbnails map
+        std::map<std::string, sane::thumbnail_t> thumbnails = channelEntity->getThumbnails();
+
         // Check that the entity actually was created.
         REQUIRE( channelEntity->getId()                 == DB_YT_CHANS_TEST_002_STR_USER_ID      + std::to_string(i) );
-        REQUIRE(channelEntity->getTitle()              == DB_YT_CHANS_TEST_002_STR_PREFIX_TITLE + std::to_string(i) );
+        REQUIRE(channelEntity->getTitle()               == DB_YT_CHANS_TEST_002_STR_PREFIX_TITLE + std::to_string(i) );
         REQUIRE( channelEntity->getUploadsPlaylist()    == "UU" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
         REQUIRE( channelEntity->getFavouritesPlaylist() == "FL" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
         REQUIRE( channelEntity->getLikesPlaylist()      == "LL" DB_YT_CHANS_TEST_002_STR_USER_ID + std::to_string(i) );
-        REQUIRE(channelEntity->getDescription()        == DB_YT_CHANS_TEST_002_STR_PREFIX_DESC  + std::to_string(i) );
+        REQUIRE(channelEntity->getDescription()         == DB_YT_CHANS_TEST_002_STR_PREFIX_DESC  + std::to_string(i) );
 
-        REQUIRE( channelEntity->getThumbnailDefault()   == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_DEFAULT
+        REQUIRE( thumbnails["default"].url              == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_DEFAULT
                                                                                                  + std::to_string(i)
                                                                                                  + ".jpg" );
-        REQUIRE( channelEntity->getThumbnailHigh()      == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_HIGH
+        REQUIRE( thumbnails["high"].url                 == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_HIGH
                                                                                                  + std::to_string(i)
                                                                                                  + ".jpg" );
-        REQUIRE( channelEntity->getThumbnailMedium()    == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_MEDIUM
+        REQUIRE( thumbnails["medium"].url               == DB_YT_CHANS_TEST_002_STR_PREFIX_THUMB_MEDIUM
                                                                                                  + std::to_string(i)
                                                                                                  + ".jpg" );
 

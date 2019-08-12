@@ -3,31 +3,12 @@
 #include <entities/common.hpp>
 
 namespace sane {
-/**
- * Attempts to assign a JSON value to a given string and handle any bogus data.
- * If the input JSON value isn't a string it does nothing..
- *
- * This function passes stringToAssignValue by reference (directly modifying it).
- *
- * @param stringToAssignValue   String to assign a value (modified directly).
- * @param unknownJsonTypeValue  The undetermined JSON value to assign the string.
- * @param fullJson              OPTIONAL: The complete JSON object, for use in debugging/error reporting.
- *
- * @return integer code.
- */
-    int assignJsonStringValue(std::string &stringToAssignValue, nlohmann::json &unknownJsonTypeValue) {
-        if (unknownJsonTypeValue.is_null()) {
-            return JSON_VALUE_NULL;
-        } else if (!unknownJsonTypeValue.is_string()) {
-            return JSON_VALUE_NOT_STRING;
-        } else {
-            // If it actually is a string, then explicitly cast it.
-            stringToAssignValue = unknownJsonTypeValue.get<std::string>();
-
-            return JSON_VALUE_OK;
-        }
-    }
-
+    /**
+     * Extended check for if JSON value is boolean.
+     *
+     * @param t_bool
+     * @return
+     */
     bool isBool(nlohmann::json &t_bool) {
         if (!t_bool.empty()) {
             if (t_bool.is_boolean()) {
@@ -38,9 +19,16 @@ namespace sane {
                 }
             }
         }
+
         return false;
     }
 
+    /**
+     * Extended check for if JSON value is a number/digits.
+     *
+     * @param t_json
+     * @return
+     */
     bool isDigits(nlohmann::json &t_json) {
         if (!t_json.empty()) {
             if (t_json.is_number()) {
@@ -51,42 +39,163 @@ namespace sane {
                 return std::all_of(str.begin(), str.end(), ::isdigit);
             }
         }
+
         return false;
     }
 
-    bool getJsonBoolValue(nlohmann::json &t_bool) {
+    /**
+     * Returns a boolean value from the given JSON value.
+     *
+     * If unsuccessful return default value and warn/error.
+     *
+     * @param t_bool    JSON value to be retrieved.
+     * @param t_funcName  Name of the function that called me.
+     * @param t_problems  Map to populate with possible warnings and errors..
+     * @return
+     */
+    bool getJsonBoolValue(nlohmann::json &t_bool, const std::string &t_funcName,
+                          std::map<std::string, std::string> &t_problems) {
         if (t_bool.is_boolean()) {
+            // JSON is of expected type.
             return t_bool.get<bool>();
         } else if (t_bool.is_string()) {
+            // JSON is a string, but it might still contain a boolean value.
             return t_bool.get<std::string>() == "true";
         } else {
-            std::cerr << "Called getJsonBoolValue with invalid bool, forced to return false!" << t_bool << std::endl;
-            return false;
+            // JSON is of unhandled type.
+            t_problems["error"] = t_funcName + ": getJsonBoolValue called with invalid bool, "
+                                               "forced to return false! Type: "
+                                + t_bool.type_name() + std::string(", JSON: ") + t_bool.dump();
         }
 
+        // If you got here an error has occurred, returning false since something *has* to be returned.
+        return false;
     }
 
-    long getJsonLongValue(nlohmann::json &t_long) {
-        if (t_long.is_string()) {
-            return std::stol(t_long.get<std::string>());
-        } else if (t_long.is_number()) {
+    /**
+     * Returns a string value from the given JSON value.
+     *
+     * If unsuccessful return default value and warn/error.
+     *
+     * @param t_string  JSON value to be retrieved.
+     * @param t_funcName  Name of the function that called me.
+     * @param t_problems  Map to populate with possible warnings and errors..
+     * @return
+     */
+    std::string getJsonStringValue(nlohmann::json &t_string, const std::string &t_funcName,
+                                   std::map<std::string, std::string> &t_problems) {
+        if (t_string.is_string()) {
+            if (t_string.get<std::string>() == "null") {
+                // Called with the "null" string.
+                t_problems["warning"] = t_funcName + ": getJsonStringValue called with \"null\" string, "
+                                                     "returning empty string!";
+            } else {
+                // If it actually is a string, then explicitly cast it.
+                return t_string.get<std::string>();
+            }
+        } else if (t_string.is_null()) {
+            // Called with no value.
+            t_problems["error"] = t_funcName + ": getJsonStringValue called with no value, returning empty string!";
+        } else if (!t_string.is_string()) {
+            // JSON is string with no digits.
+            t_problems["error"] = t_funcName + ": getJsonStringValue called with non-string! Type: "
+                    + t_string.type_name() + std::string(", JSON: ") + t_string.dump();
+        } else {
+            // JSON is of unhandled type.
+            t_problems["error"] = t_funcName + ": getJsonStringValue called with invalid parameter! Type: "
+                    + t_string.type_name() + std::string(", JSON: ") + t_string.dump();
+        }
+
+        // If you got here an error has occurred, returning empty string since something *has* to be returned.
+        return {};
+    }
+
+    /**
+     * Returns a long value from the given JSON value.
+     *
+     * If unsuccessful return default value and warn/error.
+     *
+     * @param t_long    JSON value to be retrieved.
+     * @param t_funcName  Name of the function that called me.
+     * @param t_problems  Map to populate with possible warnings and errors..
+     * @return
+     */
+    long getJsonLongValue(nlohmann::json &t_long, const std::string &t_funcName,
+                          std::map<std::string, std::string> &t_problems) {
+        if (t_long.is_number()) {
+            // JSON has expected value type.
             return t_long.get<long>();
+        } else if (t_long.is_null()) {
+            // Called with no value.
+            t_problems["error"] = t_funcName + ": getJsonLongValue called with no value, returning 0 (likely wrong)!";
+        } else if (t_long.is_string()) {
+            // JSON is of string type, but might still hold digits.
+            if ( isDigits(t_long) ) {
+                // JSON is digits as a string.
+                return std::stol(t_long.get<std::string>());
+            } else if (t_long.get<std::string>() == "null") {
+                // Called with the "null" string.
+                t_problems["error"] = t_funcName + ": getJsonULongValue called with \"null\" string, "
+                                                   "returning 0 (likely wrong)!";
+            } else {
+                    // JSON is string with no digits.
+                t_problems["error"] = t_funcName + ": getJsonLongValue called with non-digit string, "
+                                                   "returning 0 (likely wrong)! Type: " + t_long.type_name()
+                                                   + std::string(", JSON: ") + t_long.dump();
+                }
         } else {
-            std::cerr << "getJsonLongValue called with invalid parameter! Type: " << t_long.type_name()
-                      << ", Value: " + t_long.dump() << std::endl;
-            return 0;
+            // Unhandled file type
+            t_problems["error"] = t_funcName + ": getJsonLongValue called  with invalid parameter, "
+                                               "returning 0 (likely wrong)! Type: " + t_long.type_name()
+                                               + std::string(", JSON: ") + t_long.dump();
         }
+
+        // If you got here an error has occurred, returning 0 since something *has* to be returned.
+        return 0;
     }
 
-    unsigned long getJsonULongValue(nlohmann::json &t_ulong) {
-        if (t_ulong.is_string()) {
-            return std::stoul(t_ulong.get<std::string>());
-        } else if (t_ulong.is_number()) {
+    /**
+     * Returns an unsigned long value from the given JSON value.
+     *
+     * If unsuccessful return default value and warn/error.
+     *
+     * @param t_ulong     JSON value to be retrieved.
+     * @param t_funcName  Name of the function that called me.
+     * @param t_problems  Map to populate with possible warnings and errors..
+     * @return
+     */
+    unsigned long getJsonULongValue(nlohmann::json &t_ulong, const std::string &t_funcName,
+                                    std::map<std::string, std::string> &t_problems) {
+        if (t_ulong.is_number()) {
+            // JSON has expected value type.
             return t_ulong.get<unsigned long>();
+        } else if (t_ulong.is_null()) {
+            // Called with no value.
+            t_problems["error"] = t_funcName + ": getJsonULongValue called with no value, "
+                                               "returning 0 (likely wrong)! Type: ";
+        } else if (t_ulong.is_string()) {
+            // JSON is of string type, but might still hold digits.
+            if (isDigits(t_ulong)) {
+                // JSON is digits as a string.
+                return std::stoul(t_ulong.get<std::string>());
+            } else if (t_ulong.get<std::string>() == "null") {
+                // Called with the "null" string.
+                t_problems["error"] = t_funcName + ": getJsonULongValue called with \"null\" string, "
+                                                   "returning 0 (likely wrong)!";
+            } else {
+                // JSON is string with no digits.
+                t_problems["error"] = t_funcName + ": getJsonULongValue called with non-digit string, "
+                                                   "returning 0 (likely wrong)! Type: " + t_ulong.type_name()
+                                                   + std::string(", JSON: ") + t_ulong.dump();
+            }
         } else {
-            std::cerr << "getJsonULongValue called with invalid parameter! Type: " << t_ulong.type_name()
-                      << ", Value: " + t_ulong.dump() << std::endl;
-            return 0;
+            // Unhandled file type
+            t_problems["error"] = t_funcName + ": getJsonULongValue called "
+                                  "with invalid parameter, returning 0 (likely wrong)! Type: " + t_ulong.type_name()
+                                  + std::string(", JSON: ") + t_ulong.dump();
         }
-    }
+
+        // If you got here an error has occurred, returning 0 since something *has* to be returned.
+        return 0;
+        }
 } // namespace sane

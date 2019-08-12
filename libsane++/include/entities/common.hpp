@@ -17,25 +17,27 @@
 #define YOUTUBE_FAVOURITES_PLAYLIST_PREFIX "FL"
 #define YOUTUBE_LIKES_PLAYLIST_PREFIX "LL"
 
-#define JSON_VALUE_OK 0
-#define JSON_VALUE_ERROR 1
-#define JSON_VALUE_NULL 2
-#define JSON_VALUE_NOT_STRING 3
-
-
 namespace sane {
-    int assignJsonStringValue(std::string &stringToAssignValue,
-                              nlohmann::json &unknownJsonTypeValue);
-
+    struct thumbnail_t {
+        std::string url;
+        unsigned int height{};
+        unsigned int width{};
+    };
 
     bool isBool(nlohmann::json &t_bool);
 
     bool isDigits(nlohmann::json &t_json);
 
-    bool getJsonBoolValue(nlohmann::json &t_bool);
+    std::string getJsonStringValue(nlohmann::json &t_string, const std::string &t_funcName,
+            std::map<std::string, std::string> &t_problems);
 
-    long getJsonLongValue(nlohmann::json &t_long);
+    bool getJsonBoolValue(nlohmann::json &t_bool, const std::string &t_funcName,
+            std::map<std::string, std::string> &t_problems);
 
-    unsigned long getJsonULongValue(nlohmann::json &t_ulong);
+    long getJsonLongValue(nlohmann::json &t_long, const std::string &t_funcName,
+            std::map<std::string, std::string> &t_problems);
+
+    unsigned long getJsonULongValue(nlohmann::json &t_ulong, const std::string &t_funcName,
+            std::map<std::string, std::string> &t_problems);
 } // namespace sane
 #endif //SANE_COMMON_HPP

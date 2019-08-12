@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 #include <nlohmann/json.hpp>
 
+#include <entities/common.hpp>
 #include <entities/youtube_channel.hpp>
 
 #define ENTITY_TEST_002_STRING_USER_ID             "Lozjflf3i84bu_2jLTK2rA"
@@ -59,15 +60,18 @@ TEST_CASE ("2: Testing sane::entities: Create and instantiate a YoutubeChannel e
     // Create a YoutubeChannel entity based on the above JSON.
     std::shared_ptr<sane::YoutubeChannel> channelEntity = std::make_shared<sane::YoutubeChannel>(channelJson);
 
+    // Get the thumbnails map
+    std::map<std::string, sane::thumbnail_t> thumbnails = channelEntity->getThumbnails();
+
     // Check that the entity actually was created.
     REQUIRE( channelEntity->getId()                 == ENTITY_TEST_002_STRING_USER_ID           );
     REQUIRE( channelEntity->getChannelId()          == "UC" ENTITY_TEST_002_STRING_USER_ID      );
-    REQUIRE(channelEntity->getTitle()              == "BluABK~"                                );
+    REQUIRE( channelEntity->getTitle()              == "BluABK~"                                );
     REQUIRE( channelEntity->getUploadsPlaylist()    == "UU" ENTITY_TEST_002_STRING_USER_ID      );
     REQUIRE( channelEntity->getFavouritesPlaylist() == "FL" ENTITY_TEST_002_STRING_USER_ID      );
     REQUIRE( channelEntity->getLikesPlaylist()      == "LL" ENTITY_TEST_002_STRING_USER_ID      );
-    REQUIRE(channelEntity->getDescription()        == ENTITY_TEST_002_STRING_DESCRIPTION       );
-    REQUIRE( channelEntity->getThumbnailDefault()   == ENTITY_TEST_002_STRING_THUMBNAIL_DEFAULT );
-    REQUIRE( channelEntity->getThumbnailHigh()      == ENTITY_TEST_002_STRING_THUMBNAIL_HIGH    );
-    REQUIRE( channelEntity->getThumbnailMedium()    == ENTITY_TEST_002_STRING_THUMBNAIL_MEDIUM  );
+    REQUIRE( channelEntity->getDescription()        == ENTITY_TEST_002_STRING_DESCRIPTION       );
+    REQUIRE( thumbnails["default"].url              == ENTITY_TEST_002_STRING_THUMBNAIL_DEFAULT );
+    REQUIRE( thumbnails["high"].url                 == ENTITY_TEST_002_STRING_THUMBNAIL_HIGH    );
+    REQUIRE( thumbnails["medium"].url               == ENTITY_TEST_002_STRING_THUMBNAIL_MEDIUM  );
 }

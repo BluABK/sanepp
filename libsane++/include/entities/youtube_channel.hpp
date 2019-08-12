@@ -7,7 +7,7 @@
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
 
-#include "common.hpp"
+#include <entities/common.hpp>
 
 namespace sane {
     /**
@@ -58,6 +58,18 @@ namespace sane {
                           t_subscribedLocalOverride);
         }
 
+        YoutubeChannel(const std::string &t_id, bool t_hasUploadsPlaylist,
+                       bool t_hasFavouritesPlaylist, bool t_hasLikesPlaylist,
+                       const std::string &t_title, const std::string &t_description,
+                       const std::string &t_thumbnailDefault, const std::string &t_thumbnailHigh,
+                       const std::string &t_thumbnailMedium, bool t_subscribedOnYoutube,
+                       bool t_subscribedLocalOverride) {
+
+            addFromValues(t_id, t_hasUploadsPlaylist, t_hasFavouritesPlaylist, t_hasLikesPlaylist, t_title,
+                          t_description, t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
+                          t_subscribedLocalOverride);
+        }
+
         void addFromJson(nlohmann::json t_json);
 
         void addFromValues(const char* t_id, const char* t_uploadsPlaylist,
@@ -73,6 +85,13 @@ namespace sane {
                            const char* t_thumbnailHigh, const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
                            bool t_subscribedLocalOverride);
 
+        void addFromValues(const std::string &t_id, bool t_hasUploadsPlaylist,
+                            bool t_hasFavouritesPlaylist, bool t_hasLikesPlaylist,
+                            const std::string &t_title, const std::string &t_description,
+                            const std::string &t_thumbnailDefault, const std::string &t_thumbnailHigh,
+                            const std::string &t_thumbnailMedium, bool t_subscribedOnYoutube,
+                            bool t_subscribedLocalOverride);
+
         void addFromMap(std::map<std::string, std::string>& t_map);
 
         void addFromMap(std::map<std::string, const unsigned char*>& t_map);
@@ -80,9 +99,11 @@ namespace sane {
         void print(int indentationSpacing);
 
         // Each error/warning map has error message as key and JSON as value.
-        void addError(const std::string &t_errorMsg, nlohmann::json &t_json);
+        void addError(const std::string &t_errorMsg, nlohmann::json t_json = nlohmann::json::object());
 
-        void addWarning(const std::string &t_warningMsg, nlohmann::json &t_json);
+        void addWarning(const std::string &t_warningMsg, nlohmann::json t_json = nlohmann::json::object());
+
+        void reportProblems(std::map<std::string, std::string> &t_problems);
 
         std::list<std::map<std::string, nlohmann::json>> getErrors();
 
@@ -106,43 +127,57 @@ namespace sane {
 
         const std::string getFavouritesPlaylist();
 
-        const std::string getId();
+        const std::string &getId() const;
 
-        const char *getIdAsCString();
+        void setId(const std::string &t_id);
+
+        void setId(nlohmann::json t_id);
 
         const std::string getChannelId();
 
-        const std::string getDescription();
+        const std::string &getDescription() const;
 
-        const char* getDescriptionAsCString();
+        void setDescription(const std::string &t_description);
 
-        const std::string getPublishedAt();
+        void setDescription(nlohmann::json &t_description);
 
-        const char* getPublishedAtAsCString();
+        const std::string &getPublishedAt() const;
 
-        const std::map<std::string, std::string> getThumbnails();
+        void setPublishedAt(const std::string &t_publishedAt);
 
-        const std::string getThumbnailDefault();
+        void setPublishedAt(nlohmann::json &t_publishedAt);
 
-        const char* getThumbnailDefaultAsCString();
+        const std::map<std::string, thumbnail_t> &getThumbnails() const;
 
-        const std::string getThumbnailHigh();
+        void setThumbnails(const std::map<std::string, thumbnail_t> &t_thumbnails);
 
-        const char* getThumbnailHighAsCString();
+        void setThumbnails(nlohmann::json &t_thumbnails);
 
-        const std::string getThumbnailMedium();
+        const std::string &getTitle() const;
 
-        const char* getThumbnailMediumAsCString();
+        void setTitle(const std::string &t_title);
 
-        const std::string getTitle();
-
-        const char* getTitleAsCString();
+        void setTitle(nlohmann::json &t_title);
 
         bool hasFavouritesPlaylist();
 
+        void setHasFavouritesPlaylist(bool t_bool);
+
         bool hasUploadsPlaylist();
 
+        void setHasUploadsPlaylist(bool t_bool);
+
         bool hasLikesPlaylist();
+
+        void setHasLikesPlaylist(bool t_bool);
+
+        bool hasSubscribedLocalOverride();
+
+        void setHasSubscribedLocalOverride(bool t_bool);
+
+        bool isSubscribedOnYoutube();
+
+        void setIsSubscribedOnYoutube(bool t_bool);
     private:
         // Relevant JSON response values.
 
@@ -168,7 +203,7 @@ namespace sane {
 
         // A map of thumbnail images associated with the subscription.
         // Should in most cases contain keys: "default", "high" and "medium".
-        std::map<std::string, std::string> m_thumbnails;
+        std::map<std::string, thumbnail_t> m_thumbnails;
 
         // Subscription/Channel title.
         std::string m_title;

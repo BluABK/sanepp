@@ -14,8 +14,20 @@ namespace sane {
         channels = sane::getChannelsFromDB(NO_ERROR_LOG);
         int counter = 1;  // Humanized counting.
         for (auto & channel : channels) {
+            std::list<std::map<std::string, nlohmann::json>> warnings = channel->getWarnings();
+            std::list<std::map<std::string, nlohmann::json>> errors = channel->getErrors();
+
             std::cout << "Sub#" << counter << ":" << std::endl;
             channel->print(DEFAULT_INDENT);
+            // Print any warnings and errors
+            if (!warnings.empty()) {
+                std::cout << "Warnings:\n" << std::endl;
+                channel->printWarnings(4);
+            }
+            if (!errors.empty()) {
+                std::cout << "Errors:\n" << std::endl;
+                channel->printErrors(4);
+            }
             counter++;
         }
     }

@@ -9,17 +9,11 @@
 
 #include <nlohmann/json.hpp>
 
-#include "common.hpp"
+#include <entities/common.hpp>
 
 // TODO: Change a lot of string variables to ints and define some constants instead?
 
 namespace sane {
-    struct thumbnail_t {
-        std::string url;
-        unsigned int height{};
-        unsigned int width{};
-    };
-
     struct videoStream_t {
         unsigned int widthPixels{};
         unsigned int heightPixels{};
@@ -130,6 +124,8 @@ namespace sane {
             addFromJson(t_data);
         }
 
+//        void assignValue(nlohmann::json &t_json);
+
         void addFromJson(nlohmann::json t_json);
 
         void print(int t_indentationSpacing, bool t_printFullInfo=false);
@@ -138,6 +134,8 @@ namespace sane {
         void addError(const std::string &t_errorMsg, nlohmann::json t_json = nlohmann::json::object());
 
         void addWarning(const std::string &t_warningMsg, nlohmann::json t_json = nlohmann::json::object());
+
+        void reportProblems(std::map<std::string, std::string> &t_problems);
 
         std::list<std::map<std::string, nlohmann::json>> getErrors();
 

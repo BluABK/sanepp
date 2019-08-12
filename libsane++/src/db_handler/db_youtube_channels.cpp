@@ -4,6 +4,7 @@
 
 #include <db_handler/db_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
+#include <entities/common.hpp>
 #include <entities/youtube_channel.hpp>
 
 namespace sane {
@@ -100,20 +101,31 @@ namespace sane {
 
         // Iterate through the subscription objects and add relevant fields to DB.
         for (auto &channel : t_channels) {
-            // Figure out and sanitize the values.
-            const char* id = channel->getIdAsCString();
+            std::map<std::string, thumbnail_t> thumbnails = channel->getThumbnails();
+
             int hasUploadsPlaylist = channel->hasUploadsPlaylist() ? 1 : 0;
             int hasFavouritesPlaylist = channel->hasFavouritesPlaylist() ? 1 : 0;
             int hasLikesPlaylist = channel->hasLikesPlaylist() ? 1 : 0;
-            const char* title = validateSQLiteInput(channel->getTitleAsCString());
-            const char* description = validateSQLiteInput(channel->getDescriptionAsCString());
-            const char* thumbnailDefault = validateSQLiteInput(channel->getThumbnailDefaultAsCString());
-            const char* thumbnailHigh = validateSQLiteInput(channel->getThumbnailHighAsCString());
-            const char* thumbnailMedium = validateSQLiteInput(channel->getThumbnailMediumAsCString());
 
             // Set default values.
             // Bools and ints are the same to SQLite, but the C API only has bind for ints.
             int subscribedOnYouTube = 1;
+
+            // Store strings locally to avoid scope issues when turned to char ptr.
+            std::string idStr = channel->getId();
+            std::string titleStr = channel->getTitle();
+            std::string descriptionStr = channel->getDescription();
+            std::string thumbnailDefaultStr = thumbnails["default"].url;
+            std::string thumbnailHighStr = thumbnails["high"].url;
+            std::string thumbnailMediumStr = thumbnails["medium"].url;
+
+            // Create C Strings from the locally stored std::strings.
+            const char* id = idStr.c_str();
+            const char* title = validateSQLiteInput(titleStr.c_str());
+            const char* description = validateSQLiteInput(descriptionStr.c_str());
+            const char* thumbnailDefault = validateSQLiteInput(thumbnailDefaultStr.c_str());
+            const char* thumbnailHigh = validateSQLiteInput(thumbnailHighStr.c_str());
+            const char* thumbnailMedium = validateSQLiteInput(thumbnailMediumStr.c_str());
 
             // Construct the UPSERT SQL statement which updates an already existing row or inserts a new one.
             //

@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 
+#include <entities/common.hpp>
 #include <entities/youtube_channel.hpp>
 #include <entities/youtube_video.hpp>
 #include <api_handler/api_handler.hpp>

@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <entities/common.hpp>
 #include <entities/youtube_video.hpp>
 
 namespace sane {
@@ -18,6 +19,13 @@ namespace sane {
         _[t_warningMsg] = t_json;
 
         m_warnings.push_back(_);
+    }
+
+    void YoutubeVideo::reportProblems(std::map<std::string, std::string> &t_problems) {
+        if (!t_problems.empty()) {
+            addWarning(t_problems["warning"]);
+            addError(t_problems["error"]);
+        }
     }
 
     std::list<std::map<std::string, nlohmann::json>> YoutubeVideo::getErrors() {
@@ -72,17 +80,21 @@ namespace sane {
     }
 
     // START: Getters & Setters.
-
-    void YoutubeVideo::setId(nlohmann::json t_id) {
-        assignJsonStringValue(m_id, t_id);
+    const std::string &YoutubeVideo::getId() const {
+        return m_id;
     }
 
     void YoutubeVideo::setId(const std::string &t_id) {
         m_id = t_id;
     }
 
-    const std::string &YoutubeVideo::getId() const {
-        return m_id;
+    void YoutubeVideo::setId(nlohmann::json t_id) {
+        if (t_id.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setId(getJsonStringValue(t_id, "setId", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getPublishedAt() const {
@@ -94,7 +106,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setPublishedAt(nlohmann::json &t_publishedAt) {
-        assignJsonStringValue(m_publishedAt, t_publishedAt);
+        if (t_publishedAt.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setPublishedAt(getJsonStringValue(t_publishedAt, "setPublishedAt", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getChannelId() const {
@@ -106,7 +123,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setChannelId(nlohmann::json &t_channelId) {
-        assignJsonStringValue(m_channelId, t_channelId);
+        if (t_channelId.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setChannelId(getJsonStringValue(t_channelId, "setChannelId", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getTitle() const {
@@ -118,7 +140,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setTitle(nlohmann::json &t_title) {
-        assignJsonStringValue(m_title, t_title);
+        if (t_title.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setTitle(getJsonStringValue(t_title, "setTitle", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getDescription() const {
@@ -130,7 +157,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setDescription(nlohmann::json &t_description) {
-        assignJsonStringValue(m_description, t_description);
+        if (t_description.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setDescription(getJsonStringValue(t_description, "setDescription", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::map<std::string, thumbnail_t> &YoutubeVideo::getThumbnails() const {
@@ -147,27 +179,57 @@ namespace sane {
 
         // Create each thumbnail struct.
         thumbnail_t defaultThumbnail;
-        assignJsonStringValue(defaultThumbnail.url, t_thumbnails["default"]["url"]);
+        if (t_thumbnails["default"]["url"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            defaultThumbnail.url = getJsonStringValue(t_thumbnails["default"]["url"],
+                                                                     "setThumbnails [default]", problems);
+            reportProblems(problems);
+        }
         defaultThumbnail.height  = t_thumbnails["default"]["height"].get<unsigned int>();
         defaultThumbnail.width   = t_thumbnails["default"]["width"].get<unsigned int>();
 
         thumbnail_t highThumbnail;
-        assignJsonStringValue(highThumbnail.url, t_thumbnails["high"]["url"]);
+        if (t_thumbnails["high"]["url"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            highThumbnail.url = getJsonStringValue(t_thumbnails["high"]["url"],
+                                                                    "setThumbnails [high]", problems);
+            reportProblems(problems);
+        }
         highThumbnail.height     = t_thumbnails["high"]["height"].get<unsigned int>();
         highThumbnail.width      = t_thumbnails["high"]["width"].get<unsigned int>();
 
         thumbnail_t mediumThumbnail;
-        assignJsonStringValue(mediumThumbnail.url, t_thumbnails["medium"]["url"]);
+        if (t_thumbnails["medium"]["url"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            mediumThumbnail.url = getJsonStringValue(t_thumbnails["medium"]["url"],
+                                                                 "setThumbnails [medium]", problems);
+            reportProblems(problems);
+        }
         mediumThumbnail.height   = t_thumbnails["medium"]["height"].get<unsigned int>();
         mediumThumbnail.width    = t_thumbnails["medium"]["width"].get<unsigned int>();
 
         thumbnail_t standardThumbnail;
-        assignJsonStringValue(standardThumbnail.url, t_thumbnails["standard"]["url"]);
+        if (t_thumbnails["standard"]["url"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            standardThumbnail.url = getJsonStringValue(t_thumbnails["standard"]["url"],
+                                                                 "setThumbnails [standard]", problems);
+            reportProblems(problems);
+        }
         standardThumbnail.height = t_thumbnails["standard"]["height"].get<unsigned int>();
         standardThumbnail.width  = t_thumbnails["standard"]["width"].get<unsigned int>();
 
         thumbnail_t maxresThumbnail;
-        assignJsonStringValue(maxresThumbnail.url, t_thumbnails["maxres"]["url"]);
+        if (t_thumbnails["maxres"]["url"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            maxresThumbnail.url = getJsonStringValue(t_thumbnails["maxres"]["url"],
+                                                                 "setThumbnails [maxres]", problems);
+            reportProblems(problems);
+        }
         maxresThumbnail.height  = t_thumbnails["maxres"]["height"].get<unsigned int>();
         maxresThumbnail.width   = t_thumbnails["maxres"]["width"].get<unsigned int>();
 
@@ -179,7 +241,7 @@ namespace sane {
         thumbnails["maxres"] = maxresThumbnail;
 
         // Finally assign the thumbnails map to the object property.
-        m_thumbnails = thumbnails;
+        setThumbnails(thumbnails);
     }
 
     const std::string &YoutubeVideo::getChannelTitle() const {
@@ -191,7 +253,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setChannelTitle(nlohmann::json &t_channelTitle) {
-        assignJsonStringValue(m_channelTitle, t_channelTitle);
+        if (t_channelTitle.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setChannelTitle(getJsonStringValue(t_channelTitle, "setChannelTitle", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::list<std::string> &YoutubeVideo::getTags() const {
@@ -213,7 +280,7 @@ namespace sane {
             tags.push_back(tag.get<std::string>());
         }
 
-        m_tags = tags;
+        setTags(tags);
     }
 
     const std::string &YoutubeVideo::getCategoryId() const {
@@ -225,7 +292,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setCategoryId(nlohmann::json &t_categoryId) {
-        assignJsonStringValue(m_categoryId, t_categoryId);
+        if (t_categoryId.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setCategoryId(getJsonStringValue(t_categoryId, "setCategoryId", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getLiveBroadcastContent() const {
@@ -237,7 +309,13 @@ namespace sane {
     }
 
     void YoutubeVideo::setLiveBroadcastContent(nlohmann::json &t_liveBroadcastContent) {
-        assignJsonStringValue(m_liveBroadcastContent, t_liveBroadcastContent);
+        if (t_liveBroadcastContent.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setLiveBroadcastContent(getJsonStringValue(t_liveBroadcastContent, "setLiveBroadcastContent",
+                                                                     problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getDefaultLanguage() const {
@@ -249,7 +327,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setDefaultLanguage(nlohmann::json &t_defaultLanguage) {
-        assignJsonStringValue(m_defaultLanguage, t_defaultLanguage);
+        if (t_defaultLanguage.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setDefaultLanguage(getJsonStringValue(t_defaultLanguage, "setDefaultLanguage", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getLocalizedTitle() const {
@@ -261,7 +344,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setLocalizedTitle(nlohmann::json &t_localizedTitle) {
-        assignJsonStringValue(m_localizedTitle, t_localizedTitle);
+        if (t_localizedTitle.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setLocalizedTitle(getJsonStringValue(t_localizedTitle, "setLocalizedTitle", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getLocalizedDescription() const {
@@ -273,7 +361,13 @@ namespace sane {
     }
 
     void YoutubeVideo::setLocalizedDescription(nlohmann::json &t_localizedDescription) {
-        assignJsonStringValue(m_localizedDescription, t_localizedDescription);
+        if (t_localizedDescription.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setLocalizedDescription(getJsonStringValue(t_localizedDescription, "setLocalizedDescription",
+                                                                     problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getDefaultAudioLanguage() const {
@@ -285,7 +379,13 @@ namespace sane {
     }
 
     void YoutubeVideo::setDefaultAudioLanguage(nlohmann::json &t_defaultAudioLanguage) {
-        assignJsonStringValue(m_defaultAudioLanguage, t_defaultAudioLanguage);
+        if (t_defaultAudioLanguage.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setDefaultAudioLanguage(getJsonStringValue(t_defaultAudioLanguage, "setDefaultAudioLanguage",
+                                                                     problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getDuration() const {
@@ -297,7 +397,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setDuration(nlohmann::json &t_duration) {
-        assignJsonStringValue(m_duration, t_duration);
+        if (t_duration.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setDuration(getJsonStringValue(t_duration, "setDuration", problems));
+            reportProblems(problems);
+        }
     }
 
     void YoutubeVideo::setDimension(nlohmann::json &t_dimension) {
@@ -368,7 +473,10 @@ namespace sane {
 
     void YoutubeVideo::setHasCaptions(nlohmann::json &t_hasCaptions) {
         if (isBool(t_hasCaptions)) {
-            setHasCaptions(getJsonBoolValue(t_hasCaptions));
+            std::map<std::string, std::string> problems;
+            
+            setHasCaptions(getJsonBoolValue(t_hasCaptions, "setHasCaptions", problems));
+            reportProblems(problems);
         }
     }
 
@@ -382,7 +490,10 @@ namespace sane {
 
     void YoutubeVideo::setIsLicensedContent(nlohmann::json &t_isLicensedContent) {
         if (isBool(t_isLicensedContent)) {
-            setIsLicensedContent(getJsonBoolValue(t_isLicensedContent));
+            std::map<std::string, std::string> problems;
+            
+            setIsLicensedContent(getJsonBoolValue(t_isLicensedContent, "setIsLicensedContent", problems));
+            reportProblems(problems);
         }
     }
 
@@ -401,7 +512,7 @@ namespace sane {
             whitelist.push_back(countryCode.get<std::string>());
         }
 
-        m_regionRestrictionWhitelist = whitelist;
+        setRegionRestrictionWhitelist(whitelist);
     }
 
     const std::list<std::string> &YoutubeVideo::getRegionRestrictionBlacklist() const {
@@ -419,7 +530,7 @@ namespace sane {
             blacklist.push_back(countryCode.get<std::string>());
         }
 
-        m_regionRestrictionWhitelist = blacklist;
+        setRegionRestrictionBlacklist(blacklist);
     }
 
     void YoutubeVideo::setProjection(nlohmann::json &t_projection) {
@@ -466,7 +577,10 @@ namespace sane {
 
     void YoutubeVideo::setHasCustomThumbnail(nlohmann::json &t_hasCustomThumbnail) {
         if (isBool(t_hasCustomThumbnail)) {
-            setHasCustomThumbnail(getJsonBoolValue(t_hasCustomThumbnail));
+            std::map<std::string, std::string> problems;
+            
+            setHasCustomThumbnail(getJsonBoolValue(t_hasCustomThumbnail, "setHasCustomThumbnail", problems));
+            reportProblems(problems);
         }
     }
 
@@ -479,7 +593,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setUploadStatus(nlohmann::json &t_uploadStatus) {
-        assignJsonStringValue(m_uploadStatus, t_uploadStatus);
+        if (t_uploadStatus.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setUploadStatus(getJsonStringValue(t_uploadStatus, "setUploadStatus", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getFailureReason() const {
@@ -491,7 +610,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setFailureReason(nlohmann::json &t_failureReason) {
-        assignJsonStringValue(m_failureReason, t_failureReason);
+        if (t_failureReason.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setFailureReason(getJsonStringValue(t_failureReason, "setFailureReason", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getRejectionReason() const {
@@ -503,7 +627,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setRejectionReason(nlohmann::json &t_rejectionReason) {
-        assignJsonStringValue(m_rejectionReason, t_rejectionReason);
+        if (t_rejectionReason.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setRejectionReason(getJsonStringValue(t_rejectionReason, "setRejectionReason", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getPrivacyStatus() const {
@@ -515,7 +644,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setPrivacyStatus(nlohmann::json &t_privacyStatus) {
-        assignJsonStringValue(m_privacyStatus, t_privacyStatus);
+        if (t_privacyStatus.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setPrivacyStatus(getJsonStringValue(t_privacyStatus, "setPrivacyStatus", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getPublishAt() const {
@@ -527,7 +661,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setPublishAt(nlohmann::json &t_publishAt) {
-        assignJsonStringValue(m_publishAt, t_publishAt);
+        if (t_publishAt.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setPublishAt(getJsonStringValue(t_publishAt, "setPublishAt", problems));
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getLicense() const {
@@ -539,7 +678,12 @@ namespace sane {
     }
 
     void YoutubeVideo::setLicense(nlohmann::json &t_license) {
-        assignJsonStringValue(m_license, t_license);
+        if (t_license.is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            setLicense(getJsonStringValue(t_license, "setLicense", problems));
+            reportProblems(problems);
+        }
     }
 
     bool YoutubeVideo::isEmbeddable() const {
@@ -552,7 +696,9 @@ namespace sane {
 
     void YoutubeVideo::setIsEmbeddable(nlohmann::json &t_isEmbeddable) {
         if (isBool(t_isEmbeddable)) {
-            setIsEmbeddable(getJsonBoolValue(t_isEmbeddable));
+            std::map<std::string, std::string> problems;
+            setIsEmbeddable(getJsonBoolValue(t_isEmbeddable, "setIsEmbeddable", problems));
+            reportProblems(problems);
         }
     }
 
@@ -566,7 +712,10 @@ namespace sane {
 
     void YoutubeVideo::setPublicStatsViewable(nlohmann::json &t_isPublicStatsViewable) {
         if (isBool(t_isPublicStatsViewable)) {
-            setPublicStatsViewable(getJsonBoolValue(t_isPublicStatsViewable));
+            std::map<std::string, std::string> problems;
+            setPublicStatsViewable(getJsonBoolValue(t_isPublicStatsViewable, "setPublicStatsViewable",
+                                                                  problems));
+            reportProblems(problems);
         }
     }
 
@@ -580,12 +729,10 @@ namespace sane {
 
     void YoutubeVideo::setViewCount(nlohmann::json &t_viewCount) {
         if (isDigits(t_viewCount)) {
-            setViewCount(getJsonULongValue(t_viewCount));
-        } else if (t_viewCount.is_null() or t_viewCount.get<std::string>() == "null"){
-            addWarning("setViewCount: Got null string.");
-        } else {
-            addError("setViewCount called with invalid parameter! Type: " +
-                     std::string(t_viewCount.type_name()) + ", Value: " + t_viewCount.dump(), t_viewCount);
+            std::map<std::string, std::string> problems;
+            
+            setViewCount(getJsonULongValue(t_viewCount, "setViewCount", problems));
+            reportProblems(problems);
         }
     }
 
@@ -599,12 +746,10 @@ namespace sane {
 
     void YoutubeVideo::setLikeCount(nlohmann::json &t_likeCount) {
         if (isDigits(t_likeCount)) {
-            setLikeCount(getJsonULongValue(t_likeCount));
-        } else if (t_likeCount.is_null() or t_likeCount.get<std::string>() == "null"){
-            addWarning("setLikeCount: Got null string.");
-        } else {
-            addError("setLikeCount called with invalid parameter! Type: " +
-                     std::string(t_likeCount.type_name()) + ", Value: " + t_likeCount.dump(), t_likeCount);
+            std::map<std::string, std::string> problems;
+            
+            setLikeCount(getJsonULongValue(t_likeCount, "setLikeCount", problems));
+            reportProblems(problems);
         }
     }
 
@@ -618,12 +763,10 @@ namespace sane {
 
     void YoutubeVideo::setDislikeCount(nlohmann::json &t_dislikeCount) {
         if (isDigits(t_dislikeCount)) {
-            setDislikeCount(getJsonULongValue(t_dislikeCount));
-        } else if (t_dislikeCount.is_null() or t_dislikeCount.get<std::string>() == "null"){
-            addWarning("setDislikeCount: Got null string.");
-        } else {
-            addError("setDislikeCount called with invalid parameter! Type: " +
-                     std::string(t_dislikeCount.type_name()) + ", Value: " + t_dislikeCount.dump(), t_dislikeCount);
+            std::map<std::string, std::string> problems;
+            
+            setDislikeCount(getJsonULongValue(t_dislikeCount, "setDislikeCount", problems));
+            reportProblems(problems);
         }
     }
 
@@ -637,12 +780,10 @@ namespace sane {
 
     void YoutubeVideo::setCommentCount(nlohmann::json &t_commentCount) {
         if (isDigits(t_commentCount)) {
-            setCommentCount(getJsonULongValue(t_commentCount));
-        } else if (t_commentCount.is_null() or t_commentCount.get<std::string>() == "null"){
-            addWarning("setCommentCount: Got null string.");
-        } else {
-            addError("setCommentCount called with invalid parameter! Type: " +
-                     std::string(t_commentCount.type_name()) + ", Value: " + t_commentCount.dump(), t_commentCount);
+            std::map<std::string, std::string> problems;
+            
+            setCommentCount(getJsonULongValue(t_commentCount, "setCommentCount", problems));
+            reportProblems(problems);
         }
     }
 
@@ -655,14 +796,22 @@ namespace sane {
     }
 
     void YoutubeVideo::setPlayer(nlohmann::json &t_player) {
-        player_t player;
+        player_t player = player_t();
 
-        assignJsonStringValue(player.embedHtml, t_player["embedHtml"]);
+        if (t_player["embedHtml"].is_string()) {
+            std::map<std::string, std::string> problems;
+            
+            player.embedHtml = getJsonStringValue(t_player["embedHtml"], "setPlayer [embedHtml]", problems);
+            reportProblems(problems);
+        }
 
         if (t_player.find("embedWidth") != t_player.end()) {
             nlohmann::json embedWidth = t_player["embedWidth"];
             if (isDigits(embedWidth)) {
-                player.embedWidth = getJsonLongValue(embedWidth);
+                std::map<std::string, std::string> problems;
+
+                player.embedWidth = getJsonLongValue(embedWidth, "setPlayer [embedWidth]", problems);
+                reportProblems(problems);
             } else {
                 addError("Player: Attempted to set non-long embedWidth! Type: " +
                          std::string(embedWidth.type_name()) + ", Value: " + embedWidth.dump(), embedWidth);
@@ -672,14 +821,17 @@ namespace sane {
         if (t_player.find("embedHeight") != t_player.end()) {
             nlohmann::json embedHeight = t_player["embedHeight"];
             if (isDigits(embedHeight)) {
-                player.embedHeight = getJsonLongValue(embedHeight);
+                std::map<std::string, std::string> problems;
+
+                player.embedHeight = getJsonLongValue(embedHeight, "setPlayer [embedHeight]", problems);
+                reportProblems(problems);
             } else {
                 addError("Player: Attempted to set non-long embedHeight! Type: " +
                          std::string(embedHeight.type_name()) + ", Value: " + embedHeight.dump(), embedHeight);
             }
         }
 
-        m_player = player;
+        setPlayer(player);
     }
 
     const std::list<std::string> &YoutubeVideo::getTopicCategories() const {
@@ -697,7 +849,7 @@ namespace sane {
             categories.push_back(category.get<std::string>());
         }
 
-        m_topicCategories = categories;
+        setTopicCategories(categories);
     }
 
     const std::string &YoutubeVideo::getRecordingDate() const {
@@ -709,16 +861,13 @@ namespace sane {
     }
 
     void YoutubeVideo::setRecordingDate(nlohmann::json &t_recordingDate) {
-        int rc = assignJsonStringValue(m_recordingDate, t_recordingDate);
+        if (t_recordingDate.is_string()) {
+            std::map<std::string, std::string> problems;
 
-        if (rc != JSON_VALUE_OK) {
-            if (rc == JSON_VALUE_NULL) {
-                addWarning("setRecordingDate: Got null string.");
-            } else {
-                addError("setRecordingDate: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         t_recordingDate);
-            }
+            setRecordingDate(getJsonStringValue(t_recordingDate, "setRecordingDate", problems));
+            reportProblems(problems);
         }
+
     }
 
     const std::string &YoutubeVideo::getFileName() const {
@@ -730,15 +879,11 @@ namespace sane {
     }
 
     void YoutubeVideo::setFileName(nlohmann::json &t_fileName) {
-        int rc = assignJsonStringValue(m_fileName, t_fileName);
+        if (t_fileName.is_string()) {
+            std::map<std::string, std::string> problems;
 
-        if (rc != JSON_VALUE_OK) {
-            if (rc == JSON_VALUE_NULL) {
-                addWarning("setFileName: Got null string.");
-            } else {
-                addError("setFileName: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         t_fileName);
-            }
+            setFileName(getJsonStringValue(t_fileName, "setFileName", problems));
+            reportProblems(problems);
         }
     }
 
@@ -752,12 +897,10 @@ namespace sane {
 
     void YoutubeVideo::setFileSize(nlohmann::json &t_fileSize) {
         if (isDigits(t_fileSize)) {
-            setFileSize(getJsonULongValue(t_fileSize));
-        } else if (t_fileSize.is_null() or t_fileSize.get<std::string>() == "null"){
-            addWarning("setFileSize: Got null string.");
-        } else {
-            addError("setFileSize called with invalid parameter! Type: " +
-                     std::string(t_fileSize.type_name()) + ", Value: " + t_fileSize.dump(), t_fileSize);
+            std::map<std::string, std::string> problems;
+
+            setFileSize(getJsonULongValue(t_fileSize, "setFileSize", problems));
+            reportProblems(problems);
         }
     }
 
@@ -770,15 +913,11 @@ namespace sane {
     }
 
     void YoutubeVideo::setFileType(nlohmann::json &t_fileType) {
-        int rc = assignJsonStringValue(m_fileType, t_fileType);
+        if (t_fileType.is_string()) {
+            std::map<std::string, std::string> problems;
 
-        if (rc != JSON_VALUE_OK) {
-            if (rc == JSON_VALUE_NULL) {
-                addWarning("setFileType: Got null string.");
-            } else {
-                addError("setFileType: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         t_fileType);
-            }
+            setFileType(getJsonStringValue(t_fileType, "setFileType", problems));
+            reportProblems(problems);
         }
     }
 
@@ -791,15 +930,11 @@ namespace sane {
     }
 
     void YoutubeVideo::setContainer(nlohmann::json &t_container) {
-        int rc = assignJsonStringValue(m_container, t_container);
+        if (t_container.is_string()) {
+            std::map<std::string, std::string> problems;
 
-        if (rc != JSON_VALUE_OK) {
-            if (rc == JSON_VALUE_NULL) {
-                addWarning("setContainer: Got null string.");
-            } else {
-                addError("setContainer: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         t_container);
-            }
+            setContainer(getJsonStringValue(t_container, "setContainer", problems));
+            reportProblems(problems);
         }
     }
 
@@ -819,49 +954,53 @@ namespace sane {
         }
 
         for (nlohmann::json item : t_videoStreams) {
-            videoStream_t stream;
+            videoStream_t stream = videoStream_t();
 
-            if (isDigits(item["widthPixels"])) { stream.widthPixels = item["widthPixels"].get<unsigned int>(); }
-            if (isDigits(item["heightPixels"])) { stream.heightPixels = item["heightPixels"].get<unsigned int>(); }
+            if (isDigits(item["widthPixels"])) {
+                stream.widthPixels = item["widthPixels"].get<unsigned int>();
+            }
+
+            if (isDigits(item["heightPixels"])) {
+                stream.heightPixels = item["heightPixels"].get<unsigned int>();
+            }
+
             stream.frameRateFps = item["frameRateFps"].get<double>();
             stream.aspectRatio = item["aspectRatio"].get<double>();
-            int rc = assignJsonStringValue(stream.codec, item["codec"]);
-            if (rc != JSON_VALUE_OK) {
-                if (rc == JSON_VALUE_NULL) {
-                    addWarning("setVideoStreams codec: Got null string.");
-                } else {
-                    addError("setVideoStreams codec: assignJsonStringValue returned non-zero value: " +
-                             std::to_string(rc),
-                             item["codec"]);
-                }
+
+            if (item["codec"].is_string()) {
+                std::map<std::string, std::string> problems;
+
+                stream.codec = getJsonStringValue(item["codec"], "setVideoStreams [codec]", problems);
+                reportProblems(problems);
             }
-            if (isDigits(item["bitrateBps"])) { stream.bitrateBps = getJsonULongValue(item["bitrateBps"]); }
-            rc = assignJsonStringValue(stream.rotation, item["rotation"]);
-            if (rc != JSON_VALUE_OK) {
-                if (rc == JSON_VALUE_NULL) {
-                    addWarning("setVideoStreams rotation: Got null string.");
-                } else {
-                    addError("setVideoStreams rotation: assignJsonStringValue returned non-zero value: " +
-                             std::to_string(rc),
-                             item["rotation"]);
-                }
+
+            if (isDigits(item["bitrateBps"])) {
+                std::map<std::string, std::string> problems;
+
+                stream.bitrateBps = getJsonULongValue(item["bitrateBps"], "setVideoStreams [bitrateBps]",
+                                                                    problems);
+                reportProblems(problems);
             }
-            rc = assignJsonStringValue(stream.vendor, item["vendor"]);
-            if (rc != JSON_VALUE_OK) {
-                if (rc == JSON_VALUE_NULL) {
-                    addWarning("setVideoStreams vendor: Got null string.");
-                } else {
-                    addError("setVideoStreams vendor: assignJsonStringValue returned non-zero value: " +
-                             std::to_string(rc),
-                             item["vendor"]);
-                }
+
+            if (item["rotation"].is_string()) {
+                std::map<std::string, std::string> problems;
+
+                stream.rotation = getJsonStringValue(item["rotation"], "setVideoStreams [rotation]",
+                                                                   problems);
+                reportProblems(problems);
+            }
+
+            if (item["vendor"].is_string()) {
+                std::map<std::string, std::string> problems;
+
+                stream.vendor = getJsonStringValue(item["vendor"], "setVideoStreams [vendor]", problems);
+                reportProblems(problems);
             }
 
             streams.push_back(stream);
         }
 
-
-        m_videoStreams = streams;
+        setVideoStreams(streams);
     }
 
     const std::list<audioStream_t> &YoutubeVideo::getAudioStreams() const {
@@ -880,36 +1019,38 @@ namespace sane {
         }
 
         for (nlohmann::json item : t_audioStreams) {
-            audioStream_t stream;
+            audioStream_t stream = audioStream_t();
 
-            if (isDigits(item["channelCount"])) { stream.channelCount = item["channelCount"].get<unsigned int>(); }
-            int rc = assignJsonStringValue(stream.codec, item["codec"]);
-            if (rc != JSON_VALUE_OK) {
-                if (rc == JSON_VALUE_NULL) {
-                    addWarning("setAudioStreams codec: Got null string.");
-                } else {
-                    addError("setAudioStreams codec: assignJsonStringValue returned non-zero value: " +
-                             std::to_string(rc),
-                             item["codec"]);
-                }
+            if (isDigits(item["channelCount"])) {
+                stream.channelCount = item["channelCount"].get<unsigned int>();
             }
-            if (isDigits(item["bitrateBps"])) { stream.bitrateBps = getJsonULongValue(item["bitrateBps"]); }
-            rc = assignJsonStringValue(stream.vendor, item["vendor"]);
-            if (rc != JSON_VALUE_OK) {
-                if (rc == JSON_VALUE_NULL) {
-                    addWarning("setAudioStreams vendor: Got null string.");
-                } else {
-                    addError("setAudioStreams vendor: assignJsonStringValue returned non-zero value: " +
-                             std::to_string(rc),
-                             item["vendor"]);
-                }
+
+            if (item["codec"].is_string()) {
+                std::map<std::string, std::string> problems;
+
+                stream.codec = getJsonStringValue(item["codec"], "setAudioStreams [codec]", problems);
+                reportProblems(problems);
+            }
+
+            if (isDigits(item["bitrateBps"])) {
+                std::map<std::string, std::string> problems;
+
+                stream.bitrateBps = getJsonULongValue(item["bitrateBps"], "setAudioStreams [bitrateBps]",
+                                                                    problems);
+                reportProblems(problems);
+            }
+
+            if (item["vendor"].is_string()) {
+                std::map<std::string, std::string> problems;
+
+                stream.vendor = getJsonStringValue(item["vendor"], "setAudioStreams [vendor]", problems);
+                reportProblems(problems);
             }
 
             streams.push_back(stream);
         }
 
-
-        m_audioStreams = streams;
+        setAudioStreams(streams);
     }
 
     unsigned long YoutubeVideo::getDurationMs() const {
@@ -922,12 +1063,10 @@ namespace sane {
 
     void YoutubeVideo::setDurationMs(nlohmann::json &t_durationMs) {
         if (isDigits(t_durationMs)) {
-            m_durationMs = getJsonULongValue(t_durationMs);
-        } else if (t_durationMs.is_null() or t_durationMs.get<std::string>() == "null"){
-            addWarning("setDurationMs: Got null string.");
-        } else{
-            addError("setDurationMs called with invalid parameter! Type: " +
-                     std::string(t_durationMs.type_name()) + ", Value: " + t_durationMs.dump(), t_durationMs);
+            std::map<std::string, std::string> problems;
+
+            setDurationMs(getJsonULongValue(t_durationMs, "", problems));
+            reportProblems(problems);
         }
     }
 
@@ -941,12 +1080,10 @@ namespace sane {
 
     void YoutubeVideo::setBitrateBps(nlohmann::json &t_bitrateBps) {
         if (isDigits(t_bitrateBps)) {
-            m_bitrateBps = getJsonULongValue(t_bitrateBps);
-        } else if (t_bitrateBps.is_null() or t_bitrateBps.get<std::string>() == "null"){
-            addWarning("setBitrateBps: Got null string.");
-        } else {
-            addError("setBitrateBps called with invalid parameter! Type: " +
-                     std::string(t_bitrateBps.type_name()) + ", Value: " + t_bitrateBps.dump(), t_bitrateBps);
+            std::map<std::string, std::string> problems;
+
+            setBitrateBps(getJsonULongValue(t_bitrateBps, "setBitrateBps", problems));
+            reportProblems(problems);
         }
     }
 
@@ -959,14 +1096,11 @@ namespace sane {
     }
 
     void YoutubeVideo::setCreationTime(nlohmann::json & t_creationTime) {
-        int rc = assignJsonStringValue(m_creationTime, t_creationTime);
-        if (rc != JSON_VALUE_OK) {
-            if (rc == JSON_VALUE_NULL) {
-                addWarning("setCreationTime: Got null string.");
-            } else {
-                addError("setCreationTime: assignJsonStringValue returned non-zero value: " + std::to_string(rc),
-                         t_creationTime);
-            }
+        if (t_creationTime.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setCreationTime(getJsonStringValue(t_creationTime, "setCreationTime", problems));
+            reportProblems(problems);
         }
     }
 

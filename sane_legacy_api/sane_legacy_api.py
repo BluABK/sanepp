@@ -1,6 +1,6 @@
 import datetime
 import threading
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, Response
 from flask_restful import Api
 
 # Sane legacy
@@ -1208,6 +1208,13 @@ def testing_api_static_json():
     return jsonify([{'one': '1', 'two': '2', 'three': '3', "sub_dict": {'subitem1': 'cake', 'subitem2': '4.20'},
                      'the list': ['this', 'is', 'a', 'list']}])
     # return jsonify(['a', 'b', 'c'])
+
+
+@app.errorhandler(Exception)
+def exception_handler(error):
+    status_code = str(error)[11:14]
+
+    return Response(repr(error), status=status_code)
 
 
 # If we're running in stand alone mode, run the application

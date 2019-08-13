@@ -1288,12 +1288,52 @@ namespace sane {
         m_processingErrors = t_processingErrors;
     }
 
+    void YoutubeVideo::setProcessingErrors(nlohmann::json &t_processingErrors) {
+        std::list<std::string> processingErrors;
+
+        for (nlohmann::json error : t_processingErrors) {
+            std::map<std::string, std::string> problems;
+            if (error.is_string()) {
+                std::string parsedValue = getJsonStringValue(error, "setProcessingErrors", problems);
+
+                reportProblems(problems);
+
+                if (!parsedValue.empty())
+                {
+                    processingErrors.push_back(parsedValue);
+                }
+            }
+        }
+
+        setProcessingErrors(processingErrors);
+    }
+
     const std::list<std::string> &YoutubeVideo::getProcessingWarnings() const {
         return m_processingWarnings;
     }
 
     void YoutubeVideo::setProcessingWarnings(const std::list<std::string> &t_processingWarnings) {
         m_processingWarnings = t_processingWarnings;
+    }
+
+    void YoutubeVideo::setProcessingWarnings(nlohmann::json &t_processingWarnings) {
+        std::list<std::string> processingWarnings;
+
+        for (nlohmann::json warning : t_processingWarnings) {
+            std::map<std::string, std::string> problems;
+            if (warning.is_string()) {
+                std::string parsedValue = getJsonStringValue(warning, "setProcessingWarnings", problems);
+
+                reportProblems(problems);
+
+                if (!parsedValue.empty())
+                {
+                    processingWarnings.push_back(parsedValue);
+                }
+            }
+        }
+
+        setProcessingWarnings(processingWarnings);
     }
 
     const std::list<std::string> &YoutubeVideo::getProcessingHints() const {
@@ -1304,12 +1344,78 @@ namespace sane {
         m_processingHints = t_processingHints;
     }
 
-    const std::list<tagSuggestions_t> &YoutubeVideo::getTagSuggestions() const {
+    void YoutubeVideo::setProcessingHints(nlohmann::json &t_processingHints) {
+        std::list<std::string> processingHints;
+
+        for (nlohmann::json hint : t_processingHints) {
+            std::map<std::string, std::string> problems;
+            if (hint.is_string()) {
+                std::string parsedValue = getJsonStringValue(hint, "setProcessingHints", problems);
+
+                reportProblems(problems);
+
+                if (!parsedValue.empty())
+                {
+                    processingHints.push_back(parsedValue);
+                }
+            }
+        }
+
+        setProcessingHints(processingHints);
+    }
+
+    const std::list<tagSuggestion_t> &YoutubeVideo::getTagSuggestions() const {
         return m_tagSuggestions;
     }
 
-    void YoutubeVideo::setTagSuggestions(const std::list<tagSuggestions_t> &t_tagSuggestions) {
+    void YoutubeVideo::setTagSuggestions(const std::list<tagSuggestion_t> &t_tagSuggestions) {
         m_tagSuggestions = t_tagSuggestions;
+    }
+
+    void YoutubeVideo::setTagSuggestions(nlohmann::json &t_tagSuggestions) {
+        std::list<tagSuggestion_t> tagSuggestions;
+
+        // For each tag, categoryRestricts[] in t_tagSuggestions.
+        for (nlohmann::json suggestion : t_tagSuggestions) {
+            if (suggestion["tag"].is_string()) {
+                std::map<std::string, std::string> tagProblems;
+
+                std::string parsedTag = getJsonStringValue(suggestion, "setTagSuggestions [parsedTag]", tagProblems);
+                reportProblems(tagProblems);
+
+                // If parsed tag is not empty, proceed to categoryRestricts list parsing.
+                if (!parsedTag.empty())
+                {
+                    std::list<std::string> categoryRestricts;
+
+                    for(const nlohmann::json& categoryRestrict : suggestion["categoryRestricts"]) {
+                        std::map<std::string, std::string> catProblems;
+
+                        if (categoryRestrict.is_string()) {
+                            std::string parsedCat = getJsonStringValue(suggestion,
+                                    "setTagSuggestions [categoryRestricts]", catProblems);
+                            reportProblems(catProblems);
+
+                            if (!parsedCat.empty())
+                            {
+                                categoryRestricts.push_back(parsedCat);
+                            }
+                        }
+                    } // for categoryRestricts
+
+                    // Create a tagSuggestion_t object.
+                    tagSuggestion_t tagSuggestion = tagSuggestion_t();
+
+                    tagSuggestion.tag = parsedTag;
+                    tagSuggestion.categoryRestricts = categoryRestricts;
+
+                    // Add the tagSuggestion_t to the list.
+                    tagSuggestions.push_back(tagSuggestion);
+                } // if parsed tag is not empty
+            } // if tag is string
+        } // for suggestion
+
+        setTagSuggestions(tagSuggestions);
     }
 
     const std::list<std::string> &YoutubeVideo::getEditorSuggestions() const {
@@ -1318,6 +1424,26 @@ namespace sane {
 
     void YoutubeVideo::setEditorSuggestions(const std::list<std::string> &t_editorSuggestions) {
         m_editorSuggestions = t_editorSuggestions;
+    }
+
+    void YoutubeVideo::setEditorSuggestions(nlohmann::json &t_editorSuggestions) {
+        std::list<std::string> editorSuggestions;
+
+        for (nlohmann::json suggestion : t_editorSuggestions) {
+            std::map<std::string, std::string> problems;
+            if (suggestion.is_string()) {
+                std::string parsedValue = getJsonStringValue(suggestion, "setEditorSuggestions", problems);
+
+                reportProblems(problems);
+
+                if (!parsedValue.empty())
+                {
+                    editorSuggestions.push_back(parsedValue);
+                }
+            }
+        }
+
+        setEditorSuggestions(editorSuggestions);
     }
 
     const std::list<liveStreamingDetails_t> &YoutubeVideo::getLiveStreamingDetails() const {
@@ -1806,6 +1932,12 @@ namespace sane {
             if (t_json.find("suggestions") != t_json.end()) {
                 nlohmann::json suggestions = t_json["suggestions"];
                 hasPartSuggestions = true;
+
+                setProcessingErrors(suggestions["processingErrors"]);
+                setProcessingWarnings(suggestions["processingWarnings"]);
+                setProcessingHints(suggestions["processingHints"]);
+                setTagSuggestions(suggestions["tagSuggestions"]);
+                setEditorSuggestions(suggestions["editorSuggestions"]);
             }
 
             // Part: Live streaming details.

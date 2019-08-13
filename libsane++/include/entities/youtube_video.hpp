@@ -82,7 +82,7 @@ namespace sane {
         std::string activeLiveChatId;
     };
 
-    struct tagSuggestions_t {
+    struct tagSuggestion_t {
         // The keyword tag suggested for the video.
         std::string tag;
 
@@ -511,9 +511,9 @@ namespace sane {
 
         void setProcessingHints(nlohmann::json &t_processingHints);
 
-        const std::list<tagSuggestions_t> &getTagSuggestions() const;
+        const std::list<tagSuggestion_t> &getTagSuggestions() const;
 
-        void setTagSuggestions(const std::list<tagSuggestions_t> &t_tagSuggestions);
+        void setTagSuggestions(const std::list<tagSuggestion_t> &t_tagSuggestions);
 
         void setTagSuggestions(nlohmann::json &t_tagSuggestions);
 
@@ -798,7 +798,7 @@ namespace sane {
 
         // A list of keyword tags that could be added to the video's metadata to increase the likelihood
         // that users will locate your video when searching or browsing on YouTube.
-        std::list<tagSuggestions_t> m_tagSuggestions;
+        std::list<tagSuggestion_t> m_tagSuggestions;
 
         // A list of video editing operations that might improve the
         // video quality or playback experience of the uploaded video.

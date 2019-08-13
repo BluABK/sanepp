@@ -1116,12 +1116,54 @@ namespace sane {
         m_processingStatus = t_processingStatus;
     }
 
+    void YoutubeVideo::setProcessingStatus(nlohmann::json &t_processingStatus) {
+        if (t_processingStatus.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setProcessingStatus(getJsonStringValue(t_processingStatus, "setProcessingStatus", problems));
+            reportProblems(problems);
+        }
+    }
+
     const processingProgress_t &YoutubeVideo::getProcessingProgress() const {
         return m_processingProgress;
     }
 
     void YoutubeVideo::setProcessingProgress(const processingProgress_t &t_processingProgress) {
         m_processingProgress = t_processingProgress;
+    }
+
+    void YoutubeVideo::setProcessingProgress(nlohmann::json &t_processingProgress) {
+        processingProgress_t processingProgress = processingProgress_t();
+
+        if (t_processingProgress["partsTotal"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            processingProgress.partsTotal = getJsonULongValue(t_processingProgress["partsTotal"],
+                    "setProcessingProgress [partsTotal]", problems);
+
+            reportProblems(problems);
+        }
+
+        if (t_processingProgress["partsProcessed"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            processingProgress.partsProcessed = getJsonULongValue(t_processingProgress["partsProcessed"],
+                                                              "setProcessingProgress [partsProcessed]", problems);
+
+            reportProblems(problems);
+        }
+
+        if (t_processingProgress["timeLeftMs"].is_string()) {
+            std::map<std::string, std::string> problems;
+
+            processingProgress.timeLeftMs = getJsonULongValue(t_processingProgress["timeLeftMs"],
+                                                              "setProcessingProgress [timeLeftMs]", problems);
+
+            reportProblems(problems);
+        }
+
+        setProcessingProgress(processingProgress);
     }
 
     const std::string &YoutubeVideo::getProcessingFailureReason() const {
@@ -1132,12 +1174,53 @@ namespace sane {
         m_processingFailureReason = t_processingFailureReason;
     }
 
+    void YoutubeVideo::setProcessingFailureReason(nlohmann::json &t_processingFailureReason) {
+        if (t_processingFailureReason.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setProcessingFailureReason(getJsonStringValue(t_processingFailureReason,
+                    "setProcessingFailureReason", problems));
+
+            reportProblems(problems);
+        }
+    }
+
+    const std::string &YoutubeVideo::getFileDetailsAvailability() const {
+        return m_fileDetailsAvailability;
+    }
+
+    void YoutubeVideo::setFileDetailsAvailability(const std::string &t_fileDetailsAvailability) {
+        m_fileDetailsAvailability = t_fileDetailsAvailability;
+    }
+
+    void YoutubeVideo::setFileDetailsAvailability(nlohmann::json &t_fileDetailsAvailability) {
+        if (t_fileDetailsAvailability.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setFileDetailsAvailability(getJsonStringValue(t_fileDetailsAvailability,
+                                                          "setFileDetailsAvailability", problems));
+
+            reportProblems(problems);
+        }
+    }
+
     const std::string &YoutubeVideo::getProcessingIssuesAvailability() const {
         return m_processingIssuesAvailability;
     }
 
     void YoutubeVideo::setProcessingIssuesAvailability(const std::string &t_processingIssuesAvailability) {
         m_processingIssuesAvailability = t_processingIssuesAvailability;
+    }
+
+    void YoutubeVideo::setProcessingIssuesAvailability(nlohmann::json &t_processingIssuesAvailability) {
+        if (t_processingIssuesAvailability.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setProcessingIssuesAvailability(getJsonStringValue(t_processingIssuesAvailability,
+                                                          "setProcessingIssuesAvailability", problems));
+
+            reportProblems(problems);
+        }
     }
 
     const std::string &YoutubeVideo::getTagSuggestionsAvailability() const {
@@ -1148,6 +1231,17 @@ namespace sane {
         m_tagSuggestionsAvailability = t_tagSuggestionsAvailability;
     }
 
+    void YoutubeVideo::setTagSuggestionsAvailability(nlohmann::json &t_tagSuggestionsAvailability) {
+        if (t_tagSuggestionsAvailability.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setTagSuggestionsAvailability(getJsonStringValue(t_tagSuggestionsAvailability,
+                                                               "setTagSuggestionsAvailability", problems));
+
+            reportProblems(problems);
+        }
+    }
+
     const std::string &YoutubeVideo::getEditorSuggestionsAvailability() const {
         return m_editorSuggestionsAvailability;
     }
@@ -1156,12 +1250,34 @@ namespace sane {
         m_editorSuggestionsAvailability = t_editorSuggestionsAvailability;
     }
 
+    void YoutubeVideo::setEditorSuggestionsAvailability(nlohmann::json &t_editorSuggestionsAvailability) {
+        if (t_editorSuggestionsAvailability.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setEditorSuggestionsAvailability(getJsonStringValue(t_editorSuggestionsAvailability,
+                                                             "setEditorSuggestionsAvailability", problems));
+
+            reportProblems(problems);
+        }
+    }
+
     const std::string &YoutubeVideo::getThumbnailsAvailability() const {
         return m_thumbnailsAvailability;
     }
 
     void YoutubeVideo::setThumbnailsAvailability(const std::string &t_thumbnailsAvailability) {
         m_thumbnailsAvailability = t_thumbnailsAvailability;
+    }
+
+    void YoutubeVideo::setThumbnailsAvailability(nlohmann::json &t_thumbnailsAvailability) {
+        if (t_thumbnailsAvailability.is_string()) {
+            std::map<std::string, std::string> problems;
+
+            setThumbnailsAvailability(getJsonStringValue(t_thumbnailsAvailability,
+                                                                "setThumbnailsAvailability", problems));
+
+            reportProblems(problems);
+        }
     }
 
     const std::list<std::string> &YoutubeVideo::getProcessingErrors() const {
@@ -1669,6 +1785,21 @@ namespace sane {
             if (t_json.find("processingDetails") != t_json.end()) {
                 nlohmann::json processingDetails = t_json["processingDetails"];
                 hasPartProcessingDetails = true;
+
+                setProcessingStatus(processingDetails["processingStatus"]);
+
+                // These values are really only relevant in a certain video processing status.
+                if (getProcessingStatus() == "processing") {
+                    setProcessingProgress(processingDetails["processingProgress"]);
+                } else if (getProcessingStatus() == "failed") {
+                    setProcessingFailureReason(processingDetails["processingFailureReason"]);
+                }
+
+                setFileDetailsAvailability(processingDetails["fileDetailsAvailability"]);
+                setProcessingIssuesAvailability(processingDetails["processingIssuesAvailability"]);
+                setTagSuggestionsAvailability(processingDetails["tagSuggestionsAvailability"]);
+                setEditorSuggestionsAvailability(processingDetails["editorSuggestionsAvailability"]);
+                setThumbnailsAvailability(processingDetails["thumbnailsAvailability"]);
             }
 
             // Part: Suggestions

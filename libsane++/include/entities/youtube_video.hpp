@@ -469,6 +469,12 @@ namespace sane {
 
         void setProcessingIssuesAvailability(nlohmann::json &t_processingIssuesAvailability);
 
+        const std::string &getFileDetailsAvailability() const;
+
+        void setFileDetailsAvailability(const std::string &t_fileDetailsAvailability);
+
+        void setFileDetailsAvailability(nlohmann::json &t_fileDetailsAvailability);
+
         const std::string &getTagSuggestionsAvailability() const;
 
         void setTagSuggestionsAvailability(const std::string &t_tagSuggestionsAvailability);
@@ -736,6 +742,10 @@ namespace sane {
         std::string m_processingStatus;
 
         processingProgress_t m_processingProgress;
+
+        //  whether file details are available for the uploaded video. You can retrieve a video's
+        //  file details by requesting the fileDetails part in your videos.list() request.
+        std::string m_fileDetailsAvailability;
 
         // The reason that YouTube failed to process the video.
         // This property will only have a value if the processingStatus property's value is failed.

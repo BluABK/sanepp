@@ -550,9 +550,9 @@ namespace sane {
 
         void setLiveStreamingDetails(nlohmann::json &t_liveStreamingDetails);
 
-        const std::list<localization_t> &getLocalizations() const;
+        const std::map<std::string, localization_t> &getLocalizations() const;
 
-        void setLocalizations(const std::list<localization_t> &t_localizations);
+        void setLocalizations(const std::map<std::string, localization_t> &t_localizations);
 
         void setLocalizations(nlohmann::json &t_localizations);
 
@@ -841,7 +841,7 @@ namespace sane {
          */
         // The language of the localized text associated with the key value.
         // The value is a string that contains a BCP-47 language code.
-        std::list<localization_t> m_localizations;
+        std::map<std::string, localization_t> m_localizations;
 
     };
 } // namespace sane

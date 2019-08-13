@@ -1298,8 +1298,7 @@ namespace sane {
 
                 reportProblems(problems);
 
-                if (!parsedValue.empty())
-                {
+                if (!parsedValue.empty()) {
                     processingErrors.push_back(parsedValue);
                 }
             }
@@ -1326,8 +1325,7 @@ namespace sane {
 
                 reportProblems(problems);
 
-                if (!parsedValue.empty())
-                {
+                if (!parsedValue.empty()) {
                     processingWarnings.push_back(parsedValue);
                 }
             }
@@ -1354,8 +1352,7 @@ namespace sane {
 
                 reportProblems(problems);
 
-                if (!parsedValue.empty())
-                {
+                if (!parsedValue.empty()) {
                     processingHints.push_back(parsedValue);
                 }
             }
@@ -1396,8 +1393,7 @@ namespace sane {
                                     "setTagSuggestions [categoryRestricts]", catProblems);
                             reportProblems(catProblems);
 
-                            if (!parsedCat.empty())
-                            {
+                            if (!parsedCat.empty()) {
                                 categoryRestricts.push_back(parsedCat);
                             }
                         }
@@ -1436,8 +1432,7 @@ namespace sane {
 
                 reportProblems(problems);
 
-                if (!parsedValue.empty())
-                {
+                if (!parsedValue.empty()) {
                     editorSuggestions.push_back(parsedValue);
                 }
             }
@@ -1507,12 +1502,57 @@ namespace sane {
         setLiveStreamingDetails(liveStreamingDetails);
     }
 
-    const std::list<localization_t> &YoutubeVideo::getLocalizations() const {
+    const std::map<std::string, localization_t> &YoutubeVideo::getLocalizations() const {
         return m_localizations;
     }
 
-    void YoutubeVideo::setLocalizations(const std::list<localization_t> &t_localizations) {
+    void YoutubeVideo::setLocalizations(const std::map<std::string, localization_t> &t_localizations) {
         m_localizations = t_localizations;
+    }
+
+    void YoutubeVideo::setLocalizations(nlohmann::json &t_localizations) {
+        std::map<std::string, localization_t> localizations;
+
+        // For each dict object
+        for (auto& localizationObject : t_localizations.items()) {
+            // Assign the key, value to a new JSON object to avoid code inspection funkiness.
+            nlohmann::json keyJson = localizationObject.key();
+            nlohmann::json valueJson = localizationObject.value();
+
+            if (keyJson.is_string()) {
+                std::map<std::string, std::string> keyProblems;
+
+                std::string key = getJsonStringValue(keyJson, "setLocalizations [key]", keyProblems);
+
+                reportProblems(keyProblems);
+
+                // Create the localization_t object.
+                localization_t localization = localization_t();
+
+                if (valueJson["title"].is_string()) {
+                    std::map<std::string, std::string> titleProblems;
+
+                    localization.title = getJsonStringValue(valueJson["title"],
+                            "setLocalizations [title]", titleProblems);
+
+                    reportProblems(titleProblems);
+                }
+
+                if (valueJson["description"].is_string()) {
+                    std::map<std::string, std::string> descriptionProblems;
+
+                    localization.description = getJsonStringValue(valueJson["description"],
+                            "setLocalizations [description]", descriptionProblems);
+
+                    reportProblems(descriptionProblems);
+                }
+
+                // Add the BCP-47 language code key and its values to the localizations map.
+                localizations[key] = localization;
+            }
+        }
+
+        setLocalizations(localizations);
     }
 
     // END: Getters & Setters.
@@ -1587,7 +1627,6 @@ namespace sane {
         }
         if (!getLocalizedDescription().empty() or t_printFullInfo) {
             printIndentedString(t_indentationSpacing, getLocalizedDescription(), "Localized Description: ");
-//            std::cout << indentation << "Localized Description: " << getLocalizedDescription() << std::endl;
         }
         if (!getDefaultAudioLanguage().empty() or t_printFullInfo) {
             std::cout << indentation << "Default Audio Language: " << getDefaultAudioLanguage() << std::endl;
@@ -1790,38 +1829,39 @@ namespace sane {
         }
         if (!getLiveStreamingDetails().empty() or t_printFullInfo) {
             liveStreamingDetails_t lsd = getLiveStreamingDetails();
-            
+
             std::cout << indentation << "Live Streaming Details: " << std::endl;
-            
+
             if (!lsd.activeLiveChatId.empty() or t_printFullInfo) {
                 std::cout << indentation2x << "Active LiveChat ID:   " << lsd.activeLiveChatId << std::endl;
             }
-            
+
             // There's no true way to check if this one has actually been set or is simply just 0.
             std::cout << indentation2x << "Concurrent Viewers:   " << lsd.concurrentViewers << std::endl;
-            
+
             if (!lsd.scheduledStartTime.empty() or t_printFullInfo) {
                 std::cout << indentation2x << "Scheduled Start Time: " << lsd.scheduledStartTime << std::endl;
             }
-            
+
             if (!lsd.actualStartTime.empty() or t_printFullInfo) {
                 std::cout << indentation2x << "Actual Start Time:    " << lsd.actualStartTime << std::endl;
             }
-            
+
             if (!lsd.scheduledEndTime.empty() or t_printFullInfo) {
                 std::cout << indentation2x << "Scheduled End Time:   " << lsd.scheduledEndTime << std::endl;
             }
-            
+
             if (!lsd.actualEndTime.empty() or t_printFullInfo) {
                 std::cout << indentation2x << "Actual End Time:      " << lsd.actualEndTime << std::endl;
             }
         }
         if (!getLocalizations().empty() or t_printFullInfo) {
             std::cout << indentation << "Localizations: " << std::endl;
-
-            for (auto const& localization : getLocalizations()) {
-                std::cout << indentation2x << "Title:       " << localization.title << std::endl;
-                std::cout << indentation2x << "Description: " << localization.description << std::endl;
+            std::map<std::string, localization_t> localizations = getLocalizations();
+            for (const auto& localization : localizations) {
+                std::cout << indentation2x << localization.first << ":" << std::endl;
+                std::cout << indentation3x << "Title:       " << localization.second.title << std::endl;
+                printIndentedString(t_indentationSpacing * 3, localization.second.description, "Description: ");
             }
         }
         if (t_printFullInfo) {
@@ -2021,6 +2061,8 @@ namespace sane {
             if (t_json.find("localizations") != t_json.end()) {
                 nlohmann::json localizations = t_json["localizations"];
                 hasPartLocalizations = true;
+
+                setLocalizations(localizations);
             }
         } catch (nlohmann::detail::type_error &exc) {
             addError("Skipping YoutubeVideo::addFromJson due to Exception: " + std::string(exc.what()), t_json);

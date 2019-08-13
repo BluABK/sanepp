@@ -49,11 +49,22 @@ namespace sane {
         // NB: Implicitly calls curl_global_init, which is *NOT* thread-safe!
         curl = curl_easy_init();
         if(curl) {
+            CURLcode result;
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
             // Perform a blocking file transfer
-            curl_easy_perform(curl);
+            result = curl_easy_perform(curl);
+
+            if (result == CURLE_OK) {
+                // All fine. Proceed as usual.
+                long responseCode;
+                curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+            } else {
+                std::cerr << "cURL easy perform failed with non-zero code: " << result << "!" << std::endl;
+                return jsonData;
+            }
 
             // Cleanup call REQUIRED by curl_easy_init, which closes the handle.
             //
@@ -64,7 +75,17 @@ namespace sane {
             curl_easy_cleanup(curl);
 
             // Convert readBuffer to JSON
+
+            try {
             jsonData = nlohmann::json::parse(readBuffer);
+            } catch (nlohmann::detail::parse_error &exc) {
+//                std::cout << readBuffer << std::endl;
+                std::cerr << "Skipping APIHandler::getSapiResponse due to Exception: " << std::string(exc.what())
+                << jsonData.dump();
+            } catch (const std::exception &exc) {
+                std::cerr << "Skipping APIHandler::getSapiResponse due to Unexpected Exception: "
+                << std::string(exc.what()) << jsonData.dump();
+            }
         }
         return jsonData;
     }

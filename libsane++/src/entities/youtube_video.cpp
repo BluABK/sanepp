@@ -1446,12 +1446,65 @@ namespace sane {
         setEditorSuggestions(editorSuggestions);
     }
 
-    const std::list<liveStreamingDetails_t> &YoutubeVideo::getLiveStreamingDetails() const {
+    liveStreamingDetails_t YoutubeVideo::getLiveStreamingDetails() {
         return m_liveStreamingDetails;
     }
 
-    void YoutubeVideo::setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &t_liveStreamingDetails) {
+    void YoutubeVideo::setLiveStreamingDetails(const liveStreamingDetails_t &t_liveStreamingDetails) {
         m_liveStreamingDetails = t_liveStreamingDetails;
+    }
+
+    void YoutubeVideo::setLiveStreamingDetails(nlohmann::json &t_liveStreamingDetails) {
+        liveStreamingDetails_t liveStreamingDetails = liveStreamingDetails_t();
+
+        if (t_liveStreamingDetails["actualStartTime"].is_string()) {
+            std::map<std::string, std::string> problems;
+            liveStreamingDetails.actualStartTime = getJsonStringValue(t_liveStreamingDetails["actualStartTime"],
+                    "setLiveStreamingDetails [actualStartTime]", problems);
+            reportProblems(problems);
+        }
+
+        if (t_liveStreamingDetails["actualEndTime"].is_string()) {
+            std::map<std::string, std::string> problems;
+            liveStreamingDetails.actualEndTime = getJsonStringValue(t_liveStreamingDetails["actualEndTime"],
+                                                                      "setLiveStreamingDetails [actualEndTime]",
+                                                                      problems);
+            reportProblems(problems);
+        }
+
+        if (t_liveStreamingDetails["scheduledStartTime"].is_string()) {
+            std::map<std::string, std::string> problems;
+            liveStreamingDetails.scheduledStartTime = getJsonStringValue(t_liveStreamingDetails["scheduledStartTime"],
+                                                                       "setLiveStreamingDetails [scheduledStartTime]",
+                                                                        problems);
+            reportProblems(problems);
+        }
+
+        if (t_liveStreamingDetails["scheduledEndTime"].is_string()) {
+            std::map<std::string, std::string> problems;
+            liveStreamingDetails.scheduledEndTime = getJsonStringValue(t_liveStreamingDetails["scheduledEndTime"],
+                                                                       "setLiveStreamingDetails [scheduledEndTime]",
+                                                                       problems);
+            reportProblems(problems);
+        }
+
+        if (t_liveStreamingDetails["concurrentViewers"].is_string()) {
+            std::map<std::string, std::string> problems;
+            liveStreamingDetails.concurrentViewers = getJsonULongValue(t_liveStreamingDetails["concurrentViewers"],
+                                                                       "setLiveStreamingDetails [concurrentViewers]",
+                                                                       problems);
+            reportProblems(problems);
+        }
+
+        if (t_liveStreamingDetails["activeLiveChatId"].is_string()) {
+            std::map<std::string, std::string> problems;
+            liveStreamingDetails.activeLiveChatId = getJsonStringValue(t_liveStreamingDetails["activeLiveChatId"],
+                                                                       "setLiveStreamingDetails [activeLiveChatId]",
+                                                                       problems);
+            reportProblems(problems);
+        }
+
+        setLiveStreamingDetails(liveStreamingDetails);
     }
 
     const std::list<localization_t> &YoutubeVideo::getLocalizations() const {
@@ -1736,15 +1789,31 @@ namespace sane {
             }
         }
         if (!getLiveStreamingDetails().empty() or t_printFullInfo) {
+            liveStreamingDetails_t lsd = getLiveStreamingDetails();
+            
             std::cout << indentation << "Live Streaming Details: " << std::endl;
-
-            for (auto const& detail : getLiveStreamingDetails()) {
-                std::cout << indentation2x << "Active LiveChat ID:   " << detail.activeLiveChatId << std::endl;
-                std::cout << indentation2x << "Concurrent Viewers:   " << detail.concurrentViewers << std::endl;
-                std::cout << indentation2x << "Scheduled Start Time: " << detail.scheduledStartTime << std::endl;
-                std::cout << indentation2x << "Actual Start Time:    " << detail.actualStartTime << std::endl;
-                std::cout << indentation2x << "Scheduled End Time:   " << detail.scheduledEndTime << std::endl;
-                std::cout << indentation2x << "Actual End Time:      " << detail.actualEndTime << std::endl;
+            
+            if (!lsd.activeLiveChatId.empty() or t_printFullInfo) {
+                std::cout << indentation2x << "Active LiveChat ID:   " << lsd.activeLiveChatId << std::endl;
+            }
+            
+            // There's no true way to check if this one has actually been set or is simply just 0.
+            std::cout << indentation2x << "Concurrent Viewers:   " << lsd.concurrentViewers << std::endl;
+            
+            if (!lsd.scheduledStartTime.empty() or t_printFullInfo) {
+                std::cout << indentation2x << "Scheduled Start Time: " << lsd.scheduledStartTime << std::endl;
+            }
+            
+            if (!lsd.actualStartTime.empty() or t_printFullInfo) {
+                std::cout << indentation2x << "Actual Start Time:    " << lsd.actualStartTime << std::endl;
+            }
+            
+            if (!lsd.scheduledEndTime.empty() or t_printFullInfo) {
+                std::cout << indentation2x << "Scheduled End Time:   " << lsd.scheduledEndTime << std::endl;
+            }
+            
+            if (!lsd.actualEndTime.empty() or t_printFullInfo) {
+                std::cout << indentation2x << "Actual End Time:      " << lsd.actualEndTime << std::endl;
             }
         }
         if (!getLocalizations().empty() or t_printFullInfo) {
@@ -1944,6 +2013,8 @@ namespace sane {
             if (t_json.find("liveStreamingDetails") != t_json.end()) {
                 nlohmann::json liveStreamingDetails = t_json["liveStreamingDetails"];
                 hasPartLiveStreamingDetails = true;
+
+                setLiveStreamingDetails(liveStreamingDetails);
             }
 
             // Part: Localizations.

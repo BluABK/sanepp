@@ -80,6 +80,27 @@ namespace sane {
         // The ID of the currently active live chat attached to this video.
         // This field is filled only if the video is a currently live broadcast that has live chat.
         std::string activeLiveChatId;
+
+        /**
+         * Returns false if any member is not empty.
+         *
+         * NB: Deosn't check concurrentViewers due to no way
+         * to check if it has truly been set or is simply 0.
+         *
+         * @return
+         */
+
+        bool empty() {
+            if (!actualStartTime.empty()) {
+                return false;
+            } else if (!actualEndTime.empty()) {
+                return false;
+            } else if (!scheduledStartTime.empty()) {
+                return false;
+            } else if (!scheduledEndTime.empty()) {
+                return false;
+            } else return activeLiveChatId.empty();
+        }
     };
 
     struct tagSuggestion_t {
@@ -523,9 +544,9 @@ namespace sane {
 
         void setEditorSuggestions(nlohmann::json &t_editorSuggestions);
 
-        const std::list<liveStreamingDetails_t> &getLiveStreamingDetails() const;
+        liveStreamingDetails_t getLiveStreamingDetails();
 
-        void setLiveStreamingDetails(const std::list<liveStreamingDetails_t> &t_liveStreamingDetails);
+        void setLiveStreamingDetails(const liveStreamingDetails_t &t_liveStreamingDetails);
 
         void setLiveStreamingDetails(nlohmann::json &t_liveStreamingDetails);
 
@@ -811,7 +832,7 @@ namespace sane {
          * Contains metadata about a live video broadcast. Will only be present in a video resource if the
          * video is an upcoming, live, or completed live broadcast.
          */
-        std::list<liveStreamingDetails_t> m_liveStreamingDetails;
+        liveStreamingDetails_t m_liveStreamingDetails;
 
         /**
          * LOCALIZATIONS

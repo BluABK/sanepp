@@ -276,8 +276,12 @@ namespace sane {
             return;
         }
 
-        for (nlohmann::json tag : t_tags.items()) {
-            tags.push_back(tag.get<std::string>());
+        for (const nlohmann::json &tag : t_tags) {
+            if (tag.is_string()) {
+                tags.push_back(tag.get<std::string>());
+            } else {
+                addError("setTags: non-string (" + std::string(tag.type_name()) + "): " + tag.dump());
+            }
         }
 
         setTags(tags);
@@ -1261,8 +1265,17 @@ namespace sane {
         }
         if (!getTags().empty() or t_printFullInfo) {
             std::cout << indentation << "Tags: " << std::endl;
+            size_t counter = 0;
             for (auto const& tag : getTags()) {
                 std::cout << indentation2x << tag;
+
+                if (counter < getTags().size()-1) {
+                    std::cout << ",";
+                }
+
+                std::cout << std::endl;
+
+                counter++;
             }
         }
         if (!getCategoryId().empty() or t_printFullInfo) {

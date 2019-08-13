@@ -197,5 +197,37 @@ namespace sane {
 
         // If you got here an error has occurred, returning 0 since something *has* to be returned.
         return 0;
+    }
+
+    void printIndentedString(int t_spacing, const std::string &t_string, std::string t_title) {
+        std::string indentation(t_spacing, ' ');
+        std::string indentedDescription;
+        std::string stringIndentation(t_spacing * 2, ' ');
+        std::istringstream iss(t_string);
+        int lineCount = 0;
+
+        // Check how many lines the string contains.
+        for (std::string line; std::getline(iss, line); )
+        {
+            lineCount++;
+            if (lineCount > 1) {
+                // Return immediately to avoid wasting time looping through the string.
+                break;
+            }
         }
+
+        // If there's more than one line; indent.
+        if (lineCount > 1) {
+            // Iterate over newlines to preserve indentation.
+            for (std::string line; std::getline(iss, line); )
+            {
+                indentedDescription += stringIndentation + line + "\n";
+            }
+
+            std::cout << indentation << t_title <<"\n" << indentedDescription << std::endl;
+        } else {
+            // If there's only one line, print it on the same line.
+            std::cout << indentation << t_title << t_string << std::endl;
+        }
+    }
 } // namespace sane

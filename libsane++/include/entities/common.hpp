@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <sstream>
 
 #include <nlohmann/json.hpp>
 
@@ -39,5 +40,7 @@ namespace sane {
 
     unsigned long getJsonULongValue(nlohmann::json &t_ulong, const std::string &t_funcName,
             std::map<std::string, std::string> &t_problems);
+
+    void printIndentedString(int t_spacing, const std::string &t_string, std::string t_title = {});
 } // namespace sane
 #endif //SANE_COMMON_HPP

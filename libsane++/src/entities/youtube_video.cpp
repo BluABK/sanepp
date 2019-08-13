@@ -1243,7 +1243,7 @@ namespace sane {
             std::cout << indentation << "Channel Title: " << getChannelTitle() << std::endl;
         }
         if (!getDescription().empty() or t_printFullInfo) {
-            std::cout << indentation << "Description: " << getDescription() << std::endl;
+            printIndentedString(t_indentationSpacing, getDescription(), "Description: ");
         }
         if (!getThumbnails().empty() or t_printFullInfo) {
             std::cout << indentation << "Thumbnails: " << std::endl;
@@ -1291,7 +1291,8 @@ namespace sane {
             std::cout << indentation << "Localized Title: " << getLocalizedTitle() << std::endl;
         }
         if (!getLocalizedDescription().empty() or t_printFullInfo) {
-            std::cout << indentation << "Localized Description: " << getLocalizedDescription() << std::endl;
+            printIndentedString(t_indentationSpacing, getLocalizedDescription(), "Localized Description: ");
+//            std::cout << indentation << "Localized Description: " << getLocalizedDescription() << std::endl;
         }
         if (!getDefaultAudioLanguage().empty() or t_printFullInfo) {
             std::cout << indentation << "Default Audio Language: " << getDefaultAudioLanguage() << std::endl;

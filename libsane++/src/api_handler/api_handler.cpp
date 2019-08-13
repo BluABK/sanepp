@@ -43,6 +43,7 @@ namespace sane {
     nlohmann::json APIHandler::getSapiResponse(const std::string& url) {
         CURL *curl;
         std::string readBuffer;
+        long responseCode;
         nlohmann::json jsonData = nlohmann::json::object();
 
         // Start a libcURL easy session and assign the returned handle.
@@ -59,8 +60,11 @@ namespace sane {
 
             if (result == CURLE_OK) {
                 // All fine. Proceed as usual.
-                long responseCode;
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+                if (responseCode != 200) {
+                    std::cerr << "SAPI request failed with error " << responseCode << ": " << readBuffer << "\n"
+                              << std::endl;
+                }
             } else {
                 std::cerr << "cURL easy perform failed with non-zero code: " << result << "!" << std::endl;
                 return jsonData;
@@ -75,16 +79,16 @@ namespace sane {
             curl_easy_cleanup(curl);
 
             // Convert readBuffer to JSON
-
-            try {
-            jsonData = nlohmann::json::parse(readBuffer);
-            } catch (nlohmann::detail::parse_error &exc) {
-//                std::cout << readBuffer << std::endl;
-                std::cerr << "Skipping APIHandler::getSapiResponse due to Exception: " << std::string(exc.what())
-                << jsonData.dump();
-            } catch (const std::exception &exc) {
-                std::cerr << "Skipping APIHandler::getSapiResponse due to Unexpected Exception: "
-                << std::string(exc.what()) << jsonData.dump();
+            if (responseCode == 200) {
+                try {
+                    jsonData = nlohmann::json::parse(readBuffer);
+                } catch (nlohmann::detail::parse_error &exc) {
+                    std::cerr << "Skipping APIHandler::getSapiResponse due to Exception: " << std::string(exc.what())
+                              << jsonData.dump() << std::endl;
+                } catch (const std::exception &exc) {
+                    std::cerr << "Skipping APIHandler::getSapiResponse due to Unexpected Exception: "
+                              << std::string(exc.what()) << jsonData.dump() << "\n" << std::endl;
+                }
             }
         }
         return jsonData;

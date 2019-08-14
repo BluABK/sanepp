@@ -63,8 +63,9 @@ add_executable(sane++_cli cli/src/main.cpp
         libsane++/src/entities/youtube_video.cpp
         libsane++/include/entities/youtube_video.hpp
         libsane++/include/entities/common.hpp
-#        libsane++/include/types.hpp
-        libsane++/src/entities/common.cpp)
+        libsane++/include/types.hpp
+        libsane++/src/entities/common.cpp
+        libsane++/src/types.cpp)
 
 # API Handler
 target_link_libraries (sane++_cli -lcurl)
@@ -92,8 +93,9 @@ add_executable(sane++_gui gui/src/main.cpp
         libsane++/src/entities/youtube_video.cpp
         libsane++/include/entities/youtube_video.hpp
         libsane++/include/entities/common.hpp
-#        libsane++/include/types.hpp
-        libsane++/src/entities/common.cpp)
+        libsane++/include/types.hpp
+        libsane++/src/entities/common.cpp
+        libsane++/src/types.cpp)
 
 # API Handler
 target_link_libraries (sane++_gui -lcurl)
@@ -154,8 +156,9 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
             libsane++/src/entities/youtube_video.cpp
             libsane++/include/entities/youtube_video.hpp
             libsane++/include/entities/common.hpp
-#            libsane++/include/types.hpp
-            libsane++/src/entities/common.cpp)
+            libsane++/include/types.hpp
+            libsane++/src/entities/common.cpp
+            libsane++/src/types.cpp)
 
     # API Handler
     target_link_libraries(travis_test_all -lcurl)
@@ -203,8 +206,9 @@ else()
             libsane++/src/entities/youtube_video.cpp
             libsane++/include/entities/youtube_video.hpp
             libsane++/include/entities/common.hpp
-#            libsane++/include/types.hpp
-            libsane++/src/entities/common.cpp)
+            libsane++/include/types.hpp
+            libsane++/src/entities/common.cpp
+            libsane++/src/types.cpp)
 
     # API Handler
     target_link_libraries(test_all -lcurl)

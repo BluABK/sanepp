@@ -182,7 +182,7 @@ namespace sane {
 
         void setId(nlohmann::json t_id);
 
-        const std::string &getPublishedAt() const;
+        datetime_t getPublishedAt();
 
         void setPublishedAt(const std::string &t_publishedAt);
 
@@ -597,7 +597,7 @@ namespace sane {
          * Contains basic details about the video, such as its title, description, and category.
          */
         // The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format.
-        std::string m_publishedAt;    // TODO: Make it proper datetime type?
+        datetime_t m_publishedAt;    // TODO: Make it proper datetime type?
 
         std::string m_channelId;
 

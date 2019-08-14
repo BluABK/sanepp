@@ -97,12 +97,16 @@ namespace sane {
         }
     }
 
-    const std::string &YoutubeVideo::getPublishedAt() const {
+    datetime_t YoutubeVideo::getPublishedAt() {
         return m_publishedAt;
     }
 
     void YoutubeVideo::setPublishedAt(const std::string &t_publishedAt) {
-        m_publishedAt = t_publishedAt;
+        datetime_t datetime = datetime_t();
+
+        datetime.fromISO8601(t_publishedAt);
+
+        m_publishedAt = datetime;
     }
 
     void YoutubeVideo::setPublishedAt(nlohmann::json &t_publishedAt) {
@@ -1569,7 +1573,7 @@ namespace sane {
             std::cout << indentation << "ID: " << getId() << std::endl;
         }
         if (!getPublishedAt().empty() or t_printFullInfo) {
-            std::cout << indentation << "PublishedAt: " << getPublishedAt() << std::endl;
+            std::cout << indentation << "PublishedAt: " << getPublishedAt().isoDateAndTime << std::endl;
         }
         if (!getChannelId().empty() or t_printFullInfo) {
             std::cout << indentation << "Channel ID: " << getChannelId() << std::endl;

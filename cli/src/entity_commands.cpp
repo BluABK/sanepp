@@ -25,7 +25,7 @@ namespace sane {
                 channel->printWarnings(4);
             }
             if (!errors.empty()) {
-                std::cout << "Errors:\n" << std::endl;
+                std::cerr << "Errors:\n" << std::endl;
                 channel->printErrors(4);
             }
             counter++;

@@ -10,6 +10,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <types.hpp>
+
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 

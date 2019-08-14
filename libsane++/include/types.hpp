@@ -27,21 +27,24 @@ namespace sane {
         unsigned int timestamp;
 
         // As individual Segments (Using std::tm struct as template)
-        int year;           // Years since 1900
-        int month;          // Months since January     [0,  11]
-        int day;            // Day of the month         [1,  31]
-        int weekDay;        // Days since Sunday        [0,   6]
-        int yearDay;        // Days since January 1st   [0, 365]
+        int year;               // Years since 1900
+        int month;              // Months since January     [0,  11]
+        int day;                // Day of the month         [1,  31]
+        int weekDay;            // Days since Sunday        [0,   6]
+        int yearDay;            // Days since January 1st   [0, 365]
 
-        int hour;           // Hours since midnight     [0,  23]
-        int minute;         // Minutes after the hour   [0,  59]
-        int second;         // Seconds after the minute [0,  60]
-        int millisecond;    // Milliseconds [000-999]
+        int hour;               // Hours since midnight     [0,  23]
+        int minute;             // Minutes after the hour   [0,  59]
+        int second;             // Seconds after the minute [0,  60]
+        int millisecond;        // Milliseconds [000-999]
 
+        // Timezones! D:
         // Pesky, pesky DST ~
-        int isDST;          // Daylight Saving Time flag.
-                            // The value is positive if DST is in effect,
-                            // zero if not and negative if no information is available.
+        int isDST;              // Daylight Saving Time flag.
+                                // The value is positive if DST is in effect,
+                                // zero if not and negative if no information is available.
+        long int gmtOffset;	    // Seconds east of UTC.
+        std::string timezone;   // Timezone abbreviation.
 
         // Format strings
         const char* ISO8601_FORMAT = "%Y-%m-%dT%H:%M:%S."; // millisecond not in tm struct spec
@@ -89,6 +92,8 @@ namespace sane {
                           << std::string(exc.what()) << "!" << std::endl;
             }
             isDST = timeInfo.tm_isdst;
+            gmtOffset = timeInfo.tm_gmtoff;
+            timezone  = timeInfo.tm_zone;
 
             isEmpty = false;
         }

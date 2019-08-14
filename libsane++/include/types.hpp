@@ -10,10 +10,11 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+
+#include <lexical_analysis.hpp>
+
 namespace sane {
     extern "C" char* strptime(const char* s, const char* f, struct tm* tm);
-
-    std::vector<std::string> tokenize2(const std::string &t_input, char t_delim);
 
     struct datetime_t {
         bool isEmpty = true;
@@ -56,7 +57,7 @@ namespace sane {
 
             // Only check for milliseconds if there's a '.' in the ISO 8601 string.
             if (t_iso8601.find('.') != std::string::npos) {
-                iso8601WithoutMilliseconds = tokenize2(t_iso8601, '.').at(0);
+                iso8601WithoutMilliseconds = tokenize(t_iso8601, '.').at(0);
             } else {
                 iso8601WithoutMilliseconds = t_iso8601;
             }
@@ -84,8 +85,8 @@ namespace sane {
             try {
                 // Only check for milliseconds if there's a '.' in the ISO 8601 string.
                 if (t_iso8601.find('.') != std::string::npos) {
-                    std::vector<std::string> tokensWithUTCDesignator = tokenize2(t_iso8601, '.');
-                    std::string hopefullyNumericString = tokenize2(tokensWithUTCDesignator.at(1), 'Z').at(0);
+                    std::vector<std::string> tokensWithUTCDesignator = tokenize(t_iso8601, '.');
+                    std::string hopefullyNumericString = tokenize(tokensWithUTCDesignator.at(1), 'Z').at(0);
                     // Only continue if the string isn't empty.
                     if (!hopefullyNumericString.empty()) {
                         millisecond = std::stoi(hopefullyNumericString);

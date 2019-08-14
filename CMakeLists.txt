@@ -65,7 +65,7 @@ add_executable(sane++_cli cli/src/main.cpp
         libsane++/include/entities/common.hpp
         libsane++/include/types.hpp
         libsane++/src/entities/common.cpp
-        libsane++/src/types.cpp)
+        libsane++/src/types.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp)
 
 # API Handler
 target_link_libraries (sane++_cli -lcurl)
@@ -95,7 +95,7 @@ add_executable(sane++_gui gui/src/main.cpp
         libsane++/include/entities/common.hpp
         libsane++/include/types.hpp
         libsane++/src/entities/common.cpp
-        libsane++/src/types.cpp)
+        libsane++/src/types.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp)
 
 # API Handler
 target_link_libraries (sane++_gui -lcurl)
@@ -158,7 +158,7 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
             libsane++/include/entities/common.hpp
             libsane++/include/types.hpp
             libsane++/src/entities/common.cpp
-            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp)
+            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp)
 
     # API Handler
     target_link_libraries(travis_test_all -lcurl)
@@ -208,7 +208,7 @@ else()
             libsane++/include/entities/common.hpp
             libsane++/include/types.hpp
             libsane++/src/entities/common.cpp
-            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp)
+            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp)
 
     # API Handler
     target_link_libraries(test_all -lcurl)

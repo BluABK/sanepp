@@ -6,6 +6,8 @@
 #include <string>
 #include <iostream>
 
+#include <lexical_analysis.hpp>
+#include <types.hpp>
 #include <entities/common.hpp>
 #include <entities/youtube_channel.hpp>
 #include <entities/youtube_video.hpp>
@@ -35,8 +37,6 @@ namespace sane {
     class CLI {
     public:
         explicit CLI();
-
-        static std::vector<std::string> tokenize(const std::string &t_input, char t_delim = ' ');
 
         static std::map<std::string, std::string> stringToMap(const std::string &t_string);
 

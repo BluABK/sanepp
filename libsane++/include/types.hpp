@@ -51,10 +51,15 @@ namespace sane {
         const char* ISO8601_FORMAT = "%Y-%m-%dT%H:%M:%S."; // millisecond not in tm struct spec
 
         void fromISO8601(const std::string &t_iso8601) {
+            std::string iso8601WithoutMilliseconds;
             iso8601 = t_iso8601;
 
-            // Strip out milliseconds to make string tm struct compatible.
-            const std::string iso8601Substr = t_iso8601.substr(0, t_iso8601.size() -5);
+            // Only check for milliseconds if there's a '.' in the ISO 8601 string.
+            if (t_iso8601.find('.') != std::string::npos) {
+                iso8601WithoutMilliseconds = tokenize2(t_iso8601, '.').at(0);
+            } else {
+                iso8601WithoutMilliseconds = t_iso8601;
+            }
 
             // Create an std::tm struct and strptime the ISO8601 string.
             tm timeInfo = tm();
@@ -64,7 +69,7 @@ namespace sane {
             timestamp = static_cast<long int>(timegm(&timeInfo));
 
             // Set humanized date & time.
-            isoDateAndTime = iso8601Substr;
+            isoDateAndTime = iso8601WithoutMilliseconds;
             std::replace(isoDateAndTime.begin(), isoDateAndTime.end(), 'T', ' ');
 
             // Assign individual values

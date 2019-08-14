@@ -24,7 +24,7 @@ namespace sane {
         std::string isoDateAndTime;
 
         // UNIX Timestamp
-        unsigned int timestamp;
+        long int timestamp;
 
         // As individual Segments (Using std::tm struct as template)
         int year;               // Years since 1900
@@ -59,8 +59,8 @@ namespace sane {
             tm timeInfo = tm();
             strptime(t_iso8601.c_str(), ISO8601_FORMAT, &timeInfo);
 
-            // Calculate UNIX timestamp
-            timestamp = timegm(&timeInfo);
+            // Calculate UNIX timestamp (returned value is time_t, which needs to be recast).
+            timestamp = static_cast<long int>(timegm(&timeInfo));
 
             // Set humanized date & time.
             isoDateAndTime = iso8601Substr;

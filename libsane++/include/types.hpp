@@ -9,10 +9,11 @@
 #include <sstream>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 namespace sane {
     extern "C" char* strptime(const char* s, const char* f, struct tm* tm);
 
-//    char *strptime(const char * __restrict, const char * __restrict, struct tm * __restrict);
+    std::vector<std::string> tokenize2(const std::string &t_input, char t_delim);
 
     struct datetime_t {
         bool isEmpty = true;
@@ -76,8 +77,15 @@ namespace sane {
             minute  = timeInfo.tm_min;
             second  = timeInfo.tm_sec;
             try {
-                std::string stringToConvert = t_iso8601.substr(t_iso8601.size() -4, 3);
-                millisecond = std::stoi(stringToConvert);
+                // Only check for milliseconds if there's a '.' in the ISO 8601 string.
+                if (t_iso8601.find('.') != std::string::npos) {
+                    std::vector<std::string> tokensWithUTCDesignator = tokenize2(t_iso8601, '.');
+                    std::string hopefullyNumericString = tokenize2(tokensWithUTCDesignator.at(1), 'Z').at(0);
+                    // Only continue if the string isn't empty.
+                    if (!hopefullyNumericString.empty()) {
+                        millisecond = std::stoi(hopefullyNumericString);
+                    }
+                }
             } catch(std::invalid_argument& e){
                 // if no conversion could be performed
                 std::cerr << "datetime_t.fromISO8601(" << t_iso8601 << "): " << "Invalid argument exception!"
@@ -91,6 +99,7 @@ namespace sane {
                 std::cerr << "datetime_t.fromISO8601(" << t_iso8601 << "): " << "Unexpected exception: "
                           << std::string(exc.what()) << "!" << std::endl;
             }
+
             isDST = timeInfo.tm_isdst;
             gmtOffset = timeInfo.tm_gmtoff;
             timezone  = timeInfo.tm_zone;

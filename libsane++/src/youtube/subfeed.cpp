@@ -64,7 +64,7 @@ namespace sane {
             filter["playlistId"] = playlist;
 
             // Make the SAPI request and retrieve JSON.
-            jsonData = api->sapiGetPlaylistItemsList(t_part, t_filter, t_optParams);
+            jsonData = api->sapiGetPlaylistItemsList(part, filter, optParams);
 
             // Make sure the response was valid.
             if (!jsonData.empty()) {
@@ -77,6 +77,7 @@ namespace sane {
                     videos.push_back(video);
                 }
             }
+            counter++;
         }
 
         return videos;

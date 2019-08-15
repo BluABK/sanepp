@@ -11,18 +11,6 @@
 #include <youtube/subfeed.hpp>
 
 namespace sane {
-    // Get list of uploaded videos for a channel
-    std::shared_ptr<YoutubeVideo> getPlaylistItemsList(const std::string &t_part,
-                                                       const std::map<std::string,std::string> &t_filter,
-                                                       const std::map<std::string,std::string> &t_optParams) {
-        nlohmann::json jsonData;
-
-        // Instantiate API Handler
-        std::shared_ptr<sane::APIHandler> api = std::make_shared<sane::APIHandler>();
-
-        jsonData = api->sapiGetPlaylistItemsList(t_part, t_filter, t_optParams);
-    }
-
     std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
                                                                 const std::string &t_part,
                                                                 const std::map<std::string, std::string> &t_filter,

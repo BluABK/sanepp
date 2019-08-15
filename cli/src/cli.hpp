@@ -209,6 +209,9 @@ namespace sane {
         const std::string PRINT_FULL_VIDEOS = "print-videos-full";
         // -- JSON
         const std::string PRINT_VIDEOS_JSON = "print-videos-json";
+        // Subscriptions Feed
+        // -- Print
+        const std::string PRINT_SUBSCRIPTIONS_FEED = "print-subsfeed";
 
 
         // Map of commands (to be populated)

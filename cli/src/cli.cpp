@@ -149,6 +149,8 @@ namespace sane {
         addCommand(PRINT_FULL_VIDEOS, "Prints a list of videos and all their info.", "PART... FILTER [PARAM...]",
                 ENTITY_CATEGORY);
         addCommand(PRINT_PLAYLIST_ITEMS, "Prints a table of playlist videos.", "PLAYLIST_ID [PARAM...]", UNCATEGORISED);
+        addCommand(PRINT_SUBSCRIPTIONS_FEED, "Prints a table of your subscriptions feed.", "LIMIT PART [PARAM...]",
+                UNCATEGORISED);
 
         // Instantiate the API Handler.
         api = std::make_shared<sane::APIHandler>();
@@ -288,6 +290,17 @@ namespace sane {
             } else if (args.size() == 2) {
                 // Has playlist ID and optional params.
                 printPlaylistVideos( args.at(0), stringToMap(args.at(1)) );
+            } else {
+                std::cerr << "Error in PRINT_PLAYLIST_ITEMS: invalid argument count: " << args.size() << std::endl;
+            }
+        } else if (command == PRINT_SUBSCRIPTIONS_FEED) {
+            if (args.size() == 3) {
+                int limit = std::stoi(args.at(0));
+                const std::string part = args.at(1);
+                const std::map<std::string, std::string> filter = std::map<std::string, std::string>();
+                const std::map<std::string, std::string> optParams = stringToMap(args.at(2));
+
+                printSubscriptionsFeed(limit, part, filter, optParams);
             } else {
                 std::cerr << "Error in PRINT_PLAYLIST_ITEMS: invalid argument count: " << args.size() << std::endl;
             }

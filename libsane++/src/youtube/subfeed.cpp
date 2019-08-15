@@ -83,23 +83,27 @@ namespace sane {
     }
 
     // Create subfeed from a list of channel uploaded videos playlists.
-    void createSubscriptionsFeed(const std::list<std::string> &t_playlists) {
+    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::list<std::string> &t_playlists) {
         // YouTube API essentials
         const std::string part = "snippet,contentDetails";
         // Any filter besides "id="
-        const std::map<std::string,std::string> filter;
-        const std::map<std::string,std::string> optParams;
+        std::map<std::string,std::string> filter;
+        std::map<std::string,std::string> optParams;
 
         // Video uploads
         std::list<std::shared_ptr<YoutubeVideo>> videos;
+
+        // Set maxResults // FIXME: bake into parameter
+        optParams["maxResults"] = "50";
 
         // Get list of uploaded videos for every given channel/playlist.
         videos = listUploadedVideos(t_playlists, part, filter, optParams);
 
         // Sort by publishedAt date.
         std::cout << "Sorting subfeed videos by publishedAt datetime..." << std::endl;
-//        videos.sort( [](const YoutubeVideo &video1, const YoutubeVideo &video2) );
         videos.sort(YoutubeVideoPublishedAtComparator());
+
+        return videos;
     }
 
 }

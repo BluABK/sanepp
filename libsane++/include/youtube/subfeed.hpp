@@ -2,6 +2,8 @@
 #define SANE_SUBFEED_HPP
 
 #include <api_handler/api_handler.hpp>
+#include <entities/youtube_video.hpp>
+#include <entities/youtube_channel.hpp>
 #include <types.hpp>
 
 namespace sane {
@@ -20,7 +22,7 @@ namespace sane {
                                                                 const std::map<std::string, std::string> &t_filter,
                                                                 const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-    void createSubscriptionsFeed(const std::list<std::string> &t_playlists);
+    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::list<std::string> &t_playlists);
 }
 #endif //SANE_SUBFEED_HPP
 

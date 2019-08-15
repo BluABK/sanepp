@@ -38,9 +38,24 @@ namespace sane {
         // For playlist in t_playlists
         // TODO: This probably needs threading
         int playlistCounter = 1;
+        // This print can be anything as long as it's shorter than the progress line print below.
+        std::cout << "Retrieving " << t_playlists.size() << " \"uploaded videos\" playlists: X" << std::flush;
         for (const auto& playlist : t_playlists) {
-            std::cout << "Retrieving playlist " << playlistCounter << " / " << t_playlists.size() << "\t" << playlist
-                      << std::endl;
+            // Define the current progress as a whole string line
+            std::string progressPercentString;
+            std::string progressLine = std::to_string(playlistCounter) + "/" + std::to_string(t_playlists.size());
+            float progressPercent = (float)playlistCounter / t_playlists.size() * 100;
+
+            if ((size_t)playlistCounter < t_playlists.size()) {
+                progressPercentString = std::to_string(progressPercent).substr(0, 4);
+            } else {
+                // Handle "100." case, where there's no decimals, only the decimal point.
+                progressPercentString = std::to_string(progressPercent).substr(0, 3);
+            }
+
+            // Return to start of line and overwrite with progressLine (works cos it never shrinks in length)
+            std::cout << "\r" << "Retrieving " << "\"Uploaded Videos\" playlists... "
+                      << progressPercentString << "% " << "(" << progressLine << ")" << std::flush;
 
             // Add passed filters and optional parameters.
             std::map<std::string,std::string> filter = t_filter;
@@ -101,7 +116,7 @@ namespace sane {
                 } // for playlistItemJson in current playlistItemsJson
 
                 // 3. Request proper information for the current video IDs using the API's videos.list().
-                std::cout << "\tRetrieving additional video info... " << std::endl;
+//                std::cout << "\tRetrieving additional video info... " << std::endl;
                 videoListJson = api->sapiGetVideosList(t_part, filter, optParams);
 
                 // Make sure the videoListJson response was valid.
@@ -118,6 +133,7 @@ namespace sane {
             } // if playlistItemsJson not empty
             playlistCounter++;
         } // for playlist in t_playlists
+        std::cout << std::endl;  // Newline after playlist counter is done.
 
         return videos;
     }
@@ -134,7 +150,7 @@ namespace sane {
         videos = listUploadedVideos(t_playlists, t_part, t_filter, t_optParams);
 
         // Sort by publishedAt date.
-        std::cout << "Sorting subs-feed videos by publishedAt datetime..." << std::endl;
+//        std::cout << "Sorting subs-feed videos by publishedAt datetime..." << std::endl;
         videos.sort(sortYoutubeVideoDateDescending());
 
         return videos;

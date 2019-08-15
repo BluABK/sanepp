@@ -1903,7 +1903,39 @@ namespace sane {
     void YoutubeVideo::addFromJson(nlohmann::json t_json) {
         try {
             // General.
-            setId(t_json["id"]);
+
+            // Set the Video ID (not as simple as it seems)
+            if (t_json["kind"] == "youtube#video") {
+                // Normal case: ID is easily available in the root.
+                setId(t_json["id"]);
+            } else if (t_json["kind"] == "youtube#playlistItem") {
+                // The "id" field in playlistItem is the item's ID, not the video's.
+
+                // The actual video ID can be found inside of the parts.
+                if (t_json.find("contentDetails") != t_json.end()) {
+                    setId(t_json["contentDetails"]["videoId"]);
+                } else if (t_json.find("snippet") != t_json.end()) {
+                    // Make sure the resourceId object exists.
+                    if (t_json["snippet"].find("resourceId") != t_json["snippet"].end()) {
+                        // Make sure it's of the expected kind.
+                        if (t_json["snippet"]["resourceId"]["kind"] == "youtube#video") {
+                            setId(t_json["snippet"]["resourceId"]["videoId"]);
+                        } else{
+                            addError("Unable to set video ID: "
+                                     "['snippet']['resourceId']['kind'] == "
+                                     + t_json["snippet"]["resourceId"]["kind"].get<std::string>()
+                                     + ", expected 'youtube#video'!");
+                        }
+                    }
+                } else {
+                    // Kind is playlistItem, but no snippet or contentDetails were provided.
+                    addError("Unable to set video ID: Kind is youtube#playlistItem, "
+                             "but not snippet or contentDetails parts were available!");
+                }
+            } else {
+                // Kind is of unexpected type.
+                addError("Unable to set video ID: Unexpected kind: " + t_json["kind"].get<std::string>());
+            }
 
             // Add properties to various parts (if they exist).
 

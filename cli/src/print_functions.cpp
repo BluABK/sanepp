@@ -1,4 +1,5 @@
 #include <youtube/subfeed.hpp>
+#include <algorithm>
 
 #include "cli.hpp"
 
@@ -70,9 +71,58 @@ namespace sane {
         << " Next page: " << nextPage << std::endl;
     }
 
-    void CLI::printSubscriptionsFeed(const std::list<std::string> &t_playlists) {
+    void CLI::printSubscriptionsFeed(int t_videoLimit) {
+        // Get subscriptions.
+        std::list<std::string> errors;
+        std::cout << "Retrieving subscriptions from DB..." << std::endl;
+        std::list <std::shared_ptr<YoutubeChannel>> channels = getChannelsFromDB(&errors);
+
+        // FIXME: Debug speedup, limit subs count:
+        auto end = std::next(channels.begin(), std::min((size_t)10, channels.size()));
+        std::list <std::shared_ptr<YoutubeChannel>> limitedChannels( channels.begin(), end);
+        channels = limitedChannels;
+
+        // Retrieve uploaded videos playlist IDs.
+        std::cout << "Retrieving \"uploaded videos\" playlists..." << std::endl;
+        std::list<std::string> playlists;
+        size_t longestChannelTitleLength = 0;
+        for (const auto& channel : channels) {
+            // Get the uploads playlist.
+            playlists.push_back(channel->getUploadsPlaylist());
+
+            // Get the longest channel title (used in indent calculation).
+            if (channel->getTitle().length() > longestChannelTitleLength) {
+                longestChannelTitleLength = channel->getTitle().length();
+            }
+        }
+
         // Get list of videos.
-        std::list<std::shared_ptr<YoutubeVideo>> videos = createSubscriptionsFeed(t_playlists);
+        std::cout << "Retrieving videos from \"uploaded videos\" playlists..." << std::endl;
+        std::list<std::shared_ptr<YoutubeVideo>> videos = createSubscriptionsFeed(playlists);
+
+        // Handle any limits (0 == disable limit)
+        if (t_videoLimit > 0) {
+            // Iterate t_videoLimit amount of videos from the original list.
+            auto lastVideoIterator = std::next(videos.begin(), std::min((size_t)t_videoLimit, videos.size()));
+
+            // Make a new list containing the first n elements of the first list
+            std::list <std::shared_ptr<YoutubeVideo>> limited(videos.begin(), lastVideoIterator);
+
+            // Replace the original list with the new limited version.
+            videos = limited;
+        }
+
+        // Table headings.
+        const std::string publishDateHeading    = "Published on";
+        const std::string definitionHeading     = "Definition";
+        const std::string videoUrlHeading       = "URL";
+        const std::string hasCaptionsHeading    = "Captions?";
+        const std::string channelTitleHeading   = "Channel Title";
+        const std::string videoTitleHeading     = "Title";
+
+        // Table contents helpers.
+        const std::string youtubeVideoURLBase   = "https://www.youtube.com/watch?v=";
+
 
         // Indent stuff.
         int indentLength = 4;
@@ -81,31 +131,27 @@ namespace sane {
         std::string tripleIndent = std::string(11, ' ');
 
         // Determine Spacing between channel title and video title.
-        // Get the longest channel title
-        size_t channelTitleLength = 0;
-        for (const auto& video : videos) {
-            if (video->getChannelTitle().length() > channelTitleLength) {
-                channelTitleLength = video->getChannelTitle().length();
-            }
+        std::string longestChannelTitleOffset = std::string(longestChannelTitleLength, ' ');
+        const std::string urlIndent = std::string(youtubeVideoURLBase.length() + 11, ' ');
+        const std::string urlHeadingIndent = std::string(urlIndent.length() - 3, ' ');
+
+        // Set a default indent value.
+        std::string channelHeadingIndent = std::string(longestChannelTitleLength, ' ');
+        if (longestChannelTitleLength < channelTitleHeading.length()) {
+            // If Longest channel title is shorter than heading.
+            longestChannelTitleOffset = std::string(channelTitleHeading.length() - longestChannelTitleLength, ' ');
+            channelHeadingIndent = std::string(indentLength, ' ');
+        } else if (longestChannelTitleLength > channelTitleHeading.length()) {
+            // If Longest channel title is longer than heading.
+//            longestChannelTitleOffset = std::string(channelHeadingIndentLength, ' ');
+            channelHeadingIndent = std::string(longestChannelTitleLength - channelTitleHeading.length(), ' ');
         }
 
-        size_t channelHeadingIndent;
-        size_t channelHeadingLength = std::string("Channel Title").length();
-        std::string channelIndent;
-
-        channelHeadingIndent = channelTitleLength;
-        if (channelTitleLength < channelHeadingLength) {
-            // If Channel title is shorter than heading.
-            channelIndent = std::string(channelHeadingLength - channelTitleLength + indentLength, ' ');
-            channelHeadingIndent = indentLength;
-        } else if (channelTitleLength > channelHeadingLength) {
-            // If Channel title is longer than heading.
-            channelHeadingIndent -= (channelHeadingLength - indentLength);
-            channelIndent = std::string(indentLength, ' ');
-        }
-
-        std::cout << "#" << "\t" << "Published on" << tripleIndent << "Video ID" << doubleIndent << "Privacy" << "   "
-                  << "Channel Title" << std::string(channelHeadingIndent, ' ') << "Title" << std::endl;
+        std::cout << std::endl;
+        std::cout << "#" << "\t" << publishDateHeading << tripleIndent << videoUrlHeading << urlHeadingIndent
+                  << indent << definitionHeading << indent
+                  << hasCaptionsHeading << indent << channelTitleHeading << channelHeadingIndent << indent
+                  << videoTitleHeading << std::endl;
         int position = 0;
         for (const auto& video: videos) {
             const std::string videoId = video->getId();
@@ -115,10 +161,19 @@ namespace sane {
 
             const std::string channelId = video->getChannelId();
             const std::string channelTitle = video->getChannelTitle();
+            const std::string definition = video->isHD() ? "HD" : "SD";
+            const std::string hasCaptions = video->hasCaptions() ? "Yes." : "No.";
+
+            // Per-item offsets.
+            const std::string definitionOffset = std::string(definitionHeading.length() - definition.length(), ' ');
+            const std::string hasCaptionsOffset = std::string(hasCaptionsHeading.length() - hasCaptions.length(), ' ');
+            const std::string channelTitleOffset = std::string(longestChannelTitleLength - channelTitle.length(), ' ');
 
             // Print table item.
-            std::cout << position << "\t" << videoPublishDate << indent << videoId << indent
-                      << videoPrivacyStatus << indent << channelTitle << channelIndent << videoTitle << std::endl;
+            std::cout << position << "\t" << videoPublishDate << indent
+                      << youtubeVideoURLBase << videoId << indent
+                      << definition << definitionOffset << indent << hasCaptions << hasCaptionsOffset << indent
+                      << channelTitle << channelTitleOffset << indent << videoTitle << std::endl;
 
             position++;
         }

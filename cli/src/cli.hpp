@@ -63,7 +63,7 @@ namespace sane {
         void printPlaylistVideos(const std::string &t_playlistId,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
-        void printSubscriptionsFeed(const std::list<std::string> &t_playlists);
+        void printSubscriptionsFeed(int t_videoLimit = 0);
 
         void getSubscriptionsFromApi();
 

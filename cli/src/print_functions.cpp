@@ -77,7 +77,7 @@ namespace sane {
                                      const std::map<std::string, std::string> &t_optParams) {
         // Get subscriptions.
         std::list<std::string> errors;
-        std::cout << "Retrieving subscriptions from DB..." << std::endl;
+//        std::cout << "Retrieving subscriptions from DB..." << std::endl;
         std::list <std::shared_ptr<YoutubeChannel>> channels = getChannelsFromDB(&errors);
 
         // FIXME: Debug speedup, limit subs count:
@@ -86,7 +86,7 @@ namespace sane {
 //        channels = limitedChannels;
 
         // Retrieve uploaded videos playlist IDs.
-        std::cout << "Retrieving \"uploaded videos\" playlists..." << std::endl;
+//        std::cout << "Retrieving \"uploaded videos\" playlists..." << std::endl;
         std::list<std::string> playlists;
         size_t longestChannelTitleLength = 0;
         for (const auto& channel : channels) {
@@ -100,7 +100,7 @@ namespace sane {
         }
 
         // Get list of videos.
-        std::cout << "Retrieving videos from \"uploaded videos\" playlists..." << std::endl;
+//        std::cout << "Retrieving videos from \"uploaded videos\" playlists..." << std::endl;
         std::list<std::shared_ptr<YoutubeVideo>> videos = createSubscriptionsFeed(playlists, t_part,
                                                                                   t_filter, t_optParams);
 
@@ -147,7 +147,6 @@ namespace sane {
             channelHeadingIndent = std::string(indentLength, ' ');
         } else if (longestChannelTitleLength > channelTitleHeading.length()) {
             // If Longest channel title is longer than heading.
-//            longestChannelTitleOffset = std::string(channelHeadingIndentLength, ' ');
             channelHeadingIndent = std::string(longestChannelTitleLength - channelTitleHeading.length(), ' ');
         }
 

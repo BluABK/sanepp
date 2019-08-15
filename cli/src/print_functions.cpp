@@ -71,16 +71,19 @@ namespace sane {
         << " Next page: " << nextPage << std::endl;
     }
 
-    void CLI::printSubscriptionsFeed(int t_videoLimit) {
+    void CLI::printSubscriptionsFeed(int t_videoLimit,
+                                     const std::string &t_part,
+                                     const std::map<std::string, std::string> &t_filter,
+                                     const std::map<std::string, std::string> &t_optParams) {
         // Get subscriptions.
         std::list<std::string> errors;
         std::cout << "Retrieving subscriptions from DB..." << std::endl;
         std::list <std::shared_ptr<YoutubeChannel>> channels = getChannelsFromDB(&errors);
 
         // FIXME: Debug speedup, limit subs count:
-        auto end = std::next(channels.begin(), std::min((size_t)10, channels.size()));
-        std::list <std::shared_ptr<YoutubeChannel>> limitedChannels( channels.begin(), end);
-        channels = limitedChannels;
+//        auto end = std::next(channels.begin(), std::min((size_t)10, channels.size()));
+//        std::list <std::shared_ptr<YoutubeChannel>> limitedChannels( channels.begin(), end);
+//        channels = limitedChannels;
 
         // Retrieve uploaded videos playlist IDs.
         std::cout << "Retrieving \"uploaded videos\" playlists..." << std::endl;
@@ -98,7 +101,8 @@ namespace sane {
 
         // Get list of videos.
         std::cout << "Retrieving videos from \"uploaded videos\" playlists..." << std::endl;
-        std::list<std::shared_ptr<YoutubeVideo>> videos = createSubscriptionsFeed(playlists);
+        std::list<std::shared_ptr<YoutubeVideo>> videos = createSubscriptionsFeed(playlists, t_part,
+                                                                                  t_filter, t_optParams);
 
         // Handle any limits (0 == disable limit)
         if (t_videoLimit > 0) {

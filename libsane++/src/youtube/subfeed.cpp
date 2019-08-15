@@ -26,7 +26,8 @@ namespace sane {
     std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
                                                                 const std::string &t_part,
                                                                 const std::map<std::string, std::string> &t_filter,
-                                                                const std::map<std::string, std::string> &t_optParams) {
+                                                                const std::map<std::string, std::string> &t_optParams,
+                                                                const std::string &t_playlistItemsPart) {
         std::list<std::shared_ptr<YoutubeVideo>> videos;
         nlohmann::json playlistItemsJson;
         nlohmann::json videoListJson;
@@ -40,9 +41,6 @@ namespace sane {
         for (const auto& playlist : t_playlists) {
             std::cout << "Retrieving playlist " << playlistCounter << " / " << t_playlists.size() << "\t" << playlist
                       << std::endl;
-
-            // Create an actual useful part to be used with videos.list().
-            const std::string informativePart = t_part + "," + "snippet";
 
             // Add passed filters and optional parameters.
             std::map<std::string,std::string> filter = t_filter;
@@ -65,8 +63,12 @@ namespace sane {
             filter["playlistId"] = playlist;
 
             // Make the SAPI request and retrieve (a rather limited) JSON.
-            // NB: Note using t_part (likely only contentDetails), not part.
-            playlistItemsJson = api->sapiGetPlaylistItemsList(t_part, filter, optParams);
+            //
+            // NB: Note using t_playlistItemsPart (likely only contentDetails), not t_part.
+            //
+            // Due to the limited amount of info in youtube#playlistItems we only request the part that holds videoId,
+            // and then we perform a separate videos.list() API request for those IDs further down the line.
+            playlistItemsJson = api->sapiGetPlaylistItemsList(t_playlistItemsPart, filter, optParams);
 
             // Make sure the playlistItemsJson response was valid.
             if (!playlistItemsJson.empty()) {
@@ -100,7 +102,7 @@ namespace sane {
 
                 // 3. Request proper information for the current video IDs using the API's videos.list().
                 std::cout << "\tRetrieving additional video info... " << std::endl;
-                videoListJson = api->sapiGetVideosList(informativePart, filter, optParams);
+                videoListJson = api->sapiGetVideosList(t_part, filter, optParams);
 
                 // Make sure the videoListJson response was valid.
                 if (!videoListJson.empty()) {
@@ -120,27 +122,19 @@ namespace sane {
         return videos;
     }
 
-    // Create subfeed from a list of channel uploaded videos playlists.
-    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::list<std::string> &t_playlists) {
-        // YouTube API essentials:
-        // Due to the limited amount of info in youtube#playlistItems we'll just request the part that holds videoId,
-        // and then we'll do a separate videos.list() API request for those IDs further down the line.
-        const std::string part = "contentDetails";
-        // Any filter besides "id="
-        std::map<std::string,std::string> filter;
-        std::map<std::string,std::string> optParams;
-
+    // Create subs-feed from a list of channel uploaded videos playlists.
+    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::list<std::string> &t_playlists,
+                                                                     const std::string &t_part,
+                                                                     const std::map<std::string, std::string> &t_filter,
+                                                                     const std::map<std::string, std::string> &t_optParams) {
         // Video uploads
         std::list<std::shared_ptr<YoutubeVideo>> videos;
 
-        // Set maxResults // FIXME: bake into parameter
-        optParams["maxResults"] = "50";
-
         // Get list of uploaded videos for every given channel/playlist.
-        videos = listUploadedVideos(t_playlists, part, filter, optParams);
+        videos = listUploadedVideos(t_playlists, t_part, t_filter, t_optParams);
 
         // Sort by publishedAt date.
-        std::cout << "Sorting subfeed videos by publishedAt datetime..." << std::endl;
+        std::cout << "Sorting subs-feed videos by publishedAt datetime..." << std::endl;
         videos.sort(sortYoutubeVideoDateDescending());
 
         return videos;

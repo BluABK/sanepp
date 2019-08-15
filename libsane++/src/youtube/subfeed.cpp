@@ -41,7 +41,7 @@ namespace sane {
                       << std::endl;
 
             // YouTube API essentials
-            const std::string part = "snippet,contentDetails";
+//            const std::string part = t_part;
 
             // Add passed filters and optional parameters.
             std::map<std::string,std::string> filter = t_filter;
@@ -64,12 +64,12 @@ namespace sane {
             filter["playlistId"] = playlist;
 
             // Make the SAPI request and retrieve JSON.
-            jsonData = api->sapiGetPlaylistItemsList(part, filter, optParams);
+            jsonData = api->sapiGetPlaylistItemsList(t_part, filter, optParams);
 
             // Make sure the response was valid.
             if (!jsonData.empty()) {
                 // For video item in response // FIXME: No pagination support, will cutoff at 50 max.
-                for (auto playlistItemJson : jsonData) {
+                for (auto playlistItemJson : jsonData["items"]) {
                     // Create the YoutubeVideo entity.
                     std::shared_ptr<YoutubeVideo> video = std::make_shared<YoutubeVideo>(playlistItemJson);
 
@@ -102,7 +102,7 @@ namespace sane {
 
         // Sort by publishedAt date.
         std::cout << "Sorting subfeed videos by publishedAt datetime..." << std::endl;
-        videos.sort(YoutubeVideoPublishedAtComparator());
+        videos.sort(sortYoutubeVideoDateDescending());
 
         return videos;
     }

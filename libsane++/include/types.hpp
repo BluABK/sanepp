@@ -28,6 +28,9 @@ namespace sane {
         // UNIX Timestamp
         long int timestamp;
 
+        // Hybrid UNIX Timestamp with milliseconds for extra precision.
+        long double timestampWithMsec;
+
         // As individual Segments (Using std::tm struct as template)
         int year;               // Years since 1900
         int month;              // Months since January     [0,  11]
@@ -105,6 +108,8 @@ namespace sane {
                 std::cerr << "datetime_t.fromISO8601(" << t_iso8601 << "): " << "Unexpected exception: "
                           << std::string(exc.what()) << "!" << std::endl;
             }
+
+            timestampWithMsec = timestamp + (millisecond / 1000.0);
 
             isDST = timeInfo.tm_isdst;
             gmtOffset = timeInfo.tm_gmtoff;

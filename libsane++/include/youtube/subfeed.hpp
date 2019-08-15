@@ -7,7 +7,7 @@
 namespace sane {
     struct YoutubeVideoPublishedAtComparator {
         bool operator ()(const std::shared_ptr<YoutubeVideo> &video1, const std::shared_ptr<YoutubeVideo> &video2) {
-            return video1->getPublishedAt().timestamp < video2->getPublishedAt().timestamp;
+            return video1->getPublishedAt().timestampWithMsec < video2->getPublishedAt().timestampWithMsec;
         }
     };
 

@@ -32,3 +32,7 @@ endif()
 set(PROJECT_GIT_REV_ ${GIT_REV}${GIT_DIFF})
 set(PROJECT_GIT_TAG_ ${GIT_TAG})
 set(PROJECT_GIT_BRANCH_ ${GIT_BRANCH})
+
+# Additionally get the date;
+string(TIMESTAMP _date "%Y-%m-%d %H:%M:%S")
+set(PROJECT_BUILD_DATE_ ${_date})

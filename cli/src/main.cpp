@@ -7,6 +7,7 @@
 #include <string>
 
 // Sane++ Project specific
+#include <config.hpp>
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_handler.hpp>
 #include "cli.hpp"
@@ -23,6 +24,14 @@ int main(int argc, char *argv[]) {
         
         cli->executeCommand(commandWithArgs);
     } else {
+//        // YouTube API essentials:
+//        const std::string part = "snippet,contentDetails";
+//        // Any filter besides "id="
+//        std::map<std::string,std::string> filter;
+//        std::map<std::string,std::string> optParams;
+//        optParams["maxResults"] = "50";
+//        cli->printSubscriptionsFeed(75, part, filter, optParams);
+
         // Make the CLI interactive
         cli->interactive();
     }

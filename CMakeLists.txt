@@ -4,7 +4,18 @@ cmake_minimum_required(VERSION 3.14)    # CMake version check
 ## PROJECT
 ## name and version
 ##
-project(Sane++)                         # Create project
+project(Sane++ VERSION "0.1.0")                         # Create project
+
+# Project config files directory.
+include_directories(config)
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config/config.hpp.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/config/config.hpp")
+
+##
+## COMPILER
+##
+
 set(CMAKE_CXX_STANDARD 14)              # Enable c++14 standard
 
 ##
@@ -41,7 +52,7 @@ find_library(sqlite3 NAMES sqlite3 PATHS ${LIB_DIR_LOCATION})
 set(INCLUDE_DIRS ${NAME}/include)
 
 # CLI
-add_executable(sane++_cli cli/src/main.cpp
+add_executable(sane++_cli config/config.hpp cli/src/main.cpp
         cli/src/cli.cpp
         cli/src/cli.hpp
         libsane++/src/api_handler/api_handler.cpp
@@ -77,7 +88,7 @@ target_link_libraries(sane++_cli sqlite3)
 target_include_directories(sane++_cli PRIVATE ${INCLUDE_DIRS})
 
 # GUI
-add_executable(sane++_gui gui/src/main.cpp
+add_executable(sane++_gui config/config.hpp gui/src/main.cpp
         libsane++/src/entities/youtube_channel.cpp
         libsane++/include/entities/youtube_channel.hpp
         libsane++/src/db_handler/db_handler.cpp
@@ -129,7 +140,7 @@ find_package(Catch2 REQUIRED)
 if(DEFINED ENV{THIS_IS_TRAVIS})
     message("Building tests for Travis CI env...")
 
-    add_executable(travis_test_all tests/test_all.cpp
+    add_executable(travis_test_all config/config.hpp tests/test_all.cpp
             cli/src/cli.cpp
             cli/src/cli.hpp
             cli/test/unit-test_cli.cpp
@@ -178,7 +189,7 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
 else()
     message("Building tests for normal env...")
 
-    add_executable(test_all tests/test_all.cpp
+    add_executable(test_all config/config.hpp tests/test_all.cpp
             cli/src/cli.cpp
             cli/src/cli.hpp
             cli/test/unit-test_cli.cpp

@@ -1,24 +1,22 @@
+# IDE
 .idea
+
+# Editors
+*.kate-swp
+
+#CMake
 build
 cmake-build-debug
 build-analyze
+config/config.hpp
 *.o
-sane_gui
-moc_*
-.qmake.stash
-qrc_qml.cpp
-Makefile
-*.qmake.stash
-*.qmlc
-*.jsc
-src_qml*
-qmlcache*
-qrc_src*
-*.kate-swp
-*backdoor*.cpp
-*backdoor*.go
-*backdoor*.py
+
+# *Local* git config.
 .gitconfig
+
+# Legacy Sane
 youtube_api_samples
+
+# Not git ready / on-the-bubble
 log_print.cpp
 log_print.hpp

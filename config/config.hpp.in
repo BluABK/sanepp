@@ -1,10 +1,19 @@
 #ifndef SANE_CONFIG_HPP
 #define SANE_CONFIG_HPP
 
+/** Name and versioning. */
 #define PROJECT_NAME "@PROJECT_NAME@"
 #define PROJECT_VER  "@PROJECT_VERSION@"
 #define PROJECT_VER_MAJOR "@PROJECT_VERSION_MAJOR@"
 #define PROJECT_VER_MINOR "@PROJECT_VERSION_MINOR@"
-#define PTOJECT_VER_PATCH "@PROJECT_VERSION_PATCH@"
+#define PROJECT_VER_PATCH "@PROJECT_VERSION_PATCH@"
+
+/** git info. */
+// The short commit hash, with a trailing + if there are uncommitted changes.
+#define PROJECT_GIT_REV "@PROJECT_GIT_REV_@"
+// The tag (if any).
+#define PROJECT_GIT_TAG "@PROJECT_GIT_TAG_@"
+// The current branch.
+#define PROJECT_GIT_BRANCH "@PROJECT_GIT_BRANCH_@"
 
 #endif //SANE_CONFIG_HPP

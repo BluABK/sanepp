@@ -2,6 +2,7 @@
 #include <list>
 #include <sstream>
 
+#include <config.hpp>
 #include "cli.hpp"
 
 namespace sane {
@@ -166,7 +167,8 @@ namespace sane {
         size_t longestLine_ = 0;
 
         if (!isInteractive) {
-            std::cout << "Sane++ (rudimentary) Command Line Interface." << std::endl;
+            std::cout << PROJECT_NAME << " v" << PROJECT_VER << " [" << PROJECT_GIT_REV << "]" << std::flush;
+            std::cout << " Command Line Interface." << std::endl;
             std::cout << std::endl;
             std::cout << "Run without arguments to enter interactive mode." << std::endl;
             std::cout << std::endl;

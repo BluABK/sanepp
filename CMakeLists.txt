@@ -9,13 +9,16 @@ project(Sane++ VERSION "0.1.0")                         # Create project
 # Project config files directory.
 include_directories(config)
 
+# Get git version info.
+include(config/git_version.cmake)
+
+# Generate config header file.
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config/config.hpp.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/config/config.hpp")
 
 ##
 ## COMPILER
 ##
-
 set(CMAKE_CXX_STANDARD 14)              # Enable c++14 standard
 
 ##

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.14)    # CMake version check
 ## PROJECT
 ## name and version
 ##
-project(Sane++ VERSION "0.1.0")                         # Create project
+project(Sane++ VERSION "0.2.0")                         # Create project
 
 # Project config files directory.
 include_directories(config)

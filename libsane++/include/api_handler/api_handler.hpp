@@ -71,18 +71,6 @@ namespace sane {
 
         void getSubscriptionsEntities(bool clearProblems = CLEAR_PROBLEMS);
 
-        nlohmann::json sapiRemoteGetSubscriptionsJson();
-
-        std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelByUsername(const std::string &t_username,
-                                                                       bool clearProblems = CLEAR_PROBLEMS);
-
-        nlohmann::json sapiRemoteGetChannelJsonByUsername(const std::string &t_username);
-
-        std::shared_ptr<YoutubeChannel> sapiRemoteGetChannelById(const std::string &t_channelId,
-                                                                 bool clearProblems = CLEAR_PROBLEMS);
-
-        nlohmann::json sapiRemoteGetChannelJsonById(const std::string &t_channelId);
-
         /** YouTube API https://www.googleapis.com/youtube/v3/ */
         nlohmann::json youtubeListActivities(const std::string &t_part,
                                              const std::map<std::string, std::string> &t_filter,

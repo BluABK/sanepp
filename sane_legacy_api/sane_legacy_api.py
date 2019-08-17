@@ -132,49 +132,6 @@ def youtube_channel_remote():
 
     return jsonify(channel['items'][0])  # Send full relevant response since id is outside of snippet
 
-
-"""
-# FIXME: find a name/category for youtube-dl. 
-"""
-
-
-# noinspection PyUnreachableCode
-@app.route('/api/v1/download', methods=['GET', 'PUT', 'CREATE'])
-def youtube_download(video_id, db_update_listeners=None, youtube_dl_finished_listener=None, wait=False):
-    # Vital parts unimplemented, return error for now.
-
-    raise Exception("Not Implemented")
-
-    # FIXME: get a video obj from id
-    video = None
-
-    # Set properties related to downloading.
-    video.downloaded = True
-    video.date_downloaded = datetime.datetime.utcnow()
-
-    # Update Video information in Database.
-    DBUpdateVideo(video, update_existing=True,
-                  finished_listeners=db_update_listeners).start()
-
-    # Create a threading event and set it if ready.
-    event = threading.Event()
-
-    if not wait:
-        event.set()
-
-    # FIXME: Find a way to handle "emitting" progress, finished and failed downloads.
-    # Create a signal to track download progress. (was: PyQt signals/slots)
-    # download_progress_signal = DownloadProgressSignals(video, event)
-    download_progress_signal = None
-
-    # Create a download instance.
-    YoutubeDownload(video, event, download_progress_listener=download_progress_signal,
-                    finished_listeners=youtube_dl_finished_listener).start()
-
-    # return the signal
-    return download_progress_signal
-
-
 @app.errorhandler(Exception)
 def exception_handler(error):
     status_code = str(error)[11:14]

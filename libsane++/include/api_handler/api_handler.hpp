@@ -87,9 +87,7 @@ namespace sane {
 
         nlohmann::json sapiRemoteGetChannelJsonById(const std::string &t_channelId);
 
-        /** YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
-         * "Youtube" prefix is implicit.
-         */
+        /** YouTube API https://www.googleapis.com/youtube/v3/ */
         nlohmann::json youtubeListActivities(const std::string &t_part,
                                              const std::map<std::string, std::string> &t_filter,
                                              const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());

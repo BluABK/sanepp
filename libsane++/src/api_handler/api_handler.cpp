@@ -36,7 +36,7 @@ namespace sane {
         return t_size * t_nmemb;
     }
 
-    nlohmann::json APIHandler::getOauth2Token(const std::string &t_tokenUri, const std::string &t_refreshToken,
+    nlohmann::json APIHandler::getOAuth2Token(const std::string &t_tokenUri, const std::string &t_refreshToken,
                                               const std::string &t_clientId, const std::string &t_clientSecret) {
         CURL *curl;
         std::string readBuffer;
@@ -117,10 +117,10 @@ namespace sane {
                 try {
                     accessToken = nlohmann::json::parse(readBuffer);
                 } catch (nlohmann::detail::parse_error &exc) {
-                    std::cerr << "Skipping APIHandler::getOauth2Token due to Exception: " << std::string(exc.what())
+                    std::cerr << "Skipping APIHandler::getOAuth2Token due to Exception: " << std::string(exc.what())
                               << accessToken.dump() << std::endl;
                 } catch (const std::exception &exc) {
-                    std::cerr << "Skipping APIHandler::getOauth2Token due to Unexpected Exception: "
+                    std::cerr << "Skipping APIHandler::getOAuth2Token due to Unexpected Exception: "
                               << std::string(exc.what()) << accessToken.dump() << "\n" << std::endl;
                 }
             }
@@ -134,13 +134,13 @@ namespace sane {
      * @param url   A const string of the full API route URL.
      * @return      Response parsed as JSON or - if cURL failed - an explicitly expressed empty object.
      */
-    nlohmann::json APIHandler::getSapiResponse(const std::string& url) {
+    nlohmann::json APIHandler::getOAuth2Response(const std::string &url) {
         nlohmann::json jsonData = nlohmann::json::object();
 
 
         // Get OAuth2 access token.
         std::string accessToken;
-        nlohmann::json accessTokenJson = getOauth2Token();
+        nlohmann::json accessTokenJson = getOAuth2Token();
 
         if (accessTokenJson.find("access_token") != accessTokenJson.end()) {
             if (accessTokenJson["access_token"].is_string()) {
@@ -209,10 +209,10 @@ namespace sane {
                 try {
                     jsonData = nlohmann::json::parse(readBuffer);
                 } catch (nlohmann::detail::parse_error &exc) {
-                    std::cerr << "Skipping APIHandler::getSapiResponse due to Exception: " << std::string(exc.what())
+                    std::cerr << "Skipping APIHandler::getOAuth2Response due to Exception: " << std::string(exc.what())
                               << jsonData.dump() << std::endl;
                 } catch (const std::exception &exc) {
-                    std::cerr << "Skipping APIHandler::getSapiResponse due to Unexpected Exception: "
+                    std::cerr << "Skipping APIHandler::getOAuth2Response due to Unexpected Exception: "
                               << std::string(exc.what()) << jsonData.dump() << "\n" << std::endl;
                 }
             }

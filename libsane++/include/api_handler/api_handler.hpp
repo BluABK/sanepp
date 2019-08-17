@@ -57,10 +57,10 @@ for the meaning of Local, Remote and YouTube.
 namespace sane {
     class APIHandler {
     public:
-        nlohmann::json getOauth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
+        nlohmann::json getOAuth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
                                       const std::string &t_clientId = {}, const std::string &t_clientSecret = {});
 
-        nlohmann::json getSapiResponse(const std::string& url);
+        nlohmann::json getOAuth2Response(const std::string &url);
 
         void printReport(int t_warningsCount, int t_errorsCount);
 

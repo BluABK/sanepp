@@ -44,7 +44,7 @@ namespace sane {
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_SUBSCRIPTIONS);
+        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_SUBSCRIPTIONS);
         std::cout << "Got response from SaneAPI, processing " << jsonData.size() << " channels..." << std::endl;
 
         // iterate the JSON array of multiple channels and append a YoutubeChannel.
@@ -88,7 +88,7 @@ namespace sane {
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?username=" + t_username);
+        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_CHANNEL "?username=" + t_username);
         std::cout << "Got response from SaneAPI, processing channel..." << std::endl;
 
         // Create a new YoutubeChannel object for the requested channel.
@@ -120,7 +120,7 @@ namespace sane {
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?id=" + t_channelId);
+        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_CHANNEL "?id=" + t_channelId);
         std::cout << "Got response from SaneAPI, processing channel..." << std::endl;
 
         // Create a new YoutubeChannel object for the requested channel.

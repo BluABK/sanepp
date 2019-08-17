@@ -75,7 +75,7 @@ namespace sane {
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_SUBSCRIPTIONS);
+        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_SUBSCRIPTIONS);
         std::cout << "Got response from SaneAPI: " << jsonData.size() << " channels." << std::endl;
 
         return jsonData;
@@ -86,7 +86,7 @@ namespace sane {
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?username=" + t_username);
+        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_CHANNEL "?username=" + t_username);
         std::cout << "Got response from SaneAPI" << std::endl;
 
         return jsonData;
@@ -97,7 +97,7 @@ namespace sane {
 
         // Parse the JSON response from the API.
         std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getSapiResponse(SAPI_REMOTE_GET_CHANNEL "?id=" + t_channelId);
+        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_CHANNEL "?id=" + t_channelId);
         std::cout << "Got response from SaneAPI, processing channel..." << std::endl;
 
         return jsonData;
@@ -119,7 +119,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_ACTIVITIES + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_ACTIVITIES + compiledVariables);
 
         return jsonData;
     }
@@ -138,7 +138,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_CAPTIONS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_CAPTIONS + compiledVariables);
 
         return jsonData;
     }
@@ -159,7 +159,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_CHANNELS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_CHANNELS + compiledVariables);
 
         return jsonData;
     }
@@ -180,7 +180,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_CHANNEL_SECTIONS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_CHANNEL_SECTIONS + compiledVariables);
 
         return jsonData;
     }
@@ -201,7 +201,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_COMMENTS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_COMMENTS + compiledVariables);
 
         return jsonData;
     }
@@ -222,7 +222,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_COMMENT_THREADS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_COMMENT_THREADS + compiledVariables);
 
         return jsonData;
     }
@@ -243,7 +243,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_GUIDE_CATEGORIES + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_GUIDE_CATEGORIES + compiledVariables);
 
         return jsonData;
     }
@@ -262,7 +262,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_I18N_LANGUAGES + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_I18N_LANGUAGES + compiledVariables);
 
         return jsonData;
     }
@@ -281,7 +281,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_I18N_REGIONS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_I18N_REGIONS + compiledVariables);
 
         return jsonData;
     }
@@ -302,7 +302,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_PLAYLIST_ITEMS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_PLAYLIST_ITEMS + compiledVariables);
 
         return jsonData;
     }
@@ -323,7 +323,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_PLAYLISTS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_PLAYLISTS + compiledVariables);
 
         return jsonData;
     }
@@ -341,7 +341,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_SEARCH + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_SEARCH + compiledVariables);
 
         return jsonData;
     }
@@ -361,7 +361,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_SEARCH + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_SEARCH + compiledVariables);
 
         return jsonData;
     }
@@ -382,7 +382,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_SUBSCRIPTIONS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_SUBSCRIPTIONS + compiledVariables);
 
         return jsonData;
     }
@@ -401,7 +401,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_VIDEO_ABUSE_REPORT_REASONS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_VIDEO_ABUSE_REPORT_REASONS + compiledVariables);
 
         return jsonData;
     }
@@ -422,7 +422,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_VIDEO_CATEGORIES + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_VIDEO_CATEGORIES + compiledVariables);
 
         return jsonData;
     }
@@ -443,7 +443,7 @@ namespace sane {
         compiledVariables += compileUrlVariables(varMaps);
 
         // Parse the JSON response from the API.
-        nlohmann::json jsonData = getSapiResponse(YOUTUBE_API_VIDEOS + compiledVariables);
+        nlohmann::json jsonData = getOAuth2Response(YOUTUBE_API_VIDEOS + compiledVariables);
 
         return jsonData;
     }

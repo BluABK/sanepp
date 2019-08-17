@@ -1,3 +1,4 @@
+#include <youtube/toolkit.hpp>
 #include "cli.hpp"
 
 namespace sane {
@@ -67,8 +68,22 @@ namespace sane {
     }
 
     void CLI::printChannelFromApiByName(const std::string &t_input) {
-        std::shared_ptr<YoutubeChannel> channel = api->sapiRemoteGetChannelByUsername(t_input);
-        channel->print(DEFAULT_INDENT);
+        const std::string part = "snippet";
+        std::map<std::string, std::string> filter;
+        std::map<std::string, std::string> optParams;
+
+        filter["forUsername"] = t_input;
+        optParams["maxResults"] = "1";
+        nlohmann::json channelListJson = api->youtubeListChannels(part, filter, optParams);
+
+        if (hasItems(channelListJson)) {
+            std::shared_ptr<YoutubeChannel> channel = std::make_shared<YoutubeChannel>(channelListJson["items"][0]);
+
+            channel->print(DEFAULT_INDENT);
+        } else {
+            std::cerr << "CLI::printChannelFromApiByName Error: Result had no items:\n" << channelListJson.dump(4)
+                      << std::endl;
+        }
     }
 
     void CLI::printChannelFromApiByName(const std::vector<std::string> &t_input) {
@@ -80,8 +95,22 @@ namespace sane {
     }
 
     void CLI::printChannelFromApiById(const std::string &t_input) {
-        std::shared_ptr<YoutubeChannel> channel = api->sapiRemoteGetChannelById(t_input);
-        channel->print(DEFAULT_INDENT);
+        const std::string part = "snippet";
+        std::map<std::string, std::string> filter;
+        std::map<std::string, std::string> optParams;
+
+        filter["id"] = t_input;
+        optParams["maxResults"] = "1";
+        nlohmann::json channelListJson = api->youtubeListChannels(part, filter, optParams);
+
+        if (hasItems(channelListJson)) {
+            std::shared_ptr<YoutubeChannel> channel = std::make_shared<YoutubeChannel>(channelListJson["items"][0]);
+
+            channel->print(DEFAULT_INDENT);
+        } else {
+            std::cerr << "CLI::printChannelFromApiById Error: Result had no items:\n" << channelListJson.dump(4)
+                      << std::endl;
+        }
     }
 
     void CLI::printChannelFromApiById(const std::vector<std::string> &t_input) {

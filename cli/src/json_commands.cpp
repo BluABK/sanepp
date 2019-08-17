@@ -60,9 +60,20 @@ namespace sane {
     }
 
     void CLI::printChannelJsonFromApiByName(const std::string &t_input, int jsonIndent) {
-        nlohmann::json channelJson;
-        channelJson = api->sapiRemoteGetChannelJsonByUsername(t_input);
-        std::cout << channelJson.dump(jsonIndent) << std::endl;
+        const std::string part = "snippet";
+        std::map<std::string, std::string> filter;
+        std::map<std::string, std::string> optParams;
+
+        filter["forUsername"] = t_input;
+        optParams["maxResults"] = "1";
+        nlohmann::json channelListJson = api->youtubeListChannels(part, filter, optParams);
+
+        if (hasItems(channelListJson)) {
+            std::cout << channelListJson["items"][0].dump(jsonIndent) << std::endl;
+        } else {
+            std::cerr << "CLI::printChannelJsonFromApiByName Error: Result had no items:\n" << channelListJson.dump(4)
+                      << std::endl;
+        }
     }
 
     void CLI::printChannelJsonFromApiByName(const std::vector<std::string> &t_input, int jsonIndent) {
@@ -74,8 +85,20 @@ namespace sane {
     }
 
     void CLI::printChannelJsonFromApiById(const std::string &t_input, int jsonIndent) {
-        nlohmann::json channelJson = api->sapiRemoteGetChannelJsonById(t_input);
-        std::cout << channelJson.dump(jsonIndent) << std::endl;
+        const std::string part = "snippet";
+        std::map<std::string, std::string> filter;
+        std::map<std::string, std::string> optParams;
+
+        filter["id"] = t_input;
+        optParams["maxResults"] = "1";
+        nlohmann::json channelListJson = api->youtubeListChannels(part, filter, optParams);
+
+        if (hasItems(channelListJson)) {
+            std::cout << channelListJson["items"][0].dump(jsonIndent) << std::endl;
+        } else {
+            std::cerr << "CLI::printChannelJsonFromApiById Error: Result had no items:\n" << channelListJson.dump(4)
+                      << std::endl;
+        }
     }
 
     void CLI::printChannelJsonFromApiById(const std::vector<std::string> &t_input, int jsonIndent) {

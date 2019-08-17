@@ -70,28 +70,6 @@ namespace sane {
         return compiledString;
     }
 
-    nlohmann::json APIHandler::sapiRemoteGetChannelJsonByUsername(const std::string &t_username) {
-        std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
-
-        // Parse the JSON response from the API.
-        std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_CHANNEL "?username=" + t_username);
-        std::cout << "Got response from SaneAPI" << std::endl;
-
-        return jsonData;
-    }
-
-    nlohmann::json APIHandler::sapiRemoteGetChannelJsonById(const std::string &t_channelId) {
-        std::cout << "Retrieving channel '" << t_channelId << "' from YouTube API..." << std::endl;
-
-        // Parse the JSON response from the API.
-        std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_CHANNEL "?id=" + t_channelId);
-        std::cout << "Got response from SaneAPI, processing channel..." << std::endl;
-
-        return jsonData;
-    }
-
     nlohmann::json APIHandler::youtubeListActivities(const std::string &t_part,
                                                      const std::map<std::string, std::string> &t_filter,
                                                      const std::map<std::string, std::string> &t_optParams) {

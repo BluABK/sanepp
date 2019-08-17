@@ -70,17 +70,6 @@ namespace sane {
         return compiledString;
     }
 
-    nlohmann::json APIHandler::sapiRemoteGetSubscriptionsJson() {
-        std::cout << "Retrieving subscriptions from YouTube API..." << std::endl;
-
-        // Parse the JSON response from the API.
-        std::cout << "Waiting for SaneAPI response..." << std::endl;
-        nlohmann::json jsonData = getOAuth2Response(SAPI_REMOTE_GET_SUBSCRIPTIONS);
-        std::cout << "Got response from SaneAPI: " << jsonData.size() << " channels." << std::endl;
-
-        return jsonData;
-    }
-
     nlohmann::json APIHandler::sapiRemoteGetChannelJsonByUsername(const std::string &t_username) {
         std::cout << "Retrieving channel '" << t_username << "' from YouTube API..." << std::endl;
 

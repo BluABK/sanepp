@@ -2,6 +2,7 @@
 #include <string>
 
 #include "cli.hpp"
+#include <youtube/toolkit.hpp>
 
 namespace sane {
     /**
@@ -42,8 +43,20 @@ namespace sane {
     }
 
     void CLI::printSubscriptionsJsonFromApi(int jsonIndent) {
-        nlohmann::json subsJson = api->sapiRemoteGetSubscriptionsJson();
-        std::cout << subsJson.dump(jsonIndent) << std::endl;
+        // snippet is required because 'id' part is the ID of the subscription, not the channel.
+        const std::string part = "snippet";
+        std::map<std::string, std::string> filter;
+        std::map<std::string, std::string> optParams;
+        nlohmann::json subsJson;
+
+        filter["mine"] = "true";
+        optParams["maxResults"] = "50";
+
+        do {
+            subsJson = api->youtubeListSubscriptions(part, filter, optParams);
+            std::cout << subsJson.dump(jsonIndent) << std::endl;
+            optParams["pageToken"] = getNextPageToken(subsJson);
+        } while (hasNextPage(subsJson));
     }
 
     void CLI::printChannelJsonFromApiByName(const std::string &t_input, int jsonIndent) {

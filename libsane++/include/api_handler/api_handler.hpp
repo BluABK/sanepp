@@ -24,7 +24,6 @@ for the meaning of Local, Remote and YouTube.
 #define SAPI_LOCAL_ADD_SUBSCRIPTION             "http://127.0.0.1:5002/api/v1/local/add_subscription"
 
 /** Remote: Requests to the YouTube API with some extra functionality added on. */
-#define SAPI_REMOTE_GET_SUBSCRIPTIONS           "http://127.0.0.1:5002/api/v1/remote/subscriptions"
 #define SAPI_REMOTE_GET_CHANNEL                 "http://127.0.0.1:5002/api/v1/remote/channel"
 
 /** YouTube API https://www.googleapis.com/youtube/v3/ */

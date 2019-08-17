@@ -30,39 +30,6 @@ def home():
     """
     return render_template('home.html')
 
-
-"""
-Local: Internal or local operations.
-"""
-
-
-@app.route('/api/v1/local/add_subscription')
-def add_subscription():
-    """
-    Add a YouTube subscription (Local).
-    Takes a channel ID or username as argument.
-
-    :return: Returns the youtube#channel resource response.
-    """
-    # Get an authenticated API key object
-    youtube_auth = load_key()
-
-    if 'id' in request.args:
-        channel = youtube_auth.channels().list(part='contentDetails,snippet', id=request.args['id']).execute()
-    elif 'username' in request.args:
-        channel = youtube_auth.channels().list(part='contentDetails,snippet',
-                                               forUsername=request.args['username']).execute()
-    else:
-        return jsonify("Error: no id or username field provided. Please specify one.")
-
-    channel_title = channel['items'][0]['snippet']['localized']['title']
-    channel_id = channel['items'][0]['id']
-
-    logger.info("Adding subscription (Local): {} / {}".format(channel_id, channel_title))
-
-    return jsonify(channel)
-
-
 """
 Remote: Requests to the YouTube API with some extra functionality added on.
 """

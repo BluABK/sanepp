@@ -143,8 +143,7 @@ def exception_handler(error):
 if __name__ == '__main__':
     # Debug OAuth2
     youtube_auth = load_youtube_resource_oauth()
-    logger.debug(youtube_auth.__dict__)
-    logger.debug(youtube_auth._http.__dict__)
-    logger.debug(youtube_auth._http.credentials.__dict__)
+
+    print(youtube_auth._http.credentials._refresh_token)
     # Run API
     app.run(port="5002", debug=True)

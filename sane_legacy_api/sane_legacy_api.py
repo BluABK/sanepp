@@ -3,7 +3,6 @@ from flask_restful import Api
 
 # Sane legacy
 from sane_legacy.handlers.log_handler import create_logger
-from resources import remote
 from resources.youtube_auth import load_key, load_youtube_resource_oauth
 
 # Create logger instance
@@ -29,49 +28,6 @@ def home():
     :return:        the rendered template 'home.html'
     """
     return render_template('home.html')
-
-"""
-Remote: Requests to the YouTube API with some extra functionality added on.
-"""
-
-
-@app.route('/api/v1/remote/subscriptions')
-def youtube_subscriptions():
-    """
-    Returns subscriptions from YouTube API.
-
-    :return: A list of youtube#subscription resources with <contentDetails> added on.
-    """
-    logger.info("Getting subscriptions from DB.")
-
-    # Get an authenticated OAuth2 resource (since this is authenticated user scope)
-    youtube_oauth = load_youtube_resource_oauth()
-
-    try:
-        subscriptions = remote.get_subscriptions(youtube_oauth)
-    except ValueError as exc_ve:
-        return jsonify(str(exc_ve))
-
-    return jsonify(subscriptions)
-
-
-@app.route('/api/v1/remote/subfeed')
-def youtube_subfeed():
-    """
-    !! NB: This is *NOT* the regular YouTube subscription feed !!
-
-    This function gets a list of every channel the user is subscribed to
-    and combines the "Uploaded videos" playlists of all the channel into
-    a single one.
-
-    :return: JSONified list of subscribed channels' uploaded videos.
-    """
-    pass  # FIXME: Implement
-
-
-@app.route('/video')
-def youtube_video_remote(id):
-    pass  # FIXME: Implement
 
 
 @app.route('/api/v1/remote/channel')

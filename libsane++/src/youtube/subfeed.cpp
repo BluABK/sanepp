@@ -99,7 +99,7 @@ namespace sane {
             //
             // Due to the limited amount of info in youtube#playlistItems we only request the part that holds videoId,
             // and then we perform a separate videos.list() API request for those IDs further down the line.
-            playlistItemsJson = api->sapiGetPlaylistItemsList(t_playlistItemsPart, filter, optParams);
+            playlistItemsJson = api->youtubeListPlaylistItems(t_playlistItemsPart, filter, optParams);
 
             // Make sure the playlistItemsJson response was valid and contains items.
             if (hasItems(playlistItemsJson)) {
@@ -133,7 +133,7 @@ namespace sane {
 
                 // 3. Request proper information for the current video IDs using the API's videos.list().
 //                std::cout << "\tRetrieving additional video info... " << std::endl;
-                videoListJson = api->sapiGetVideosList(t_part, filter, optParams);
+                videoListJson = api->youtubeListVideos(t_part, filter, optParams);
 
                 // Make sure the videoListJson response was valid.
                 if (!videoListJson.empty()) {

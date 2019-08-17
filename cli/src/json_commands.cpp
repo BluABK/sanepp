@@ -98,10 +98,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetActivitiesList(part, filter);
+            jsonData = api->youtubeListActivities(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetActivitiesList(part, filter, optParams);
+            jsonData = api->youtubeListActivities(part, filter, optParams);
         }
 
         // Print the result
@@ -132,10 +132,10 @@ namespace sane {
         videoId = t_input.at(1);
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetCaptionsList(part, videoId);
+            jsonData = api->youtubeListCaptions(part, videoId);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetCaptionsList(part, videoId, optParams);
+            jsonData = api->youtubeListCaptions(part, videoId, optParams);
         }
 
         // Print the result
@@ -167,10 +167,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetChannelsList(part, filter);
+            jsonData = api->youtubeListChannels(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetChannelsList(part, filter, optParams);
+            jsonData = api->youtubeListChannels(part, filter, optParams);
         }
 
         // Print the result
@@ -202,10 +202,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetChannelSectionsList(part, filter);
+            jsonData = api->youtubeListChannelSections(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetChannelSectionsList(part, filter, optParams);
+            jsonData = api->youtubeListChannelSections(part, filter, optParams);
         }
 
         // Print the result
@@ -237,10 +237,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetCommentsList(part, filter);
+            jsonData = api->youtubeListComments(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetCommentsList(part, filter, optParams);
+            jsonData = api->youtubeListComments(part, filter, optParams);
         }
 
         // Print the result
@@ -272,10 +272,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetCommentThreadsList(part, filter);
+            jsonData = api->youtubeListCommentThreads(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetCommentThreadsList(part, filter, optParams);
+            jsonData = api->youtubeListCommentThreads(part, filter, optParams);
         }
 
         // Print the result
@@ -307,10 +307,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetGuideCategoriesList(part, filter);
+            jsonData = api->youtubeListGuideCategories(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetGuideCategoriesList(part, filter, optParams);
+            jsonData = api->youtubeListGuideCategories(part, filter, optParams);
         }
 
         // Print the result
@@ -340,10 +340,10 @@ namespace sane {
         part = t_input.at(0);
 
         if (t_input.size() == 1) {
-            jsonData = api->sapiGeti18nLanguagesList(part);
+            jsonData = api->youtubeListI18nLanguages(part);
         } else if (t_input.size() == 2) {
             optParams = stringToMap(t_input.at(1));
-            jsonData = api->sapiGeti18nLanguagesList(part, optParams);
+            jsonData = api->youtubeListI18nLanguages(part, optParams);
         }
 
         // Print the result
@@ -373,10 +373,10 @@ namespace sane {
         part = t_input.at(0);
 
         if (t_input.size() == 1) {
-            jsonData = api->sapiGeti18nRegionsList(part);
+            jsonData = api->youtubeListI18nRegions(part);
         } else if (t_input.size() == 2) {
             optParams = stringToMap(t_input.at(1));
-            jsonData = api->sapiGeti18nRegionsList(part, optParams);
+            jsonData = api->youtubeListI18nRegions(part, optParams);
         }
 
         // Print the result
@@ -408,10 +408,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetPlaylistItemsList(part, filter);
+            jsonData = api->youtubeListPlaylistItems(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetPlaylistItemsList(part, filter, optParams);
+            jsonData = api->youtubeListPlaylistItems(part, filter, optParams);
         }
 
         // Print the result
@@ -443,10 +443,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetPlaylistsList(part, filter);
+            jsonData = api->youtubeListPlaylists(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetPlaylistsList(part, filter, optParams);
+            jsonData = api->youtubeListPlaylists(part, filter, optParams);
         }
 
         // Print the result
@@ -473,10 +473,10 @@ namespace sane {
         }
 
         if (t_input.empty()) {
-            jsonData = api->sapiGetSearchList();
+            jsonData = api->youtubeSearch();
         } else if (t_input.size() == 1) {
             optParams = stringToMap(t_input.at(0));
-            jsonData = api->sapiGetSearchList(optParams);
+            jsonData = api->youtubeSearch(optParams);
         }
 
         // Print the result
@@ -506,10 +506,10 @@ namespace sane {
         filter = stringToMap(t_input.at(0));
 
         if (t_input.size() == 1) {
-            jsonData = api->sapiGetSearchFilteredList(filter);
+            jsonData = api->youtubeSearchFiltered(filter);
         } else if (t_input.size() == 2) {
             optParams = stringToMap(t_input.at(1));
-            jsonData = api->sapiGetSearchFilteredList(filter, optParams);
+            jsonData = api->youtubeSearchFiltered(filter, optParams);
         }
 
         // Print the result
@@ -541,10 +541,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetSubscriptionsList(part, filter);
+            jsonData = api->youtubeListSubscriptions(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetSubscriptionsList(part, filter, optParams);
+            jsonData = api->youtubeListSubscriptions(part, filter, optParams);
         }
 
         // Print the result
@@ -574,10 +574,10 @@ namespace sane {
         part = t_input.at(0);
 
         if (t_input.size() == 1) {
-            jsonData = api->sapiGetVideoAbuseReportReasonsList(part);
+            jsonData = api->youtubeListVideoAbuseReportReasons(part);
         } else if (t_input.size() == 2) {
             optParams = stringToMap(t_input.at(1));
-            jsonData = api->sapiGetVideoAbuseReportReasonsList(part, optParams);
+            jsonData = api->youtubeListVideoAbuseReportReasons(part, optParams);
         }
 
         // Print the result
@@ -609,10 +609,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetVideoCategoriesList(part, filter);
+            jsonData = api->youtubeListVideoCategories(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetVideoCategoriesList(part, filter, optParams);
+            jsonData = api->youtubeListVideoCategories(part, filter, optParams);
         }
 
         // Print the result
@@ -651,10 +651,10 @@ namespace sane {
         filter = stringToMap(t_input.at(1));
 
         if (t_input.size() == 2) {
-            jsonData = api->sapiGetVideosList(part, filter);
+            jsonData = api->youtubeListVideos(part, filter);
         } else if (t_input.size() == 3) {
             optParams = stringToMap(t_input.at(2));
-            jsonData = api->sapiGetVideosList(part, filter, optParams);
+            jsonData = api->youtubeListVideos(part, filter, optParams);
         }
 
         return jsonData;

@@ -90,67 +90,67 @@ namespace sane {
         /** YouTube: Pass-through kwargs directly to the YouTube API at https://www.googleapis.com/youtube/v3/
          * "Youtube" prefix is implicit.
          */
-        nlohmann::json sapiGetActivitiesList(const std::string &t_part,
-                const std::map<std::string,std::string> & t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListActivities(const std::string &t_part,
+                                             const std::map<std::string, std::string> &t_filter,
+                                             const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetCaptionsList(const std::string &t_part, const std::string &t_videoId,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListCaptions(const std::string &t_part, const std::string &t_videoId,
+                                           const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetChannelsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListChannels(const std::string &t_part,
+                                           const std::map<std::string, std::string> &t_filter,
+                                           const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetChannelSectionsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListChannelSections(const std::string &t_part,
+                                                  const std::map<std::string, std::string> &t_filter,
+                                                  const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetCommentsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListComments(const std::string &t_part,
+                                           const std::map<std::string, std::string> &t_filter,
+                                           const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetCommentThreadsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListCommentThreads(const std::string &t_part,
+                                                 const std::map<std::string, std::string> &t_filter,
+                                                 const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetGuideCategoriesList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListGuideCategories(const std::string &t_part,
+                                                  const std::map<std::string, std::string> &t_filter,
+                                                  const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGeti18nLanguagesList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListI18nLanguages(const std::string &t_part,
+                                                const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGeti18nRegionsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListI18nRegions(const std::string &t_part,
+                                              const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetPlaylistItemsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListPlaylistItems(const std::string &t_part,
+                                                const std::map<std::string, std::string> &t_filter,
+                                                const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetPlaylistsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListPlaylists(const std::string &t_part,
+                                            const std::map<std::string, std::string> &t_filter,
+                                            const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetSearchList(
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeSearch(
+                const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetSearchFilteredList(const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeSearchFiltered(const std::map<std::string, std::string> &t_filter,
+                                             const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetSubscriptionsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListSubscriptions(const std::string &t_part,
+                                                const std::map<std::string, std::string> &t_filter,
+                                                const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetVideoAbuseReportReasonsList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListVideoAbuseReportReasons(const std::string &t_part,
+                                                          const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetVideoCategoriesList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListVideoCategories(const std::string &t_part,
+                                                  const std::map<std::string, std::string> &t_filter,
+                                                  const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-        nlohmann::json sapiGetVideosList(const std::string &t_part,
-                const std::map<std::string,std::string> &t_filter,
-                const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeListVideos(const std::string &t_part,
+                                         const std::map<std::string, std::string> &t_filter,
+                                         const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
     private:
     };

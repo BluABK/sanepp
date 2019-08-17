@@ -103,8 +103,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetActivitiesList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListActivities(const std::string &t_part,
+                                                     const std::map<std::string, std::string> &t_filter,
+                                                     const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -123,8 +124,8 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetCaptionsList(const std::string &t_part, const std::string &t_videoId,
-            const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListCaptions(const std::string &t_part, const std::string &t_videoId,
+                                                   const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -142,8 +143,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetChannelsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListChannels(const std::string &t_part,
+                                                   const std::map<std::string, std::string> &t_filter,
+                                                   const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -162,8 +164,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetChannelSectionsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListChannelSections(const std::string &t_part,
+                                                          const std::map<std::string, std::string> &t_filter,
+                                                          const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -182,8 +185,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetCommentsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListComments(const std::string &t_part,
+                                                   const std::map<std::string, std::string> &t_filter,
+                                                   const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -202,8 +206,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetCommentThreadsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListCommentThreads(const std::string &t_part,
+                                                         const std::map<std::string, std::string> &t_filter,
+                                                         const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -222,8 +227,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetGuideCategoriesList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListGuideCategories(const std::string &t_part,
+                                                          const std::map<std::string, std::string> &t_filter,
+                                                          const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -242,8 +248,8 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGeti18nLanguagesList(const std::string &t_part,
-                                                        const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListI18nLanguages(const std::string &t_part,
+                                                        const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -261,8 +267,8 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGeti18nRegionsList(const std::string &t_part,
-                                                      const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListI18nRegions(const std::string &t_part,
+                                                      const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -280,8 +286,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetPlaylistItemsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListPlaylistItems(const std::string &t_part,
+                                                        const std::map<std::string, std::string> &t_filter,
+                                                        const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -300,8 +307,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetPlaylistsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListPlaylists(const std::string &t_part,
+                                                    const std::map<std::string, std::string> &t_filter,
+                                                    const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -320,7 +328,7 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetSearchList(const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeSearch(const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -338,8 +346,8 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetSearchFilteredList(const std::map<std::string,std::string> &t_filter,
-                                                         const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeSearchFiltered(const std::map<std::string, std::string> &t_filter,
+                                                     const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -358,8 +366,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetSubscriptionsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListSubscriptions(const std::string &t_part,
+                                                        const std::map<std::string, std::string> &t_filter,
+                                                        const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -378,8 +387,8 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetVideoAbuseReportReasonsList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListVideoAbuseReportReasons(const std::string &t_part,
+            const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -397,8 +406,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetVideoCategoriesList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListVideoCategories(const std::string &t_part,
+                                                          const std::map<std::string, std::string> &t_filter,
+                                                          const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
@@ -417,8 +427,9 @@ namespace sane {
         return jsonData;
     }
 
-    nlohmann::json APIHandler::sapiGetVideosList(const std::string &t_part,
-            const std::map<std::string,std::string> &t_filter, const std::map<std::string,std::string> &t_optParams) {
+    nlohmann::json APIHandler::youtubeListVideos(const std::string &t_part,
+                                                 const std::map<std::string, std::string> &t_filter,
+                                                 const std::map<std::string, std::string> &t_optParams) {
         // Setup
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;

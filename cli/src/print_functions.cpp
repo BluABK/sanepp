@@ -14,7 +14,7 @@ namespace sane {
         filter["playlistId"] = t_playlistId;
 
         // Get list of videos.
-        playlistJson = api->sapiGetPlaylistItemsList(part, filter, optParams);
+        playlistJson = api->youtubeListPlaylistItems(part, filter, optParams);
 
         // Store page info.
         int resultsPerPage = playlistJson["pageInfo"]["resultsPerPage"].get<int>();
@@ -84,6 +84,14 @@ namespace sane {
 //        auto end = std::next(channels.begin(), std::min((size_t)10, channels.size()));
 //        std::list <std::shared_ptr<YoutubeChannel>> limitedChannels( channels.begin(), end);
 //        channels = limitedChannels;
+        // FIXME: Debug, pick specific subset
+//        std::list<std::shared_ptr<YoutubeChannel>> channelsDebugSubset;
+//        for (const auto& channel : channels) {
+//            if (channel->getId() == "Lk8QEI2dnGzAXVRWbxkXZw") channelsDebugSubset.push_back(channel);
+//            if (channel->getId() == "KWMWDeHqmh9Ss_7qBHEDwA") channelsDebugSubset.push_back(channel);
+//            if (channel->getId() == "OHBVUV8aDg4tQiHnUqi_QA") channelsDebugSubset.push_back(channel);
+//        }
+//        channels = channelsDebugSubset;
 
         // Retrieve uploaded videos playlist IDs.
 //        std::cout << "Retrieving \"uploaded videos\" playlists..." << std::endl;

@@ -73,7 +73,7 @@ namespace sane {
 
         /** Remote: Requests to the YouTube API with some extra functionality added on. */
 
-        void sapiRemoteGetSubscriptions(bool clearProblems = CLEAR_PROBLEMS);
+        void getSubscriptionsEntities(bool clearProblems = CLEAR_PROBLEMS);
 
         nlohmann::json sapiRemoteGetSubscriptionsJson();
 

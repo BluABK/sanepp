@@ -5,6 +5,7 @@
 #include <entities/youtube_video.hpp>
 #include <entities/youtube_channel.hpp>
 #include <types.hpp>
+#include <youtube/toolkit.hpp>
 
 namespace sane {
     struct sortYoutubeVideoDateDescending {

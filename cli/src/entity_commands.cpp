@@ -5,7 +5,7 @@ namespace sane {
      * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
      */
     void CLI::getSubscriptionsFromApi() {
-        api->sapiRemoteGetSubscriptions();
+        api->getSubscriptionsEntities();
     }
 
     void CLI::printSubscriptionsFull() {

@@ -13,12 +13,18 @@ namespace sane {
 
     void YoutubeChannel::addFromJson(nlohmann::json t_json) {
         try {
-            // Relevant JSON response values. See header for explanations.
-            setId(t_json["snippet"]["resourceId"]["channelId"]);
-
-            // If channel ID is missing, check if this is a Channel resource not a Subscription resource.
-            if (getId().empty()) {
-                setId(t_json["id"]);
+            if (t_json.find("kind") != t_json.end()) {
+                if (t_json["kind"].get<std::string>() == "youtube#channel") {
+                    setId(t_json["id"]);
+                } else if (t_json["kind"].get<std::string>() == "youtube#subscription") {
+                    setId(t_json["snippet"]["resourceId"]["channelId"]);
+                } else {
+                    std::cerr << "YoutubeChannel::addFromJson Error: given channel resource has invalid kind!\n"
+                              << t_json.dump(4) << std::endl;
+                }
+            } else {
+                std::cerr << "YoutubeChannel::addFromJson Error: given channel resource no kind!\n"
+                          << t_json.dump(4) << std::endl;
             }
 
             // If channelId was valid, strip non-unique channel prefix from its head to produce the actual ID.
@@ -26,7 +32,7 @@ namespace sane {
                 m_id = getId().substr(2);
             } else {
                 addError("Missing Channel ID!", t_json);
-                std::cerr << "Missing Channel ID!" << std::endl;
+                std::cerr << "Missing Channel ID:\n" << t_json.dump(4) << std::endl;
             }
 
             // Playlists

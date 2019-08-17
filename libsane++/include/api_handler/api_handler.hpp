@@ -68,7 +68,7 @@ for the meaning of Local, Remote and YouTube.
 #define SAPI_YT_THUMBNAILS_SET                  "http://127.0.0.1:5002/api/v1/youtube/thumbnails/set"
 #define SAPI_YT_VIDEO_ABUSE_REPORT_REASONS_LIST "http://127.0.0.1:5002/api/v1/youtube/videoAbuseReportReasons/list"
 #define SAPI_YT_VIDEO_CATEGORIES_LIST           "http://127.0.0.1:5002/api/v1/youtube/videoCategories/list"
-#define SAPI_YT_VIDEOS_LIST                     "http://127.0.0.1:5002/api/v1/youtube/videos/list"
+#define SAPI_YT_VIDEOS_LIST                     "https://www.googleapis.com/youtube/v3/videos"
 #define SAPI_YT_VIDEOS_INSERT                   "http://127.0.0.1:5002/api/v1/youtube/videos/insert"
 #define SAPI_YT_VIDEOS_UPDATE                   "http://127.0.0.1:5002/api/v1/youtube/videos/update"
 #define SAPI_YT_VIDEOS_RATE                     "http://127.0.0.1:5002/api/v1/youtube/videos/rate"
@@ -81,6 +81,9 @@ for the meaning of Local, Remote and YouTube.
 namespace sane {
     class APIHandler {
     public:
+        nlohmann::json getOauth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
+                                      const std::string &t_clientId = {}, const std::string &t_clientSecret = {});
+
         nlohmann::json getSapiResponse(const std::string& url);
 
         void printReport(int t_warningsCount, int t_errorsCount);

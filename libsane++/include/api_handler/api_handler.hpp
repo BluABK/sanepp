@@ -20,9 +20,6 @@ SaneAPI (SAPI) REST API URLs, see SaneAPI documentation
 for the meaning of Local, Remote and YouTube.
 */
 
-/** Local: SAPI Internal or local operations. */
-#define SAPI_LOCAL_ADD_SUBSCRIPTION             "http://127.0.0.1:5002/api/v1/local/add_subscription"
-
 /** Remote: Requests to the YouTube API with some extra functionality added on. */
 #define SAPI_REMOTE_GET_CHANNEL                 "http://127.0.0.1:5002/api/v1/remote/channel"
 

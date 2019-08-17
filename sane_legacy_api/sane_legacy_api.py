@@ -35,9 +35,10 @@ def exception_handler(error):
 
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
-    # Debug OAuth2
+    # Load Oauth2
     youtube_auth = load_youtube_resource_oauth()
+    # Dump the refresh token
+    print("YouTube OAuth2 refresh token: {}".format(youtube_auth._http.credentials._refresh_token))
 
-    print(youtube_auth._http.credentials._refresh_token)
     # Run API
-    app.run(port="5002", debug=True)
+    # app.run(port="5002", debug=True)

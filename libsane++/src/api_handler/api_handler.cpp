@@ -31,13 +31,13 @@ namespace sane {
      * @param userp
      * @return
      */
-    static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
-        ((std::string*)userp)->append((char*)contents, size * nmemb);
-        return size * nmemb;
+    static size_t writeCallback(void *t_contents, size_t t_size, size_t t_nmemb, void *t_userp) {
+        ((std::string*)t_userp)->append((char*)t_contents, t_size * t_nmemb);
+        return t_size * t_nmemb;
     }
 
     nlohmann::json APIHandler::getOauth2Token(const std::string &t_tokenUri, const std::string &t_refreshToken,
-                               const std::string &t_clientId, const std::string &t_clientSecret) {
+                                              const std::string &t_clientId, const std::string &t_clientSecret) {
         CURL *curl;
         std::string readBuffer;
         long responseCode;
@@ -69,7 +69,6 @@ namespace sane {
         // NB: Implicitly calls curl_global_init, which is *NOT* thread-safe!
         curl = curl_easy_init();
         if(curl) {
-            std::cout << t_tokenUri << std::endl;
             CURLcode result;
 
             // Custom headers

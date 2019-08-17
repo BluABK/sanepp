@@ -2,168 +2,14 @@ import ast
 import copy
 import os
 from configparser import ConfigParser, NoSectionError, NoOptionError
-from sane_legacy.absolute_paths import CONFIG_PATH, SAMPLE_PATH, CONFIG_HOTKEYS_PATH, SAMPLE_HOTKEYS_PATH
+from sane_legacy.absolute_paths import CONFIG_PATH, SAMPLE_PATH
 
 default_parser = ConfigParser()
 default_parser.read(CONFIG_PATH)
-hotkeys_parser = ConfigParser()
-hotkeys_parser.read(CONFIG_HOTKEYS_PATH)
 
 DEFAULTS = {
-    'Model': {
-        'loaded_videos': '90'
-    },
-    'Requests': {
-        'miss_limit': '10',
-        'test_pages': '2',
-        'use_tests': 'True',
-        'extra_list_pages': '3',
-        'deep_search_quota_k': '100',
-        'filter_videos_days_old': '-1'
-    },
     'Debug': {
         'debug': 'False',
-        'cached_subs': 'True',
-        'start_with_stored_videos': 'True',
-        'channels_limit': '-1',
-        'use_playlistitems': 'True',
-        'disable_tooltips': 'False',
-        'show_unimplemented_gui': 'False',
-        'display_all_exceptions': 'False'
-    },
-    'Gui': {
-        'launch_gui': 'True',
-        'grid_view_x': '6',
-        'grid_view_y': '5',
-        'grey_old_videos': 'False',
-        'tile_pref_height': '209',
-        'tile_pref_width': '209',
-        'tile_overlay_height_pct': '30',
-        'tile_overlay_width_pct': '70',
-        'tooltip_pictures': 'False',
-        'tooltip_picture_width': '512',
-        'tooltip_picture_height': '256',
-        'tooltip_picture_size': 'h1',
-        'keep_thumb_ar': 'True',
-        'enable_auto_copy_to_clipboard': 'False',
-        'bgcolor': "",
-        'darkmode_icons': 'False',
-        'toolbar_icon_size_modifier': '1'
-    },
-    'Theme': {
-        'last_style': "",
-        'last_theme': "",
-        'custom_image': "",
-        'custom_toolbar_image': "",
-        'custom_central_widget_image': ""
-    },
-    'Fonts': {
-        'video_title_font': 'Noto Sans,10,-1,0,75,0,0,0,0,0,Bold',
-        'video_channel_font': 'Noto Sans,10,-1,0,50,0,0,0,0,0,Regular',
-        'video_date_font': 'Noto Sans,10,-1,0,50,0,0,0,0,0,Regular',
-        'video_thumbnail_overlay_font': 'Noto Sans,10,-1,0,50,0,0,0,0,0,Regular'
-    },
-    'GridView': {
-        'show_watched': 'False',
-        'show_dismissed': 'False',
-        'show_sd_warning': 'False',
-        'show_has_captions': 'True',
-        'duration_right_padding': '4',
-        'duration_bottom_padding': '4',
-        'captions_left_padding': '4',
-        'captions_bottom_padding': '4',
-        'elided_text_modifier_title': '1',
-        'elided_text_modifier_channel': '1',
-        'elided_text_modifier_date': '1',
-        'elided_text_unicode_weight_modifier': '0.0075',
-        'tile_unicode_line_height_offset': '1.99',
-        'add_thumbnail_spacer': 'False',
-        'tile_line_spacing': '5',
-        'tile_title_lines': '2',
-        'tile_channel_lines': '1',
-        'tile_date_lines': '1',
-        'title_tile_font_weight': 'Bold',
-        'use_timedelta': 'False',
-        'use_iso_datetime_format': 'True',
-        'iso_format_separator': ' ',
-        'custom_datetime_format': '',
-        'timedelta_format': '$HH:$MM:$SS ago',
-        'timedelta_format_days': '$d days, $HH:$MM:$SS ago',
-        'timedelta_format_months': '$m months, ${d}d, $HH:$MM:$SS ago',
-        'timedelta_format_years': '${yd}y, ${m}m, ${d}d, $HH:$MM:$SS ago',
-        'timedelta_format_decades': '${decades}dc, ${yd}y, ${m}m, ${d}d, $HH:$MM:$SS ago'
-    },
-    'SubFeed': {
-        'show_downloaded': 'False',
-        'color_live_broadcast_content': 'True',
-        'left_mouse_action': 'Open URL in browser'
-    },
-    'DownloadView': {
-        'download_tile_height': '200'
-    },
-    'PlaySort': {
-        'ascending_date': 'False',
-        'by_channel': 'False'
-    },
-    'SubSort': {
-        'ascending_date': 'False',
-        'by_channel': 'False',
-        'pin_live_broadcast_content': 'True'
-    },
-    'Thumbnails': {
-        'force_download_best': 'True',
-        '0': 'maxres',
-        '1': 'standard',
-        '2': 'high',
-        '3': 'medium',
-        '4': 'default'
-    },
-    'Threading': {
-        'img_threads': '200',
-        'retry_attempts': '10',
-        'retry_delay': '1.0'
-    },
-    'Play': {
-        'enabled': 'False',
-        'yt_file_path': "",
-        'disable_dir_listener': 'False',
-        'default_watch_prio': '10'
-    },
-    'Youtube-dl': {
-        'use_youtube_dl': 'True'
-    },
-    'Youtube-dl_proxies': {
-        'proxy1': "",
-        'proxy2': "",
-        'proxy3': "",
-        'proxy4': "",
-        'proxy5': ""
-    },
-    'Youtube-dl_opts': {},
-    'Postprocessing': {
-        'prefer_ffmpeg': 'True',
-        'ffmpeg_location': "",
-        'embed_metadata': 'False'
-    },
-    'Player': {
-        'default_player': "",
-        'url_player': ""
-    },
-    'PlayerNames': {
-        'url_player_name': ""
-    },
-    'AlternativePlayers': {
-        'player1': "",
-        'player2': "",
-        'player3': ""
-    },
-    'AlternativePlayerNames': {
-        'player1': "",
-        'player2': "",
-        'player3': ""
-    },
-    'DefaultApp': {
-        'Image': ""
     },
     'Logging': {
         'use_socket_log': 'False',
@@ -171,46 +17,7 @@ DEFAULTS = {
         'logging_port': '19996'
     },
     'Authentication': {
-        'oauth2_local_server_port': '8080'
-    }
-}
-
-DEFAULTS_HOTKEYS = {
-    'Global': {
-        'preferences': 'Ctrl+P',
-        'hotkeys': 'F2',
-        'quit': 'Ctrl+Q',
-        'copy_all_urls': 'Ctrl+D',
-        'refresh_feed': 'Ctrl+R',
-        'refresh_feed_deep': 'Ctrl+T',
-        'reload_subslist': 'Ctrl+L',
-        'test_channels': "",
-        'manual_dir_search': "",
-        'manual_thumb_dl': "",
-        'manual_db_grab': 'Ctrl+E',
-        'download_video_by_url': 'Ctrl+O',
-        'show_usage_history': 'Ctrl+H',
-        'history_undo_action': 'Ctrl+Z'
-    },
-    'View': {
-        'subfeed': 'Ctrl+1',
-        'playback': 'Ctrl+2',
-        'detailed_list': 'Ctrl+3',
-        'download': 'Ctrl+4',
-        'subscriptions': 'Ctrl+5',
-        'tiled_list': 'Ctrl+9',
-        'config': 'Ctrl+P'
-    },
-    'Subfeed': {
-        'download': 'LeftButton',
-        'dismiss': 'MidButton'
-    },
-    'Playback': {
-        'prio_decrease': 'MidButton, Ctrl+LeftButton',
-        'mark_watched': 'Alt+LeftButton',
-        'play': 'MouseLeftButton',
-        'ascending_sort_toggle': 'Ctrl+A',
-        'by_channel_sort_toggle': 'Ctrl+B'
+        'oauth2_local_server_port': '10600'
     }
 }
 
@@ -241,7 +48,7 @@ def create_config_file(file_path, template: dict):
         cfg_parser.write(config_file)
 
 
-def read_config(section, option, literal_eval=True, custom_ini=None):
+def read_config(section, option, literal_eval=True):
     """
     Reads a configuration file (INI format)
     :param section:
@@ -252,14 +59,6 @@ def read_config(section, option, literal_eval=True, custom_ini=None):
     """
     defaults = DEFAULTS
     parser = default_parser
-    # Support multiple configs
-    if custom_ini is not None:
-        # logger.debug("Reading custom config: {}".format(custom_ini))
-        if custom_ini == "hotkeys":
-            defaults = DEFAULTS_HOTKEYS
-            parser = hotkeys_parser
-        else:
-            raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
 
     if literal_eval:
         try:
@@ -287,17 +86,12 @@ def read_config(section, option, literal_eval=True, custom_ini=None):
             return defaults[section][option]
 
 
-def read_entire_config(custom_ini=None):
+def read_entire_config():
     """
     Reads the entire config file into a nested dict-list-dict
     :return:
     """
     _parser = default_parser
-    if custom_ini is not None:
-        if custom_ini == "hotkeys":
-            _parser = hotkeys_parser
-        else:
-            raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
 
     config = {}
     for section in _parser.sections():
@@ -311,31 +105,22 @@ def read_entire_config(custom_ini=None):
     return config
 
 
-def has_section(section, custom_ini=None):
+def has_section(section):
     """
     Checks if a section exists in config
     :return:
     """
     _parser = default_parser
-    if custom_ini is not None:
-        if custom_ini == "hotkeys":
-            _parser = hotkeys_parser
-        else:
-            raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
+
     return _parser.has_section(section)
 
 
-def get_sections(custom_ini=None):
+def get_sections():
     """
     Returns config sections
     :return:
     """
     _parser = default_parser
-    if custom_ini is not None:
-        if custom_ini == "hotkeys":
-            _parser = hotkeys_parser
-        else:
-            raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
 
     return _parser.sections()
 
@@ -349,18 +134,11 @@ def get_options(section, custom_ini=None):
     """
     _parser = default_parser
     if custom_ini is not None:
-        if custom_ini == "hotkeys":
-            _parser = hotkeys_parser
-        else:
-            raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
+        raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
     if _parser.has_section(section):
         return_options = _parser.options(section)
     else:
-        # FIXME: check for correct custom_ini
-        if custom_ini:
-            return_options = DEFAULTS_HOTKEYS[section].keys()
-        else:
-            return_options = DEFAULTS[section].keys()
+        return_options = DEFAULTS[section].keys()
 
     return return_options
 
@@ -386,17 +164,12 @@ def get_valid_options(config_section):
     return valid_options
 
 
-def get_size(custom_ini=None, incl_sections=False):
+def get_size(incl_sections=False):
     """
     Sums up sections and options
     :return:
     """
     _parser = default_parser
-    if custom_ini is not None:
-        if custom_ini == "hotkeys":
-            _parser = hotkeys_parser
-        else:
-            raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
 
     size = 0
     for section in _parser.sections():
@@ -408,10 +181,9 @@ def get_size(custom_ini=None, incl_sections=False):
     return size
 
 
-def set_config(section, option, value, custom_ini=None):
+def set_config(section, option, value):
     """
     Sets the given option's value
-    :param custom_ini:
     :param section:
     :param option:
     :param value:
@@ -420,11 +192,6 @@ def set_config(section, option, value, custom_ini=None):
     if value is None:
         value = ""  # Keep a uniform format in the config
     _parser = default_parser
-    if custom_ini is not None:
-        if custom_ini == "hotkeys":
-            _parser = hotkeys_parser
-        else:
-            raise ValueError("Custom config '{}' is not defined in handler!!".format(custom_ini))
 
     try:
         _parser.set(section, option, value)
@@ -438,7 +205,3 @@ def set_config(section, option, value, custom_ini=None):
 # Create sample config if none exists
 if not os.path.exists(SAMPLE_PATH):
     create_config_file(SAMPLE_PATH, DEFAULTS)
-
-# Create sample hotkeys config if none exists
-if not os.path.exists(SAMPLE_HOTKEYS_PATH):
-    create_config_file(SAMPLE_HOTKEYS_PATH, DEFAULTS_HOTKEYS)

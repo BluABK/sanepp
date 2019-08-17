@@ -3,7 +3,6 @@ __pycache__/
 .idea
 hotkeys.ini
 hotkeys.ini.sample
-config.ini
 
 # Pickles
 sane_legacy/resources/pickles/youtube_auth_keys.pkl

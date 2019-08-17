@@ -1,5 +1,3 @@
-import datetime
-import threading
 from flask import Flask, jsonify, render_template, request, Response
 from flask_restful import Api
 
@@ -7,7 +5,6 @@ from flask_restful import Api
 from sane_legacy.handlers.log_handler import create_logger
 from resources import remote
 from resources.youtube_auth import load_key, load_youtube_resource_oauth
-from sane_legacy.youtube.youtube_dl_handler import YoutubeDownload
 
 # Create logger instance
 logger = create_logger(__name__)

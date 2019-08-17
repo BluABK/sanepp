@@ -28,4 +28,40 @@ namespace sane {
         }
         return false;
     }
-}
+
+    bool hasNextPage(const nlohmann::json &t_jsonPage) {
+        if (t_jsonPage.find("nextPageToken") != t_jsonPage.end()) {
+            if (t_jsonPage["nextPageToken"].is_string() and !t_jsonPage["nextPageToken"].empty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool hasPrevPage(const nlohmann::json &t_jsonPage) {
+        if (t_jsonPage.find("prevPageToken") != t_jsonPage.end()) {
+            if (t_jsonPage["prevPageToken"].is_string() and !t_jsonPage["prevPageToken"].empty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::string getNextPageToken(const nlohmann::json &t_jsonPage) {
+        if (hasNextPage(t_jsonPage)) {
+            // Set the pageToken for next page to be requested at start of loop.
+            return t_jsonPage["nextPageToken"].get<std::string>();
+        }
+
+        return {};
+    }
+
+    std::string getPrevPageToken(const nlohmann::json &t_jsonPage) {
+        if (hasPrevPage(t_jsonPage)) {
+            // Set the pageToken for next page to be requested at start of loop.
+            return t_jsonPage["prevPageToken"].get<std::string>();
+        }
+
+        return {};
+    }
+} // namespace sane

@@ -11,6 +11,34 @@
 #include <youtube/subfeed.hpp>
 
 namespace sane {
+    bool hasItems(const nlohmann::json &t_jsonList) {
+        // JSON is valid (not empty object).
+        if (!t_jsonList.empty()) {
+            // JSON contains pageInfo object.
+            if (t_jsonList.find("pageInfo") != t_jsonList.end()) {
+                // JSON pageInfo object contains totalResults item.
+                if (t_jsonList["pageInfo"].find("totalResults") != t_jsonList["pageInfo"].end()) {
+                    // JSON pageInfo object totalResults is a valid numeric value.
+                    if (t_jsonList["pageInfo"]["totalResults"].is_number()) {
+                        // JSON pageInfo object totalResults numeric value is larger than zero.
+                        if (t_jsonList["pageInfo"]["totalResults"].get<int>() > 0) {
+                            return true;
+                        }
+                    } else {
+                        std::cerr <<  "hasItems Error: JSON[pageInfo][totalResults] is not numeric:\n"
+                                  << t_jsonList.dump(4) << std::endl;
+                    }
+                } else {
+                    std::cerr <<  "hasItems Error: JSON[pageInfo] does not contain totalResults:\n"
+                              << t_jsonList.dump(4) << std::endl;
+                }
+            } else {
+                std::cerr <<  "hasItems Error: JSON does not contain pageInfo:\n" << t_jsonList.dump(4) << std::endl;
+            }
+        }
+        return false;
+    }
+
     std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
                                                                 const std::string &t_part,
                                                                 const std::map<std::string, std::string> &t_filter,
@@ -73,8 +101,8 @@ namespace sane {
             // and then we perform a separate videos.list() API request for those IDs further down the line.
             playlistItemsJson = api->sapiGetPlaylistItemsList(t_playlistItemsPart, filter, optParams);
 
-            // Make sure the playlistItemsJson response was valid.
-            if (!playlistItemsJson.empty()) {
+            // Make sure the playlistItemsJson response was valid and contains items.
+            if (hasItems(playlistItemsJson)) {
                 // Do some separate videos.list() API request for current playlist items to actually obtain useful info:
 
                 // 1. Clear playlistItems-specific filters:

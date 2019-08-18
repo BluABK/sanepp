@@ -15,17 +15,6 @@ api = Api(app)
 API_VERSION = 'v1'
 
 
-@app.route('/')
-def home():
-    """
-    This function just responds to the browser URL
-    localhost:<port>/
-
-    :return:        the rendered template 'home.html'
-    """
-    return render_template('home.html')
-
-
 @app.errorhandler(Exception)
 def exception_handler(error):
     status_code = str(error)[11:14]

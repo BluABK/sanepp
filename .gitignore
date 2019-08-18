@@ -1,5 +1,9 @@
 # IDE
+## JetBrains
 .idea
+
+# Qt Creator
+gui/build-sane_gui-Desktop-Debug
 
 # Editors
 *.kate-swp

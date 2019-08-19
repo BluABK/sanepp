@@ -96,7 +96,7 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "SAPI request failed with error " << responseCode << ": " << readBuffer << "\n"
+                    std::cerr << "API request failed with error " << responseCode << ": " << readBuffer << "\n"
                               << std::endl;
                 }
             } else {
@@ -188,7 +188,7 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "SAPI request failed with error " << responseCode << ": " << readBuffer << "\n"
+                    std::cerr << "API request failed with error " << responseCode << ": " << readBuffer << "\n"
                               << std::endl;
                 }
             } else {

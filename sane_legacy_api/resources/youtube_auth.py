@@ -18,7 +18,7 @@ from sane_legacy.settings import mutable_settings
 
 logger = create_logger(__name__)
 
-SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
+# SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
 
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
@@ -80,7 +80,30 @@ def youtube_auth_oauth():
     :return:
     """
     logger.info("OAuth: Authorising API...")
-    flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+    scopes = []
+    scope_friendly_names = []
+    if read_config('OAuth2Scopes', 'youtube', literal_eval=True):
+        scopes.append("https://www.googleapis.com/auth/youtube")
+        scope_friendly_names.append('youtube')
+    if read_config('OAuth2Scopes', 'youtube.force-ssl', literal_eval=True):
+        scopes.append("https://www.googleapis.com/auth/youtube.force-ssl")
+        scope_friendly_names.append('youtube.force-ssl')
+    if read_config('OAuth2Scopes', 'youtube.readonly', literal_eval=True):
+        scopes.append("https://www.googleapis.com/auth/youtube.readonly")
+        scope_friendly_names.append('youtube.readonly')
+    if read_config('OAuth2Scopes', 'youtube.upload', literal_eval=True):
+        scopes.append("https://www.googleapis.com/auth/youtube.upload")
+        scope_friendly_names.append('youtube.upload')
+    if read_config('OAuth2Scopes', 'youtubepartner', literal_eval=True):
+        scopes.append("https://www.googleapis.com/auth/youtubepartner")
+        scope_friendly_names.append('youtubepartner')
+    if read_config('OAuth2Scopes', 'youtubepartner-channel-audit', literal_eval=True):
+        scopes.append("https://www.googleapis.com/auth/youtubepartner-channel-audit")
+        scope_friendly_names.append('youtubepartner-channel-audit')
+
+    print("Requesting OAuth2 with scopes: {}:".format(", ".join(scope_friendly_names)))
+
+    flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, scopes)
     if mutable_settings.using_gui:
         try:
             credentials = flow.run_local_server(host='localhost',

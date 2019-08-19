@@ -18,6 +18,14 @@ DEFAULTS = {
     },
     'Authentication': {
         'oauth2_local_server_port': '10600'
+    },
+    'OAuth2Scopes': {
+        'youtube': 'True',
+        'youtube.force-ssl': 'True',
+        'youtube.readonly': 'True',
+        'youtube.upload': 'True',
+        'youtubepartner': 'True',
+        'youtubepartner-channel-audit': 'True'
     }
 }
 

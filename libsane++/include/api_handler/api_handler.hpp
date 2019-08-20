@@ -15,14 +15,6 @@
 #define IS_NOT_BEGINNING false
 #define IS_BEGINNING true
 
-/**
-SaneAPI (SAPI) REST API URLs, see SaneAPI documentation
-for the meaning of Local, Remote and YouTube.
-*/
-
-/** Remote: Requests to the YouTube API with some extra functionality added on. */
-#define SAPI_REMOTE_GET_CHANNEL                 "http://127.0.0.1:5002/api/v1/remote/channel"
-
 /** YouTube API https://www.googleapis.com/youtube/v3/ */
 #define YOUTUBE_API_ACTIVITIES                     "https://www.googleapis.com/youtube/v3/activities"
 #define YOUTUBE_API_CAPTIONS                       "https://www.googleapis.com/youtube/v3/captions"
@@ -50,9 +42,16 @@ for the meaning of Local, Remote and YouTube.
 #define YOUTUBE_API_WATERMARKS_SET                 "https://www.googleapis.com/youtube/v3/watermarks/set"
 #define YOUTUBE_API_WATERMARKS_UNSET               "https://www.googleapis.com/youtube/v3/watermarks/unset"
 
+// OAuth2
+#define OAUTH2_DEFAULT_REDIRECT_URI                "http://127.0.0.1:10600"
+
 namespace sane {
     class APIHandler {
     public:
+//        nlohmann::json authenticateOAuth2(const std::string &t_clientID = {}, const std::string &t_redirectURI = {},
+//                                          const std::string &t_responseType = {}, const std::string &t_scope = {},
+//                                          const std::string &t_state = {}, const std::string &t_loginHint = {});
+
         nlohmann::json getOAuth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
                                       const std::string &t_clientId = {}, const std::string &t_clientSecret = {});
 
@@ -66,8 +65,6 @@ namespace sane {
                 bool t_isBeginning = false);
 
         static std::string compileUrlVariables(const std::list<std::string> &t_variableValues);
-
-        /** Remote: Requests to the YouTube API with some extra functionality added on. */
 
         void getSubscriptionsEntities(bool clearProblems = CLEAR_PROBLEMS);
 

@@ -7,6 +7,7 @@
 #include <list>
 
 #include <nlohmann/json.hpp>
+#include <yhirose/httplib.h>
 
 #include <entities/youtube_channel.hpp>
 
@@ -48,8 +49,16 @@
 #define OAUTH2_DEFAULT_RESPONSE_TYPE               "code"
 
 namespace sane {
+    static std::string oauth2Code;
+
     class APIHandler {
     public:
+        static void oauth2ResponseCatcher(const httplib::Request &req, const httplib::Response &res);
+
+        static void runOAuth2Server(const std::string &t_redirectUri);
+
+        static void stopOAuth2Server();
+
         nlohmann::json generateOAuth2URI(const std::string &t_clientId = {}, const std::string &t_scope = {},
                                          const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
                                          const std::string &t_state = {}, const std::string &t_loginHint = {},

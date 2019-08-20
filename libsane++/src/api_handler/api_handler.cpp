@@ -9,10 +9,13 @@
 #include <string>
 #include <list>
 #include <regex>
+#include <thread>
 
 // 3rd party libraries.
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
+#include <yhirose/httplib.h>
+
 
 // Project specific libraries.
 #include <api_handler/api_handler.hpp>
@@ -20,6 +23,8 @@
 #include <config_handler/config_handler.hpp>
 
 namespace sane {
+    static httplib::Server oauth2server;
+
     /**
      * Callback function to be called when receiving the http response from the server.
      *
@@ -48,6 +53,77 @@ namespace sane {
         t_stringToDecode = std::regex_replace(t_stringToDecode, std::regex("%3A"), ":");
     }
 
+    void httpLog(const httplib::Request &req, const httplib::Response &res) {
+        std::cout << "\nRequest headers:\n" << std::endl;
+        for (const auto& header : req.headers) {
+            std::cout << "first: " << header.first << std::endl;
+            std::cout << "second: " << header.second << std::endl;
+        }
+        std::cout << "\nRequest params:\n" << std::endl;
+        for (const auto& header : req.params) {
+            std::cout << "first: " << header.first << std::endl;
+            std::cout << "second: " << header.second << std::endl;
+        }
+        std::cout << "Request body:\n" << req.body << std::endl;
+        std::cout << "------------------------------------------" << std::endl;
+        std::cout << "\nResponse body:\n" << res.body << std::endl;
+        std::cout << "\nResponse headers:\n" << std::endl;
+        for (const auto& header : res.headers) {
+            std::cout << "first: " << header.first << std::endl;
+            std::cout << "second: " << header.second << std::endl;
+        }
+    }
+
+    void APIHandler::oauth2ResponseCatcher(const httplib::Request &req, const httplib::Response &res) {
+        std::string code;
+        for (const auto& param : req.params) {
+            if (param.first == "code") {
+                code = param.second;
+            }
+        }
+
+        if (!code.empty()) {
+//            std::cout << "code: " << code << std::endl;
+            oauth2Code = code;
+
+            // Store code to config:
+            std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+            // 1. Get current config as JSON object.
+            nlohmann::json config = cfg->getConfig();
+            // 2. Update it with the new value.
+            config["youtube_auth"]["oauth2"]["code"] = code;
+            // 3. Overwrite the old config.
+            cfg->setConfig(config);
+
+            // Stop the static OAuth2 httplib server.
+            stopOAuth2Server();
+        }
+    }
+
+    void APIHandler::runOAuth2Server(const std::string &t_redirectUri) {
+        // Break down redirect URI into host and port.
+        std::string strippedUri = std::regex_replace(t_redirectUri, std::regex("http:\\/\\/"), "");
+        std::vector<std::string> tokens = tokenize(strippedUri, ':');
+        std::string host = tokens[0];
+        int port = std::stoi(tokens[1]);
+
+        oauth2server.set_logger([](const auto& req, const auto& res) {
+            oauth2ResponseCatcher(req, res);
+        });
+
+        try {
+            std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
+            oauth2server.listen(host.c_str(), port);
+            std::cout << "Stopped OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
+        } catch (std::exception &exc) {
+            std::cerr << "APIHandler::runOAuth2Server ERROR: Unexpected exception: " << exc.what() << std::endl;
+        }
+    }
+
+    void APIHandler::stopOAuth2Server() {
+        oauth2server.stop();
+    }
 
     nlohmann::json APIHandler::generateOAuth2URI(const std::string &t_clientId, const std::string &t_scope,
                                                  const std::string &t_redirectUri, const std::string &t_state,
@@ -119,7 +195,8 @@ namespace sane {
         if (t_runServer) {
             // FIXME: Server code goes here.
             urlDecode(redirectUri);
-            std::cout << "Started fictional server on: " << redirectUri << "." << std::endl;
+
+//            std::thread t1(&runOAuth2Server, redirectUri);
         }
 
         // Return constructed OAuth2 Authentication URI.

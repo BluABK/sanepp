@@ -44,13 +44,18 @@
 
 // OAuth2
 #define OAUTH2_DEFAULT_REDIRECT_URI                "http://127.0.0.1:10600"
+#define OAUTH2_DEFAULT_AUTH_URI                    "https://accounts.google.com/o/oauth2/v2/auth"
+#define OAUTH2_DEFAULT_RESPONSE_TYPE               "code"
 
 namespace sane {
     class APIHandler {
     public:
-//        nlohmann::json authenticateOAuth2(const std::string &t_clientID = {}, const std::string &t_redirectURI = {},
-//                                          const std::string &t_responseType = {}, const std::string &t_scope = {},
-//                                          const std::string &t_state = {}, const std::string &t_loginHint = {});
+        nlohmann::json generateOAuth2URI(const std::string &t_clientId = {}, const std::string &t_scope = {},
+                                         const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
+                                         const std::string &t_state = {}, const std::string &t_loginHint = {},
+                                         bool t_runServer = true,
+                                         const std::string &t_oauth2Uri = OAUTH2_DEFAULT_AUTH_URI,
+                                         const std::string &t_responseType = OAUTH2_DEFAULT_RESPONSE_TYPE);
 
         nlohmann::json getOAuth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
                                       const std::string &t_clientId = {}, const std::string &t_clientSecret = {});

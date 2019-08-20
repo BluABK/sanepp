@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string>
 #include <list>
+#include <regex>
 
 // 3rd party libraries.
 #include <curl/curl.h>
@@ -16,6 +17,7 @@
 // Project specific libraries.
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
+#include <config_handler/config_handler.hpp>
 
 namespace sane {
     /**
@@ -34,6 +36,94 @@ namespace sane {
     static size_t writeCallback(void *t_contents, size_t t_size, size_t t_nmemb, void *t_userp) {
         ((std::string*)t_userp)->append((char*)t_contents, t_size * t_nmemb);
         return t_size * t_nmemb;
+    }
+
+    void urlEncode(std::string &t_stringToEncode) {
+        t_stringToEncode = std::regex_replace(t_stringToEncode, std::regex("\\/"), "%2F");
+        t_stringToEncode = std::regex_replace(t_stringToEncode, std::regex(":"), "%3A");
+    }
+
+    void urlDecode(std::string &t_stringToDecode) {
+        t_stringToDecode = std::regex_replace(t_stringToDecode, std::regex("%2F"), "/");
+        t_stringToDecode = std::regex_replace(t_stringToDecode, std::regex("%3A"), ":");
+    }
+
+
+    nlohmann::json APIHandler::generateOAuth2URI(const std::string &t_clientId, const std::string &t_scope,
+                                                 const std::string &t_redirectUri, const std::string &t_state,
+                                                 const std::string &t_loginHint, bool t_runServer,
+                                                 const std::string &t_oauth2Uri, const std::string &t_responseType) {
+        // OAuth2
+        std::string uri;
+        std::string clientId = t_clientId;
+        std::string redirectUri = t_redirectUri;
+        std::string responseType = t_responseType;
+        std::string scope = t_scope;
+        std::string state = t_state; // FIXME: Not yet implemented
+        std::string loginHint = t_loginHint; // FIXME: Not yet implemented
+        std::string oauth2_uri = t_oauth2Uri;
+        nlohmann::json refreshToken;
+
+        // Use config to set parameters that weren't passed a value.
+        std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+        if (clientId.empty() and cfg) {
+            clientId = cfg->getString("youtube_auth/oauth2/client_id");
+
+            if (clientId.empty()) {
+                std::cerr << "generateOAuth2URI ERROR: required value client_id is missing, unable to generate URI!"
+                          << std::endl;
+                return {};
+            }
+        }
+
+        if (redirectUri.empty() and cfg) {
+            redirectUri = cfg->getString("youtube_auth/oauth2/redirect_uri");
+        }
+
+        if (responseType.empty() and cfg) {
+            responseType = cfg->getString("youtube_auth/oauth2/response_type");
+        }
+
+        if (scope.empty() and cfg) {
+            for (auto& s : cfg->getStringList("youtube_auth/oauth2/scope")) {
+                if (!s.empty()) {
+                    if (!scope.empty()) {
+                        // Add "whitespace" prefix to URLs as long as it's not the first one.
+                        scope += "%20";
+                    }
+                    scope += s;
+                }
+            }
+
+            // If scope is *still* empty, throw a tantrum.
+            if (scope.empty()) {
+                std::cerr << "generateOAuth2URI ERROR: required value scope is empty, unable to generate URI!"
+                          << std::endl;
+                return {};
+            }
+        }
+
+        // URL-encode URI parameters
+        urlEncode(scope);
+        urlEncode(redirectUri);
+
+        // Construct the OAuth2 Authentication URI: // FIXME: Add options
+        uri = oauth2_uri + "?scope="            + scope
+                         + "&response_type="    + responseType
+//                         + "&state="            + state
+                         + "&redirect_uri="     + redirectUri
+                         + "&client_id="         + clientId;
+
+        // Run server
+        if (t_runServer) {
+            // FIXME: Server code goes here.
+            urlDecode(redirectUri);
+            std::cout << "Started fictional server on: " << redirectUri << "." << std::endl;
+        }
+
+        // Return constructed OAuth2 Authentication URI.
+        return uri;
     }
 
     nlohmann::json APIHandler::getOAuth2Token(const std::string &t_tokenUri, const std::string &t_refreshToken,

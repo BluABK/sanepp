@@ -79,6 +79,11 @@ namespace sane {
         for (const auto& param : req.params) {
             if (param.first == "code") {
                 code = param.second;
+            } else if (param.first == "error") {
+                std::cerr << "OAuth2 ERROR: " << param.second << std::endl;
+
+                // Stop the static OAuth2 httplib server.
+                stopOAuth2Server();
             }
         }
 

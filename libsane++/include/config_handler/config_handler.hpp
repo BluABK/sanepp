@@ -17,6 +17,8 @@ namespace sane {
 
         nlohmann::json getConfig();
 
+        void setConfig(nlohmann::json &t_json);
+
         bool hasSection(const std::string &t_section);
 
         nlohmann::json getSection(const std::string &t_section, bool debug = false);
@@ -27,6 +29,8 @@ namespace sane {
 //        const std::list<T> getList(const std::string &t_section);
 
         const std::list<std::string> getStringList(const std::string &t_section);
+
+//        void setStringOption(const std::string &t_section, const std::string &t_value, bool debug = false);
     private:
         const std::string CONFIG_FILE = "config.json";
         const char SECTION_SEPARATOR = '/';

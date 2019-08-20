@@ -1,4 +1,5 @@
 #include <vector>
+#include <iomanip>
 
 #include <lexical_analysis.hpp>
 
@@ -14,7 +15,7 @@ namespace sane {
      */
     nlohmann::json ConfigHandler::getConfig() {
         // Open config file.
-        std::ifstream ifs{ "config.json" };
+        std::ifstream ifs{CONFIG_FILE};
 
         // Read config ifstream into a JSON object.
         nlohmann::json config = nlohmann::json::parse(ifs);
@@ -23,6 +24,18 @@ namespace sane {
         ifs.close();
 
         return config;
+    }
+
+    /**
+     * Writes nlohmann::json object into a config file.
+     *
+     * @return
+     */
+    void ConfigHandler::setConfig(nlohmann::json &t_json) {
+        std::ofstream ofs(CONFIG_FILE);
+        ofs << std::setw(4) << t_json << std::endl;
+
+        ofs.close();
     }
 
     /**
@@ -121,4 +134,37 @@ namespace sane {
 
         return std::list<std::string>();
     }
+
+//    void ConfigHandler::setStringOption(const std::string &t_section, const std::string &t_value, bool debug) {
+//        // Open config file and get a JSON object.
+//        nlohmann::json config = getConfig();
+//
+//        // Traverse sections
+//        std::vector<std::string> sections = tokenize(t_section, SECTION_SEPARATOR);
+//
+//        nlohmann::json valueJson = config;
+//
+//        for (const auto& key : sections) {
+//            valueJson = valueJson[key];
+//            if (debug) {
+//                std::cout << "DEBUG: currentDepth: " << valueJson.dump() << std::endl;
+//            }
+//        }
+//
+//        return valueJson;
+//
+//        // Set the option
+//        config[]
+//
+//        // Open config file.
+//        std::ofstream ofs{ "config.json" };
+//
+//        ofs << std::setw()
+//
+//        // Read config ifstream into a JSON object.
+//        nlohmann::json config = nlohmann::json::parse(ofs);
+//
+//        // Close config file.
+//        ofs.close();
+//    }
 } // namespace sane

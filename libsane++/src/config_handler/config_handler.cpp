@@ -90,18 +90,35 @@ namespace sane {
      */
     const std::string ConfigHandler::getString(const std::string &t_section)  {
         // Open config file.
-        std::ifstream ifs{ "config.json" };
+        nlohmann::json config = getConfig();
 
-        // Read config ifstream into a JSON object.
-        nlohmann::json config = nlohmann::json::parse(ifs);
+        std::string retval;
 
-        // Close config file.
-        ifs.close();
+        retval = getSection(t_section).get<std::string>();
 
-        if (hasSection(t_section)) {
-            return getSection(t_section).get<std::string>();
-        }
+        return retval;
+    }
 
-        return {};
+//    template<typename T>
+//    const std::list<T> ConfigHandler::getList(const std::string &t_section) {
+//        // Open config file.
+//        nlohmann::json config = getConfig();
+//
+//        if (hasSection(t_section)) {
+//            // ISO C++03 14.2/4: The member template name must be prefixed by the keyword template.
+//            return getSection(t_section).template get<std::list<T>>();
+//        }
+//
+//        return std::list<T>();
+//    }
+
+    const std::list<std::string> ConfigHandler::getStringList(const std::string &t_section) {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        // ISO C++03 14.2/4: The member template name must be prefixed by the keyword template.
+        return getSection(t_section).template get<std::list<std::string>>();
+
+        return std::list<std::string>();
     }
 } // namespace sane

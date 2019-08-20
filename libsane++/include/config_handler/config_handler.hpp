@@ -22,6 +22,11 @@ namespace sane {
         nlohmann::json getSection(const std::string &t_section, bool debug = false);
 
         const std::string getString(const std::string &t_section);
+
+//        template <typename T>
+//        const std::list<T> getList(const std::string &t_section);
+
+        const std::list<std::string> getStringList(const std::string &t_section);
     private:
         const std::string CONFIG_FILE = "config.json";
         const char SECTION_SEPARATOR = '/';

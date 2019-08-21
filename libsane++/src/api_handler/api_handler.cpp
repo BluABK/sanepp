@@ -390,21 +390,23 @@ namespace sane {
         std::string tokenUri = t_tokenUri;
 
         // Use config to set parameters that weren't passed a value.
-        // FIXME: Interim config solution: read a JSON config file
-        std::ifstream ifs{ "config.json" };
-        nlohmann::json config = nlohmann::json::parse(ifs);
+        std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
 
         if (refreshToken.empty()) {
-            refreshToken = config["youtube_auth"]["oauth2"]["refresh_token"].get<std::string>();
+            refreshToken = cfg->getString("youtube_auth/oauth2/refresh_token");
+
+            // If refreshToken is *still* empty, throw a tantrum.
+            if (refreshToken.empty()) {
+                std::cerr << "refreshOAuth2Token ERROR: Required value 'refreshToken' is empty, unable to authorize!"
+                          << std::endl << "(Did you forget to authorize OAuth2?)" << std::endl;
+                return accessTokenJson;
+            }
         }
         if (clientId.empty()) {
-            clientId = config["youtube_auth"]["oauth2"]["client_id"].get<std::string>();
+            clientId = cfg->getString("youtube_auth/oauth2/client_id");
         }
         if (clientSecret.empty()) {
-            clientSecret = config["youtube_auth"]["oauth2"]["client_secret"].get<std::string>();
-        }
-        if (tokenUri.empty()) {
-            tokenUri = "https://accounts.google.com/o/oauth2/token";
+            clientSecret = cfg->getString("youtube_auth/oauth2/client_secret");
         }
 
         // Start a libcURL easy session and assign the returned handle.

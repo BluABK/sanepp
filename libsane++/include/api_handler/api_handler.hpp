@@ -47,6 +47,7 @@
 #define OAUTH2_DEFAULT_REDIRECT_URI                "http://127.0.0.1:10600"
 #define OAUTH2_DEFAULT_AUTH_URI                    "https://accounts.google.com/o/oauth2/v2/auth"
 #define OAUTH2_DEFAULT_TOKEN_URI                   "https://www.googleapis.com/oauth2/v4/token"
+#define OAUTH2_DEFAULT_REFRESH_URI                 "https://accounts.google.com/o/oauth2/token"
 #define OAUTH2_DEFAULT_RESPONSE_TYPE               "code"
 
 namespace sane {
@@ -74,7 +75,8 @@ namespace sane {
                                        const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
                                        const std::string &t_tokenUri = OAUTH2_DEFAULT_TOKEN_URI);
 
-        nlohmann::json refreshOAuth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
+        nlohmann::json refreshOAuth2Token(const std::string &t_tokenUri = OAUTH2_DEFAULT_REFRESH_URI,
+                                          const std::string &t_refreshToken = {},
                                           const std::string &t_clientId = {}, const std::string &t_clientSecret = {});
 
         nlohmann::json getOAuth2Response(const std::string &url);

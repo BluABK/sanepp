@@ -36,7 +36,8 @@ Sane++ grabs the "uploaded videos" playlist for all channels you're subscribed t
 ### Command line interface
 `build/bin/sane++_cli`
 
-Supports commands as params from the command line (e.g. `build/bin/sane++_cli auth-oauth2`)
+Supports commands as params from the command line (e.g. `build/bin/sane++_cli auth-oauth2`).
+If no parameter is given, it will run in interactive mode.
 
 ### GUI
 Not yet implemented.

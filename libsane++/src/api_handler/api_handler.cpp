@@ -101,8 +101,6 @@ namespace sane {
         }
 
         if (!code.empty()) {
-            oauth2Code = code;
-
             // Store code to config:
             std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
 
@@ -135,9 +133,9 @@ namespace sane {
         });
 
         try {
-            std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
+//            std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
             oauth2server.listen(host.c_str(), port);
-            std::cout << "Stopped OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
+//            std::cout << "Stopped OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
         } catch (std::exception &exc) {
             std::cerr << "APIHandler::runOAuth2Server ERROR: Unexpected exception: " << exc.what() << std::endl;
         }

@@ -484,10 +484,36 @@ namespace sane {
      * @return      Response parsed as JSON or - if cURL failed - an explicitly expressed empty object.
      */
     nlohmann::json APIHandler::getOAuth2Response(const std::string &url) {
-        nlohmann::json jsonData = nlohmann::json::object();
         std::string accessToken;
+        std::string refreshToken;
 
+        nlohmann::json jsonData = nlohmann::json::object();
         std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+        // Check that access and/or refresh tokens are valid.
+        if (cfg->hasSection("youtube_auth/oauth2/access_token")) {
+            if (cfg->isString("youtube_auth/oauth2/access_token")) {
+                accessToken = cfg->getString("youtube_auth/oauth2/access_token");
+            }
+        }
+        if (cfg->hasSection("youtube_auth/oauth2/refresh_token")) {
+            if (cfg->isString("youtube_auth/oauth2/refresh_token")) {
+                refreshToken = cfg->getString("youtube_auth/oauth2/refresh_token");
+            }
+        }
+
+        // If both tokens are missing it is not possible to proceed, print error and abort.
+        if (accessToken.empty() and refreshToken.empty()) {
+            std::cerr << "APIHandler::getOAuth2Response ERROR: Both access and refresh tokens are empty!"
+                      << "\n\nDid you forget to authenticate OAuth2?" << std::endl;
+
+            return jsonData;
+        } else if (refreshToken.empty()) {
+            // A missing refresh token may not yet be critical, but could prove troublesome.
+            std::cerr << "APIHandler::getOAuth2Response WARNING: refresh token is empty!"
+                      << std::endl << "This means that once the access token expires you won't be able to renew it."
+                      << std::endl;
+        }
 
         // Get current timestamp in seconds since epoch.
         auto now = std::chrono::system_clock::now();
@@ -497,11 +523,8 @@ namespace sane {
         std::string confPath = "youtube_auth/oauth2/expires_at"; // For shortened line length.
         long int expiresAt = cfg->isNumber(confPath) ? cfg->getLongInt(confPath) : -1;
 
-        if (expiresAt > (long int)timeSinceEpoch) {
-            // Access token has not yet expired, use current..
-            accessToken = cfg->getString("youtube_auth/oauth2/access_token");
-        } else {
-            // Access token is expired or has invalid config, get a new one.
+        // Access token is expired or has invalid config, get a new one.
+        if (expiresAt < (long int)timeSinceEpoch) {
             nlohmann::json accessTokenJson = refreshOAuth2Token();
 
             if (accessTokenJson.find("access_token") != accessTokenJson.end()) {

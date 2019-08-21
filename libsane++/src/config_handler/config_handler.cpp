@@ -112,6 +112,15 @@ namespace sane {
         return retval;
     }
 
+    bool ConfigHandler::isString(const std::string &t_section) {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        auto section = getSection(t_section);
+
+        return section.is_string() and !section.empty();
+    }
+
     bool ConfigHandler::isNumber(const std::string &t_section) {
         // Open config file.
         nlohmann::json config = getConfig();

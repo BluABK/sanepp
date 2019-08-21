@@ -25,6 +25,8 @@ namespace sane {
 
         const std::string getString(const std::string &t_section);
 
+        bool isString(const std::string &t_section);
+
         bool isNumber(const std::string &t_section);
 
         int getInt(const std::string &t_section);

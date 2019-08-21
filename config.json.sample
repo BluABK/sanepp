@@ -1,10 +1,17 @@
 {
   "youtube_auth": {
+    "api_key": "AIzaSyB7l4tKJXaVou8jO0xvJTyDXUceUYjePqw",
     "oauth2": {
-      "refresh_token": "",
-      "client_id": "",
-      "client_secret": ""
-    },
-    "api_key": ""
+      "client_id": "1018180379176-ti0lngn2gdj7fs3a11v1ldlrcc0oocu2.apps.googleusercontent.com",
+      "client_secret": "ltRZPi6aBtZAhfOsVyt0SXGW",
+      "scope": [
+        "https://www.googleapis.com/auth/youtube",
+        "https://www.googleapis.com/auth/youtube.force-ssl",
+        "https://www.googleapis.com/auth/youtube.readonly",
+        "https://www.googleapis.com/auth/youtube.upload",
+        "https://www.googleapis.com/auth/youtubepartner",
+        "https://www.googleapis.com/auth/youtubepartner-channel-audit"
+      ]
+    }
   }
 }

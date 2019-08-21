@@ -10,6 +10,7 @@
 #include <list>
 #include <regex>
 #include <thread>
+#include <ctime>
 
 // 3rd party libraries.
 #include <curl/curl.h>
@@ -53,6 +54,12 @@ namespace sane {
         t_stringToDecode = std::regex_replace(t_stringToDecode, std::regex("%3A"), ":");
     }
 
+    /**
+     * Basic logger function to log httplib.
+     *
+     * @param req
+     * @param res
+     */
     void httpLog(const httplib::Request &req, const httplib::Response &res) {
         std::cout << "\nRequest headers:\n" << std::endl;
         for (const auto& header : req.headers) {
@@ -74,7 +81,13 @@ namespace sane {
         }
     }
 
-    void APIHandler::oauth2ResponseCatcher(const httplib::Request &req, const httplib::Response &res) {
+    /**
+     * Catches a Google OAuth 2.0 code response (from step 2).
+     *
+     * @param req
+     * @param res
+     */
+    void APIHandler::oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res) {
         std::string code;
         for (const auto& param : req.params) {
             if (param.first == "code") {
@@ -88,7 +101,6 @@ namespace sane {
         }
 
         if (!code.empty()) {
-//            std::cout << "code: " << code << std::endl;
             oauth2Code = code;
 
             // Store code to config:
@@ -106,16 +118,28 @@ namespace sane {
         }
     }
 
-    void APIHandler::runOAuth2Server(const std::string &t_redirectUri) {
+    /**
+     * Run a local loopback httplib server to catch Google's OAuth 2.0 response.
+     *
+     * @param t_redirectUri
+     */
+    void APIHandler::runOAuth2Server(const std::string &t_redirectUri, int t_mode) {
         // Break down redirect URI into host and port.
         std::string strippedUri = std::regex_replace(t_redirectUri, std::regex("http:\\/\\/"), "");
         std::vector<std::string> tokens = tokenize(strippedUri, ':');
         std::string host = tokens[0];
         int port = std::stoi(tokens[1]);
 
-        oauth2server.set_logger([](const auto& req, const auto& res) {
-            oauth2ResponseCatcher(req, res);
-        });
+        if (t_mode == OAUTH2_SERVER_MODE_AUTH) {
+            oauth2server.set_logger([](const auto &req, const auto &res) {
+                oauth2CodeResponseCatcher(req, res);
+            });
+        } else if (t_mode == OAUTH2_SERVER_MODE_TOKEN) {
+            oauth2server.set_logger([](const auto &req, const auto &res) {
+//                oauth2ExchangeResponseCatcher(req, res);
+                httpLog(req, res);
+            });
+        }
 
         try {
             std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
@@ -130,6 +154,19 @@ namespace sane {
         oauth2server.stop();
     }
 
+    /**
+     * Step 1/4: Send a request to Google's OAuth 2.0 server.
+     *
+     * @param t_clientId
+     * @param t_scope
+     * @param t_redirectUri
+     * @param t_state
+     * @param t_loginHint
+     * @param t_runServer
+     * @param t_oauth2Uri
+     * @param t_responseType
+     * @return
+     */
     nlohmann::json APIHandler::generateOAuth2URI(const std::string &t_clientId, const std::string &t_scope,
                                                  const std::string &t_redirectUri, const std::string &t_state,
                                                  const std::string &t_loginHint, bool t_runServer,
@@ -200,12 +237,191 @@ namespace sane {
         if (t_runServer) {
             // FIXME: Server code goes here.
             urlDecode(redirectUri);
-
-//            std::thread t1(&runOAuth2Server, redirectUri);
         }
 
         // Return constructed OAuth2 Authentication URI.
         return uri;
+    }
+
+    /**
+     * Step 4: Exchange authorization code for refresh and access tokens.
+     *
+     * @param req
+     * @param res
+     */
+    void APIHandler::oauth2ExchangeResponseCatcher(const httplib::Request &req, const httplib::Response &res) {
+        std::string accessToken;
+        std::string refreshToken;
+        int expiresInSeconds;
+        std::string tokenType;
+        nlohmann::json response;
+//        for (const auto& param : req.params) {
+//            if (param.first == "access_token") {
+//                accessToken = param.second;
+//            } else if (param.first == "expires_in") {}
+//            else if (param.first == "error") {
+//                std::cerr << "OAuth2 ERROR: " << param.second << std::endl;
+//
+//                // Stop the static OAuth2 httplib server.
+//                stopOAuth2Server();
+//            }
+//        }
+
+        if (!response.empty()) {
+//            oauth2Code = code;
+
+            // Store code to config:
+            std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+            // 1. Get current config as JSON object.
+            nlohmann::json config = cfg->getConfig();
+            // 2. Update it with the new value.
+            config["youtube_auth"]["oauth2"]["fixme"] = response;
+            // 3. Overwrite the old config.
+//            cfg->setConfig(config);
+
+            // Stop the static OAuth2 httplib server.
+            stopOAuth2Server();
+        }
+    }
+
+    /**
+     * Step 4/4: Exchange authorization code for refresh and access tokens
+     *
+     * @param t_code
+     * @param t_clientId
+     * @param t_clientSecret
+     * @param t_redirectUri
+     * @return
+     */
+    nlohmann::json APIHandler::authorizeOAuth2(const std::string &t_code, const std::string &t_clientId,
+                                              const std::string &t_clientSecret, const std::string &t_redirectUri,
+                                              const std::string &t_tokenUri) {
+        CURL *curl;
+        std::string readBuffer;
+        long responseCode;
+        nlohmann::json responseTokens;
+        std::string code = t_code;
+        std::string clientId = t_clientId;
+        std::string clientSecret = t_clientSecret;
+        std::string redirectUri = t_redirectUri;
+        std::string tokenUri = t_tokenUri;
+
+        // Use config to set parameters that weren't passed a value.
+        std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+        if (code.empty()) {
+            code = cfg->getString("youtube_auth/oauth2/code");
+
+            // If code is *still* empty, throw a tantrum.
+            if (code.empty()) {
+                std::cerr << "authorizeOAuth2 ERROR: Required value 'code' is empty, unable to authorize!"
+                          << std::endl;
+                return responseTokens;
+            }
+        }
+        if (clientId.empty()) {
+            clientId = cfg->getString("youtube_auth/oauth2/client_id");
+        }
+        if (clientSecret.empty()) {
+            clientSecret = cfg->getString("youtube_auth/oauth2/client_secret");
+        }
+        if (redirectUri.empty()) {
+            clientSecret = cfg->getString("youtube_auth/oauth2/redirect_uri");
+        }
+        if (tokenUri.empty()) {
+            tokenUri = cfg->getString("youtube_auth/oauth2/token_uri");
+        }
+
+        // Start a libcURL easy session and assign the returned handle.
+        // NB: Implicitly calls curl_global_init, which is *NOT* thread-safe!
+        curl = curl_easy_init();
+        if(curl) {
+            CURLcode result;
+
+            // Custom headers
+            struct curl_slist *chunk = nullptr;
+            chunk = curl_slist_append(chunk, "Content-type: application/x-www-form-urlencoded");
+
+            // POST data
+            std::string postFields =   "code="            + code
+                                     + "&client_id="      + clientId
+                                     + "&client_secret="  + clientSecret
+                                     + "&redirect_uri="   + redirectUri
+                                     + "&grant_type=authorization_code";
+
+            curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, true);
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+            curl_easy_setopt(curl, CURLOPT_URL, tokenUri.c_str());
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+            // Perform a blocking file transfer
+            result = curl_easy_perform(curl);
+
+            if (result == CURLE_OK) {
+                // All fine. Proceed as usual.
+                curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+                if (responseCode != 200) {
+                    std::cerr << "authorizeOAuth2 API request failed with error "
+                              << responseCode << ": " << readBuffer << "\n" << std::endl;
+                    return responseTokens;
+                }
+            } else {
+                std::cerr << "authorizeOAuth2 cURL easy perform failed with non-zero code: "
+                          << result << "!" << std::endl;
+                return responseTokens;
+            }
+
+            // Cleanup call REQUIRED by curl_easy_init, which closes the handle.
+            //
+            // This might close all connections this handle has used and possibly has kept open until
+            // now - unless it was attached to a multi handle while doing the transfers.
+            // Don't call this function if you intend to transfer more files,
+            // re-using handles is a key to good performance with libcurl
+            curl_easy_cleanup(curl);
+
+            // Convert readBuffer to JSON
+            if (responseCode == 200) {
+                try {
+                    responseTokens = nlohmann::json::parse(readBuffer);
+                } catch (nlohmann::detail::parse_error &exc) {
+                    std::cerr << "Skipping APIHandler::authorizeOAuth2 due to Exception: " << std::string(exc.what())
+                              << responseTokens.dump() << std::endl;
+                } catch (const std::exception &exc) {
+                    std::cerr << "Skipping APIHandler::authorizeOAuth2 due to Unexpected Exception: "
+                              << std::string(exc.what()) << responseTokens.dump() << "\n" << std::endl;
+                }
+            }
+        }
+        // Store access token and related to config:
+        // 1. Get current config as JSON object.
+        nlohmann::json config = cfg->getConfig();
+
+        // 2. Update it with the new values.
+        if (responseTokens.find("access_token") != responseTokens.end()) {
+            config["youtube_auth"]["oauth2"]["access_token"] = responseTokens["access_token"].get<std::string>();
+        }
+        if (responseTokens.find("expires_in") != responseTokens.end()) {
+            // Get token TTL in seconds.
+            int expiresInSeconds = responseTokens["expires_in"].get<int>();
+            // Get current timestamp in seconds since epoch.
+            auto now = std::chrono::system_clock::now();
+            time_t timeSinceEpoch = std::chrono::system_clock::to_time_t(now);
+            // Get timestamp of when TTL is set to expire.
+            int expiresAtTimestamp = (int)timeSinceEpoch + expiresInSeconds;
+
+            config["youtube_auth"]["oauth2"]["expires_at"] = expiresAtTimestamp;
+        }
+        if (responseTokens.find("refresh_token") != responseTokens.end()) {
+            config["youtube_auth"]["oauth2"]["refresh_token"] = responseTokens["refresh_token"].get<std::string>();
+        }
+        // 3. Overwrite the old config.
+        cfg->setConfig(config);
+
+        return responseTokens;
     }
 
     nlohmann::json APIHandler::getOAuth2Token(const std::string &t_tokenUri, const std::string &t_refreshToken,
@@ -301,7 +517,7 @@ namespace sane {
     }
 
     /**
-     * Gets a SaneAPI response via cURL.
+     * Gets an OAuth2 YouTube API response via cURL.
      *
      * @param url   A const string of the full API route URL.
      * @return      Response parsed as JSON or - if cURL failed - an explicitly expressed empty object.

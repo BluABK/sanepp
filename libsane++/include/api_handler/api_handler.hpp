@@ -46,16 +46,23 @@
 // OAuth2
 #define OAUTH2_DEFAULT_REDIRECT_URI                "http://127.0.0.1:10600"
 #define OAUTH2_DEFAULT_AUTH_URI                    "https://accounts.google.com/o/oauth2/v2/auth"
+#define OAUTH2_DEFAULT_TOKEN_URI                   "https://www.googleapis.com/oauth2/v4/token"
 #define OAUTH2_DEFAULT_RESPONSE_TYPE               "code"
+// Authorize user consent (web prompt)
+#define OAUTH2_SERVER_MODE_AUTH                     1
+// Exchange of authorization code for refresh and access tokens.
+#define OAUTH2_SERVER_MODE_TOKEN                    2
 
 namespace sane {
     static std::string oauth2Code;
 
     class APIHandler {
     public:
-        static void oauth2ResponseCatcher(const httplib::Request &req, const httplib::Response &res);
+        static void oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
 
-        static void runOAuth2Server(const std::string &t_redirectUri);
+        static void oauth2ExchangeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
+
+        static void runOAuth2Server(const std::string &t_redirectUri, int t_mode);
 
         static void stopOAuth2Server();
 
@@ -65,6 +72,11 @@ namespace sane {
                                          bool t_runServer = true,
                                          const std::string &t_oauth2Uri = OAUTH2_DEFAULT_AUTH_URI,
                                          const std::string &t_responseType = OAUTH2_DEFAULT_RESPONSE_TYPE);
+
+        nlohmann::json authorizeOAuth2(const std::string &t_code = {}, const std::string &t_clientId = {},
+                                       const std::string &t_clientSecret = {},
+                                       const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
+                                       const std::string &t_tokenUri = OAUTH2_DEFAULT_TOKEN_URI);
 
         nlohmann::json getOAuth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
                                       const std::string &t_clientId = {}, const std::string &t_clientSecret = {});

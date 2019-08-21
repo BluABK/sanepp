@@ -95,6 +95,8 @@ namespace sane {
         addCommand(EXIT, "Exit program", CORE_CATEGORY);
         addCommand(HELP, "Print help", CORE_CATEGORY);
         addCommand(HELP_EXTENDED, "Print extended help", CORE_CATEGORY);
+        addCommand(AUTHENTICATE_OAUTH2, "Authenticates OAuth 2.0 for YouTube (required for certain API calls)", UNCATEGORISED);
+
         addCommand(GET_SUBSCRIPTIONS_FROM_API, "Retrieves (and stores) a fresh list of subscriptions from "
                                                "the YouTube API.", DB_CATEGORY);
         addCommand(PRINT_SUBSCRIPTIONS_FULL, "Lists all subscriptions separately as fully detailed blocks of text",
@@ -231,7 +233,9 @@ namespace sane {
             help(true);
         } else if (command == EXIT) {
             exit();
-        } else if (command == GET_SUBSCRIPTIONS_FROM_API) {
+        } else if (command == AUTHENTICATE_OAUTH2) {
+            authenticateOAuth2();
+        }  else if (command == GET_SUBSCRIPTIONS_FROM_API) {
             getSubscriptionsFromApi();
         } else if (command == PRINT_SUBSCRIPTIONS_JSON_FROM_API){
             printSubscriptionsJsonFromApi();
@@ -308,6 +312,24 @@ namespace sane {
             }
         }
 
+    }
+
+    void CLI::authenticateOAuth2() {
+        // Step 1: Send a request to Google's OAuth 2.0 server
+        std::cout << "Open this link in a browser: " << api->generateOAuth2URI() << std::endl;
+
+        // Step 2: Wait for Google user consent prompts, then handle the OAuth 2.0 server response.
+        std::thread t1(sane::APIHandler::runOAuth2Server, OAUTH2_DEFAULT_REDIRECT_URI);
+        t1.join();
+
+        // Step 3: Exchange authorization code for refresh and access tokens.
+        nlohmann::json response = api->authorizeOAuth2();
+
+        if (!response.empty()) {
+            std::cout << "Authenticated." << std::endl;
+        } else {
+            std::cout << "Authentication aborted!" << std::endl;
+        }
     }
 
     const std::string CLI::padStringValue(const std::string &string_t,

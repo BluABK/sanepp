@@ -63,7 +63,7 @@ namespace sane {
         // Obtaining OAuth 2.0 access tokens, Step 2: Wait for Google user consent prompts,
         //                                            then handle the OAuth 2.0 server response.
         static void oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
-        static void runOAuth2Server(const std::string &t_redirectUri);
+        static void runOAuth2Server(const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI);
         static void stopOAuth2Server();
 
         // Obtaining OAuth 2.0 access tokens, Step 3: Exchange authorization code for refresh and access tokens.

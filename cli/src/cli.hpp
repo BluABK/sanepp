@@ -60,6 +60,8 @@ namespace sane {
 
         void executeCommand(const std::vector<std::string> &t_tokenizedInput);
 
+        void authenticateOAuth2();
+
         void printPlaylistVideos(const std::string &t_playlistId,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
@@ -143,6 +145,9 @@ namespace sane {
         const std::string EXIT = "exit";
         const std::string HELP = "help";
         const std::string HELP_EXTENDED = "help-extended";
+        // Authentication and OAuth2
+        const std::string AUTHENTICATE_OAUTH2 = "auth-oauth2";
+
         // Activities
         // -- JSON
         const std::string LIST_ACTIVITIES_JSON = "list-activities-json";

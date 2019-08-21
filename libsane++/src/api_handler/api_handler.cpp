@@ -242,8 +242,8 @@ namespace sane {
      * @return
      */
     nlohmann::json APIHandler::authorizeOAuth2(const std::string &t_code, const std::string &t_clientId,
-                                              const std::string &t_clientSecret, const std::string &t_redirectUri,
-                                              const std::string &t_tokenUri) {
+                                               const std::string &t_clientSecret, const std::string &t_redirectUri,
+                                               const std::string &t_tokenUri) {
         CURL *curl;
         std::string readBuffer;
         long responseCode;
@@ -475,7 +475,7 @@ namespace sane {
 
         // Get OAuth2 access token.
         std::string accessToken;
-        nlohmann::json accessTokenJson = getOAuth2Token();
+        nlohmann::json accessTokenJson = getOAuth2Token(); //FIXME: Don't request new refresh token each time (bad!)
 
         if (accessTokenJson.find("access_token") != accessTokenJson.end()) {
             if (accessTokenJson["access_token"].is_string()) {

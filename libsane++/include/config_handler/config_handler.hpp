@@ -25,7 +25,11 @@ namespace sane {
 
         const std::string getString(const std::string &t_section);
 
+        bool isNumber(const std::string &t_section);
+
         int getInt(const std::string &t_section);
+
+        long int getLongInt(const std::string &t_section);
 
         const std::list<std::string> getStringList(const std::string &t_section);
     private:

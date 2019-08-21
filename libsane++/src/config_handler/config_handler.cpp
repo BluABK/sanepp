@@ -112,11 +112,20 @@ namespace sane {
         return retval;
     }
 
+    bool ConfigHandler::isNumber(const std::string &t_section) {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        auto section = getSection(t_section);
+
+        return section.is_number();
+    }
+
     /**
      * Read a config section and return its value as an int.
      *
      * @param t_section String of path to JSON/config section.
-     * @return          Result or empty string.
+     * @return          Result or 0.
      */
     int ConfigHandler::getInt(const std::string &t_section)  {
         // Open config file.
@@ -124,7 +133,38 @@ namespace sane {
 
         int retval;
 
-        retval = getSection(t_section).get<int>();
+        auto section = getSection(t_section);
+
+        if (section.is_number()) {
+            retval = section.get<int>();
+        } else {
+            std::cerr << "ConfigHandler::getInt(" << t_section << ") ERROR: NaN: " << section.dump() << std::endl;
+            retval = 0;
+        }
+
+        return retval;
+    }
+
+    /**
+     * Read a config section and return its value as a long int.
+     *
+     * @param t_section String of path to JSON/config section.
+     * @return          Result or 0.
+     */
+    long int ConfigHandler::getLongInt(const std::string &t_section)  {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        long int retval;
+
+        auto section = getSection(t_section);
+
+        if (section.is_number()) {
+            retval = section.get<long int>();
+        } else {
+            std::cerr << "ConfigHandler::getLongInt(" << t_section << ") ERROR: NaN: " << section.dump() << std::endl;
+            retval = 0;
+        }
 
         return retval;
     }

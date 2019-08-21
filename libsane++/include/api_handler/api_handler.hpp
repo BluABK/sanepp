@@ -48,19 +48,13 @@
 #define OAUTH2_DEFAULT_AUTH_URI                    "https://accounts.google.com/o/oauth2/v2/auth"
 #define OAUTH2_DEFAULT_TOKEN_URI                   "https://www.googleapis.com/oauth2/v4/token"
 #define OAUTH2_DEFAULT_RESPONSE_TYPE               "code"
-// Authorize user consent (web prompt)
-#define OAUTH2_SERVER_MODE_AUTH                     1
-// Exchange of authorization code for refresh and access tokens.
-#define OAUTH2_SERVER_MODE_TOKEN                    2
 
 namespace sane {
-    static std::string oauth2Code;
-
     class APIHandler {
     public:
         static void oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
 
-        static void runOAuth2Server(const std::string &t_redirectUri, int t_mode);
+        static void runOAuth2Server(const std::string &t_redirectUri);
 
         static void stopOAuth2Server();
 

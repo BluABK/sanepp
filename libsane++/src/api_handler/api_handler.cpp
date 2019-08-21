@@ -123,23 +123,16 @@ namespace sane {
      *
      * @param t_redirectUri
      */
-    void APIHandler::runOAuth2Server(const std::string &t_redirectUri, int t_mode) {
+    void APIHandler::runOAuth2Server(const std::string &t_redirectUri) {
         // Break down redirect URI into host and port.
         std::string strippedUri = std::regex_replace(t_redirectUri, std::regex("http:\\/\\/"), "");
         std::vector<std::string> tokens = tokenize(strippedUri, ':');
         std::string host = tokens[0];
         int port = std::stoi(tokens[1]);
 
-        if (t_mode == OAUTH2_SERVER_MODE_AUTH) {
-            oauth2server.set_logger([](const auto &req, const auto &res) {
-                oauth2CodeResponseCatcher(req, res);
-            });
-        } else if (t_mode == OAUTH2_SERVER_MODE_TOKEN) {
-            oauth2server.set_logger([](const auto &req, const auto &res) {
-//                oauth2ExchangeResponseCatcher(req, res);
-                httpLog(req, res);
-            });
-        }
+        oauth2server.set_logger([](const auto &req, const auto &res) {
+            oauth2CodeResponseCatcher(req, res);
+        });
 
         try {
             std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;

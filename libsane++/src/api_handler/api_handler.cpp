@@ -54,6 +54,34 @@ namespace sane {
         t_stringToDecode = std::regex_replace(t_stringToDecode, std::regex("%3A"), ":");
     }
 
+    void APIHandler::updateOAuth2TokenConfig(nlohmann::json &t_response) {
+        std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+        // 1. Get current config as JSON object.
+        nlohmann::json config = cfg->getConfig();
+
+        // 2. Update it with the new values.
+        if (t_response.find("access_token") != t_response.end()) {
+            config["youtube_auth"]["oauth2"]["access_token"] = t_response["access_token"].get<std::string>();
+        }
+        if (t_response.find("expires_in") != t_response.end()) {
+            // Get token TTL in seconds.
+            long int expiresInSeconds = t_response["expires_in"].get<int>();
+            // Get current timestamp in seconds since epoch.
+            auto now = std::chrono::system_clock::now();
+            time_t timeSinceEpoch = std::chrono::system_clock::to_time_t(now);
+            // Get timestamp of when TTL is set to expire.
+            long int expiresAtTimestamp = (long int)timeSinceEpoch + expiresInSeconds;
+
+            config["youtube_auth"]["oauth2"]["expires_at"] = expiresAtTimestamp;
+        }
+        if (t_response.find("refresh_token") != t_response.end()) {
+            config["youtube_auth"]["oauth2"]["refresh_token"] = t_response["refresh_token"].get<std::string>();
+        }
+        // 3. Overwrite the old config.
+        cfg->setConfig(config);
+    }
+
     /**
      * Basic logger function to log httplib.
      *
@@ -343,30 +371,9 @@ namespace sane {
                 }
             }
         }
-        // Store access token and related to config:
-        // 1. Get current config as JSON object.
-        nlohmann::json config = cfg->getConfig();
 
-        // 2. Update it with the new values.
-        if (responseTokens.find("access_token") != responseTokens.end()) {
-            config["youtube_auth"]["oauth2"]["access_token"] = responseTokens["access_token"].get<std::string>();
-        }
-        if (responseTokens.find("expires_in") != responseTokens.end()) {
-            // Get token TTL in seconds.
-            int expiresInSeconds = responseTokens["expires_in"].get<int>();
-            // Get current timestamp in seconds since epoch.
-            auto now = std::chrono::system_clock::now();
-            time_t timeSinceEpoch = std::chrono::system_clock::to_time_t(now);
-            // Get timestamp of when TTL is set to expire.
-            int expiresAtTimestamp = (int)timeSinceEpoch + expiresInSeconds;
-
-            config["youtube_auth"]["oauth2"]["expires_at"] = expiresAtTimestamp;
-        }
-        if (responseTokens.find("refresh_token") != responseTokens.end()) {
-            config["youtube_auth"]["oauth2"]["refresh_token"] = responseTokens["refresh_token"].get<std::string>();
-        }
-        // 3. Overwrite the old config.
-        cfg->setConfig(config);
+        // Store access token and related to config.
+        updateOAuth2TokenConfig(responseTokens);
 
         return responseTokens;
     }
@@ -376,7 +383,7 @@ namespace sane {
         CURL *curl;
         std::string readBuffer;
         long responseCode;
-        nlohmann::json accessToken;
+        nlohmann::json accessTokenJson;
         std::string refreshToken = t_refreshToken;
         std::string clientId = t_clientId;
         std::string clientSecret = t_clientSecret;
@@ -431,12 +438,13 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "API request failed with error " << responseCode << ": " << readBuffer << "\n"
-                              << std::endl;
+                    std::cerr << "refreshOAuth2Token: API request failed with error " << responseCode << ": "
+                              << readBuffer << "\n" << std::endl;
                 }
             } else {
-                std::cerr << "cURL easy perform failed with non-zero code: " << result << "!" << std::endl;
-                return accessToken;
+                std::cerr << "refreshOAuth2Token: cURL easy perform failed with non-zero code: " << result
+                          << "!" << std::endl;
+                return accessTokenJson;
             }
 
             // Cleanup call REQUIRED by curl_easy_init, which closes the handle.
@@ -450,17 +458,21 @@ namespace sane {
             // Convert readBuffer to JSON
             if (responseCode == 200) {
                 try {
-                    accessToken = nlohmann::json::parse(readBuffer);
+                    accessTokenJson = nlohmann::json::parse(readBuffer);
                 } catch (nlohmann::detail::parse_error &exc) {
                     std::cerr << "Skipping APIHandler::refreshOAuth2Token due to Exception: " << std::string(exc.what())
-                              << accessToken.dump() << std::endl;
+                              << accessTokenJson.dump() << std::endl;
                 } catch (const std::exception &exc) {
                     std::cerr << "Skipping APIHandler::refreshOAuth2Token due to Unexpected Exception: "
-                              << std::string(exc.what()) << accessToken.dump() << "\n" << std::endl;
+                              << std::string(exc.what()) << accessTokenJson.dump() << "\n" << std::endl;
                 }
             }
         }
-        return accessToken;
+
+        // Store access token and related to config.
+        updateOAuth2TokenConfig(accessTokenJson);
+
+        return accessTokenJson;
     }
 
     /**
@@ -471,22 +483,36 @@ namespace sane {
      */
     nlohmann::json APIHandler::getOAuth2Response(const std::string &url) {
         nlohmann::json jsonData = nlohmann::json::object();
-
-
-        // Get OAuth2 access token.
         std::string accessToken;
-        nlohmann::json accessTokenJson = refreshOAuth2Token(); //FIXME: Don't request new refresh token each time (bad!)
 
-        if (accessTokenJson.find("access_token") != accessTokenJson.end()) {
-            if (accessTokenJson["access_token"].is_string()) {
-                accessToken = accessTokenJson["access_token"].get<std::string>();
+        std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+        // Get current timestamp in seconds since epoch.
+        auto now = std::chrono::system_clock::now();
+        time_t timeSinceEpoch = std::chrono::system_clock::to_time_t(now);
+
+        // Check expiry date of current access token.
+        std::string confPath = "youtube_auth/oauth2/expires_at"; // For shortened line length.
+        long int expiresAt = cfg->isNumber(confPath) ? cfg->getLongInt(confPath) : -1;
+
+        if (expiresAt > (long int)timeSinceEpoch) {
+            // Access token has not yet expired, use current..
+            accessToken = cfg->getString("youtube_auth/oauth2/access_token");
+        } else {
+            // Access token is expired or has invalid config, get a new one.
+            nlohmann::json accessTokenJson = refreshOAuth2Token();
+
+            if (accessTokenJson.find("access_token") != accessTokenJson.end()) {
+                if (accessTokenJson["access_token"].is_string()) {
+                    accessToken = accessTokenJson["access_token"].get<std::string>();
+                } else {
+                    std::cerr << "Invalid access token: not string!\n" << accessTokenJson.dump(4) << std::endl;
+                    return jsonData;
+                }
             } else {
-                std::cerr << "Invalid access token: not string!\n" << accessTokenJson.dump(4) << std::endl;
+                std::cerr << "Invalid access token: not in JSON!\n" << accessTokenJson.dump(4) << std::endl;
                 return jsonData;
             }
-        } else {
-            std::cerr << "Invalid access token: not in JSON!\n" << accessTokenJson.dump(4) << std::endl;
-            return jsonData;
         }
 
         // Proceed with the original cURL request.
@@ -498,7 +524,6 @@ namespace sane {
         // NB: Implicitly calls curl_global_init, which is *NOT* thread-safe!
         curl = curl_easy_init();
         if(curl) {
-//            std::cout << url << std::endl;
             CURLcode result;
 
             // Custom headers
@@ -523,11 +548,11 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "API request failed with error " << responseCode << ": " << readBuffer << "\n"
+                    std::cerr << "getOAuth2Response: API request failed with error " << responseCode << ": " << readBuffer << "\n"
                               << std::endl;
                 }
             } else {
-                std::cerr << "cURL easy perform failed with non-zero code: " << result << "!" << std::endl;
+                std::cerr << "getOAuth2Response: cURL easy perform failed with non-zero code: " << result << "!" << std::endl;
                 return jsonData;
             }
 

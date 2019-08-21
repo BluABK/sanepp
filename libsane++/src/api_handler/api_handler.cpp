@@ -82,10 +82,12 @@ namespace sane {
     }
 
     /**
-     * Catches a Google OAuth 2.0 code response (from step 2).
+     * Catches a Google OAuth 2.0 code response (used in step 2).
      *
-     * @param req
-     * @param res
+     * This is basically a re-purposed cpp-httplib logger, to keep things simple.
+     *
+     * @param req   httplib::Request struct.
+     * @param res   httplib::Response struct.
      */
     void APIHandler::oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res) {
         std::string code;
@@ -106,8 +108,10 @@ namespace sane {
 
             // 1. Get current config as JSON object.
             nlohmann::json config = cfg->getConfig();
+
             // 2. Update it with the new value.
             config["youtube_auth"]["oauth2"]["code"] = code;
+
             // 3. Overwrite the old config.
             cfg->setConfig(config);
 
@@ -117,7 +121,7 @@ namespace sane {
     }
 
     /**
-     * Run a local loopback httplib server to catch Google's OAuth 2.0 response.
+     * Step 2/3: Run a local loopback httplib server to catch Google's OAuth 2.0 response.
      *
      * @param t_redirectUri
      */
@@ -146,7 +150,7 @@ namespace sane {
     }
 
     /**
-     * Step 1/4: Send a request to Google's OAuth 2.0 server.
+     * Step 1/3: Send a request to Google's OAuth 2.0 server.
      *
      * @param t_clientId
      * @param t_scope
@@ -235,7 +239,7 @@ namespace sane {
     }
 
     /**
-     * Step 4/4: Exchange authorization code for refresh and access tokens
+     * Step 3/3: Exchange authorization code for refresh and access tokens
      *
      * @param t_code
      * @param t_clientId

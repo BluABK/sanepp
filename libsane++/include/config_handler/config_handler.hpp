@@ -25,7 +25,7 @@ namespace sane {
 
         const std::string getString(const std::string &t_section);
 
-        const std::string getInt(const std::string &t_section);
+        int getInt(const std::string &t_section);
 
         const std::list<std::string> getStringList(const std::string &t_section);
     private:

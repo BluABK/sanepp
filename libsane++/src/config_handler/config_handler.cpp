@@ -112,18 +112,22 @@ namespace sane {
         return retval;
     }
 
-//    template<typename T>
-//    const std::list<T> ConfigHandler::getList(const std::string &t_section) {
-//        // Open config file.
-//        nlohmann::json config = getConfig();
-//
-//        if (hasSection(t_section)) {
-//            // ISO C++03 14.2/4: The member template name must be prefixed by the keyword template.
-//            return getSection(t_section).template get<std::list<T>>();
-//        }
-//
-//        return std::list<T>();
-//    }
+    /**
+     * Read a config section and return its value as an int.
+     *
+     * @param t_section String of path to JSON/config section.
+     * @return          Result or empty string.
+     */
+    int ConfigHandler::getInt(const std::string &t_section)  {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        int retval;
+
+        retval = getSection(t_section).get<int>();
+
+        return retval;
+    }
 
     const std::list<std::string> ConfigHandler::getStringList(const std::string &t_section) {
         // Open config file.
@@ -134,37 +138,4 @@ namespace sane {
 
         return std::list<std::string>();
     }
-
-//    void ConfigHandler::setStringOption(const std::string &t_section, const std::string &t_value, bool debug) {
-//        // Open config file and get a JSON object.
-//        nlohmann::json config = getConfig();
-//
-//        // Traverse sections
-//        std::vector<std::string> sections = tokenize(t_section, SECTION_SEPARATOR);
-//
-//        nlohmann::json valueJson = config;
-//
-//        for (const auto& key : sections) {
-//            valueJson = valueJson[key];
-//            if (debug) {
-//                std::cout << "DEBUG: currentDepth: " << valueJson.dump() << std::endl;
-//            }
-//        }
-//
-//        return valueJson;
-//
-//        // Set the option
-//        config[]
-//
-//        // Open config file.
-//        std::ofstream ofs{ "config.json" };
-//
-//        ofs << std::setw()
-//
-//        // Read config ifstream into a JSON object.
-//        nlohmann::json config = nlohmann::json::parse(ofs);
-//
-//        // Close config file.
-//        ofs.close();
-//    }
 } // namespace sane

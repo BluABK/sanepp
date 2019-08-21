@@ -120,31 +120,6 @@ namespace sane {
         }
     }
 
-    /**
-     * Step 2/3: Run a local loopback httplib server to catch Google's OAuth 2.0 response.
-     *
-     * @param t_redirectUri
-     */
-    void APIHandler::runOAuth2Server(const std::string &t_redirectUri) {
-        // Break down redirect URI into host and port.
-        std::string strippedUri = std::regex_replace(t_redirectUri, std::regex("http:\\/\\/"), "");
-        std::vector<std::string> tokens = tokenize(strippedUri, ':');
-        std::string host = tokens[0];
-        int port = std::stoi(tokens[1]);
-
-        oauth2server.set_logger([](const auto &req, const auto &res) {
-            oauth2CodeResponseCatcher(req, res);
-        });
-
-        try {
-//            std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
-            oauth2server.listen(host.c_str(), port);
-//            std::cout << "Stopped OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
-        } catch (std::exception &exc) {
-            std::cerr << "APIHandler::runOAuth2Server ERROR: Unexpected exception: " << exc.what() << std::endl;
-        }
-    }
-
     void APIHandler::stopOAuth2Server() {
         oauth2server.stop();
     }
@@ -228,14 +203,33 @@ namespace sane {
                          + "&redirect_uri="     + redirectUri
                          + "&client_id="         + clientId;
 
-        // Run server
-        if (t_runServer) {
-            // FIXME: Server code goes here.
-            urlDecode(redirectUri);
-        }
-
         // Return constructed OAuth2 Authentication URI.
         return uri;
+    }
+
+    /**
+     * Step 2/3: Run a local loopback httplib server to catch Google's OAuth 2.0 response.
+     *
+     * @param t_redirectUri
+     */
+    void APIHandler::runOAuth2Server(const std::string &t_redirectUri) {
+        // Break down redirect URI into host and port.
+        std::string strippedUri = std::regex_replace(t_redirectUri, std::regex("http:\\/\\/"), "");
+        std::vector<std::string> tokens = tokenize(strippedUri, ':');
+        std::string host = tokens[0];
+        int port = std::stoi(tokens[1]);
+
+        oauth2server.set_logger([](const auto &req, const auto &res) {
+            oauth2CodeResponseCatcher(req, res);
+        });
+
+        try {
+//            std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
+            oauth2server.listen(host.c_str(), port);
+//            std::cout << "Stopped OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
+        } catch (std::exception &exc) {
+            std::cerr << "APIHandler::runOAuth2Server ERROR: Unexpected exception: " << exc.what() << std::endl;
+        }
     }
 
     /**

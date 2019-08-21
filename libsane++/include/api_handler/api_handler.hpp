@@ -52,12 +52,8 @@
 namespace sane {
     class APIHandler {
     public:
-        static void oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
-
-        static void runOAuth2Server(const std::string &t_redirectUri);
-
-        static void stopOAuth2Server();
-
+        /** OAuth2 */
+        // Obtaining OAuth 2.0 access tokens, Step 1: Send a request to Google's OAuth 2.0 server
         nlohmann::json generateOAuth2URI(const std::string &t_clientId = {}, const std::string &t_scope = {},
                                          const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
                                          const std::string &t_state = {}, const std::string &t_loginHint = {},
@@ -65,6 +61,13 @@ namespace sane {
                                          const std::string &t_oauth2Uri = OAUTH2_DEFAULT_AUTH_URI,
                                          const std::string &t_responseType = OAUTH2_DEFAULT_RESPONSE_TYPE);
 
+        // Obtaining OAuth 2.0 access tokens, Step 2: Wait for Google user consent prompts,
+        //                                            then handle the OAuth 2.0 server response.
+        static void oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
+        static void runOAuth2Server(const std::string &t_redirectUri);
+        static void stopOAuth2Server();
+
+        // Obtaining OAuth 2.0 access tokens, Step 3: Exchange authorization code for refresh and access tokens.
         nlohmann::json authorizeOAuth2(const std::string &t_code = {}, const std::string &t_clientId = {},
                                        const std::string &t_clientSecret = {},
                                        const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
@@ -74,6 +77,8 @@ namespace sane {
                                       const std::string &t_clientId = {}, const std::string &t_clientSecret = {});
 
         nlohmann::json getOAuth2Response(const std::string &url);
+
+        /** Other */
 
         void printReport(int t_warningsCount, int t_errorsCount);
 

@@ -1,5 +1,5 @@
 # Sane++
-A Sane Subscription Feed C++ rewrite.
+A Sane Subscriptions Feed C++ rewrite.
 
 [![Build Status](https://api.travis-ci.org/BluABK/sanepp.svg?branch=master)](https://travis-ci.org/BluABK/sanepp)
 [![GitHub](https://img.shields.io/github/license/bluabk/sanepp.svg)](https://raw.githubusercontent.com/BluABK/sanepp/master/LICENSE.md)
@@ -19,22 +19,27 @@ Sane++ grabs the "uploaded videos" playlist for all channels you're subscribed t
   2. `cmake ../src/ && cmake --build .`
   3. `cd ..` (avoids relative paths in later instructions)
 
-### Prerequisite OAuth2 authentication
-#### Installing the legacy python codebase
-It is currently necessary to authenticate OAuth2 with the legacy python codebase in order to retrieve your "refresh_token".
-Luckily, you should only need to do this once.
+### Prerequisite YouTube OAuth2 authentication
+1. Go through method A or B and then perform the following further steps:
+2. Run the CLI OAuth authentication command: `build/bin/Sane++ auth-oauth2`.
+3. Open the link it produced in a web browser and go through the authentication process.
 
-1. `pip install -r requirements.txt`
+#### Method A) Using the public YouTube API credentials
+1. Copy `config.json.sample` to `config.json`
 
-#### Running the legacy python script 
+#### Method B) Using custom YouTube API credentials
+1. Copy `config.json.sample` to `config.json`
+2. Change `client_id`, `client_secret` and `api_key` according to the ones Google API provided you.
 
-  1. `python3 src/sane-api/sane_api.py`
-  2. Click the URL and authenticate it (ignore the ghastly unsafe warning).
-  3. Paste the authorization code into the command prompt.
-  4. Put the OAuth2 refresh token in config.json, which should reside next to the executables.
+### Running it
 
 #### Command line interface
 `build/bin/Sane++`
+
+Supports commands as params from the command line (e.g. `build/bin/Sane++ auth-oauth2`)
+
+#### GUI
+Not yet implemented.
 
 ## FAQ
 ### Why rewrite the software?

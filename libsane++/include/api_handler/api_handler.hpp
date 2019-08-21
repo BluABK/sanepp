@@ -60,8 +60,6 @@ namespace sane {
     public:
         static void oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
 
-        static void oauth2ExchangeResponseCatcher(const httplib::Request &req, const httplib::Response &res);
-
         static void runOAuth2Server(const std::string &t_redirectUri, int t_mode);
 
         static void stopOAuth2Server();

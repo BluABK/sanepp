@@ -244,48 +244,6 @@ namespace sane {
     }
 
     /**
-     * Step 4: Exchange authorization code for refresh and access tokens.
-     *
-     * @param req
-     * @param res
-     */
-    void APIHandler::oauth2ExchangeResponseCatcher(const httplib::Request &req, const httplib::Response &res) {
-        std::string accessToken;
-        std::string refreshToken;
-        int expiresInSeconds;
-        std::string tokenType;
-        nlohmann::json response;
-//        for (const auto& param : req.params) {
-//            if (param.first == "access_token") {
-//                accessToken = param.second;
-//            } else if (param.first == "expires_in") {}
-//            else if (param.first == "error") {
-//                std::cerr << "OAuth2 ERROR: " << param.second << std::endl;
-//
-//                // Stop the static OAuth2 httplib server.
-//                stopOAuth2Server();
-//            }
-//        }
-
-        if (!response.empty()) {
-//            oauth2Code = code;
-
-            // Store code to config:
-            std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
-
-            // 1. Get current config as JSON object.
-            nlohmann::json config = cfg->getConfig();
-            // 2. Update it with the new value.
-            config["youtube_auth"]["oauth2"]["fixme"] = response;
-            // 3. Overwrite the old config.
-//            cfg->setConfig(config);
-
-            // Stop the static OAuth2 httplib server.
-            stopOAuth2Server();
-        }
-    }
-
-    /**
      * Step 4/4: Exchange authorization code for refresh and access tokens
      *
      * @param t_code

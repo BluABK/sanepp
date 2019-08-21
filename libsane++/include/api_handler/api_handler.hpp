@@ -72,8 +72,8 @@ namespace sane {
                                        const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
                                        const std::string &t_tokenUri = OAUTH2_DEFAULT_TOKEN_URI);
 
-        nlohmann::json getOAuth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
-                                      const std::string &t_clientId = {}, const std::string &t_clientSecret = {});
+        nlohmann::json refreshOAuth2Token(const std::string &t_tokenUri = {}, const std::string &t_refreshToken = {},
+                                          const std::string &t_clientId = {}, const std::string &t_clientSecret = {});
 
         nlohmann::json getOAuth2Response(const std::string &url);
 

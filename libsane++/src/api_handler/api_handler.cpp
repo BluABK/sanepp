@@ -371,8 +371,8 @@ namespace sane {
         return responseTokens;
     }
 
-    nlohmann::json APIHandler::getOAuth2Token(const std::string &t_tokenUri, const std::string &t_refreshToken,
-                                              const std::string &t_clientId, const std::string &t_clientSecret) {
+    nlohmann::json APIHandler::refreshOAuth2Token(const std::string &t_tokenUri, const std::string &t_refreshToken,
+                                                  const std::string &t_clientId, const std::string &t_clientSecret) {
         CURL *curl;
         std::string readBuffer;
         long responseCode;
@@ -452,10 +452,10 @@ namespace sane {
                 try {
                     accessToken = nlohmann::json::parse(readBuffer);
                 } catch (nlohmann::detail::parse_error &exc) {
-                    std::cerr << "Skipping APIHandler::getOAuth2Token due to Exception: " << std::string(exc.what())
+                    std::cerr << "Skipping APIHandler::refreshOAuth2Token due to Exception: " << std::string(exc.what())
                               << accessToken.dump() << std::endl;
                 } catch (const std::exception &exc) {
-                    std::cerr << "Skipping APIHandler::getOAuth2Token due to Unexpected Exception: "
+                    std::cerr << "Skipping APIHandler::refreshOAuth2Token due to Unexpected Exception: "
                               << std::string(exc.what()) << accessToken.dump() << "\n" << std::endl;
                 }
             }
@@ -475,7 +475,7 @@ namespace sane {
 
         // Get OAuth2 access token.
         std::string accessToken;
-        nlohmann::json accessTokenJson = getOAuth2Token(); //FIXME: Don't request new refresh token each time (bad!)
+        nlohmann::json accessTokenJson = refreshOAuth2Token(); //FIXME: Don't request new refresh token each time (bad!)
 
         if (accessTokenJson.find("access_token") != accessTokenJson.end()) {
             if (accessTokenJson["access_token"].is_string()) {

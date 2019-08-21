@@ -42,7 +42,7 @@ Supports commands as params from the command line (e.g. `build/bin/sane++_cli au
 Not yet implemented.
 
 ## FAQ
-## Why rewrite the software?
+### Why rewrite the software?
 Aside from the obvious performance enhancements and reduced complexity I decided to rewrite it in C++ because I kept running into nonsense issues with libQt segfaulting due to PyQt, and since it's C++ wrapped objects in python... GLHF debugging...
 
 This and other gripes eventually led to this rewrite.

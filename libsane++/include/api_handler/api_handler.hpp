@@ -57,7 +57,6 @@ namespace sane {
         nlohmann::json generateOAuth2URI(const std::string &t_clientId = {}, const std::string &t_scope = {},
                                          const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
                                          const std::string &t_state = {}, const std::string &t_loginHint = {},
-                                         bool t_runServer = true,
                                          const std::string &t_oauth2Uri = OAUTH2_DEFAULT_AUTH_URI,
                                          const std::string &t_responseType = OAUTH2_DEFAULT_RESPONSE_TYPE);
 

@@ -139,8 +139,8 @@ namespace sane {
      */
     nlohmann::json APIHandler::generateOAuth2URI(const std::string &t_clientId, const std::string &t_scope,
                                                  const std::string &t_redirectUri, const std::string &t_state,
-                                                 const std::string &t_loginHint, bool t_runServer,
-                                                 const std::string &t_oauth2Uri, const std::string &t_responseType) {
+                                                 const std::string &t_loginHint, const std::string &t_oauth2Uri,
+                                                 const std::string &t_responseType) {
         // OAuth2
         std::string uri;
         std::string clientId = t_clientId;

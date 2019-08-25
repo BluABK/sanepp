@@ -207,9 +207,9 @@ namespace sane {
         std::string sqlStatement;
 
         // Acquire database handle.
-        std::cout << "Acquiring DB handle..." << std::endl;
+//        std::cout << "Acquiring DB handle..." << std::endl;
         std::shared_ptr<DBHandler> db = std::make_shared<DBHandler>();
-        std::cout << "Acquired DB handle." << std::endl;
+//        std::cout << "Acquired DB handle." << std::endl;
 
         sqlStatement = std::string("SELECT "
                                        "ID, HasUploadsPlaylist, HasFavouritesPlaylist, HasLikesPlaylist, Title, "

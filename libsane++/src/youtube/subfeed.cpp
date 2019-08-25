@@ -42,7 +42,7 @@ namespace sane {
         using std::chrono_literals::operator""s;
         using std::chrono_literals::operator""ms;
 
-        int threadLimit = 10;
+        int threadLimit = 30;
         std::list<std::map<std::string, std::string>> filters;
         std::list<std::thread> threads;
         std::list<std::shared_ptr<ListVideosThread>> videoThreadObjects;
@@ -103,8 +103,8 @@ namespace sane {
                         // Associate the thread ID with videoThreadObject.
                         idMap[threadId] = videoThreadObject;
 
-                        std::cout << "Started thread: " << threadId
-                                  << " [" << videoThreadObject->getPlaylist() << "]" << std::endl;
+//                        std::cout << "Started thread: " << threadId
+//                                  << " [" << videoThreadObject->getPlaylist() << "]" << std::endl;
 
                         // Append thread to list of threads.
                         threads.push_back(std::move(thread));
@@ -136,14 +136,14 @@ namespace sane {
                     try {
                         std::thread::id id = threadIter->get_id();
                         threadIter->join();
-                        std::cout << "Joined thread: " << id << std::endl;
+//                        std::cout << "Joined thread: " << id << std::endl;
 
                         // Append videos //FIXME: videos aren't appended
 //                         std::list<std::shared_ptr<YoutubeVideo>> threadVideos = idMap[id]->get();
 //                         videos.emplace_back(threadVideos);
 
                         // Update progress info.
-                        //                            updateProgressLine(t_playlists.size(), playlistCounter++);
+                        updateProgressLine(t_playlists.size(), playlistCounter++);
 
                         // Decrement active threads counter.
                         --activeThreads;

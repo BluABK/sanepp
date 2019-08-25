@@ -573,8 +573,8 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "getOAuth2Response: API request failed with error " << responseCode << ": " << readBuffer << "\n"
-                              << std::endl;
+                    std::cerr << "getOAuth2Response: API request failed with error " << responseCode << ": "
+                              << readBuffer << "\n" << "url: " << url << std::endl;
                 }
             } else {
                 std::cerr << "getOAuth2Response: cURL easy perform failed with non-zero code: " << result << "!" << std::endl;

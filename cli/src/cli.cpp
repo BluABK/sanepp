@@ -307,6 +307,14 @@ namespace sane {
                 const std::map<std::string, std::string> optParams = stringToMap(args.at(2));
 
                 printSubscriptionsFeed(limit, part, filter, optParams);
+            } else if (args.empty()) {
+                // Assume default values if no argument is given.
+                const std::map<std::string, std::string> emptyFilter = std::map<std::string, std::string>();
+                std::map<std::string, std::string> optParams = std::map<std::string, std::string>();
+
+                optParams["maxResults"] = "50";
+
+                printSubscriptionsFeed(50, "snippet,contentDetails", emptyFilter, optParams);
             } else {
                 std::cerr << "Error in PRINT_PLAYLIST_ITEMS: invalid argument count: " << args.size() << std::endl;
             }

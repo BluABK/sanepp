@@ -113,7 +113,7 @@ namespace sane {
         using std::chrono_literals::operator""s;
         using std::chrono_literals::operator""ms;
 
-        int threadLimit = 1;
+        int threadLimit = 10;
         std::map<std::thread::id, std::thread> threads;
         std::map<std::thread::id, std::future<std::list<std::shared_ptr<YoutubeVideo>>>> threadFutures;
         std::list<std::shared_ptr<YoutubeVideo>> videos;
@@ -125,8 +125,9 @@ namespace sane {
         // This print can be anything as long as it's shorter than the progress line print below.
         std::cout << "Retrieving " << t_playlists.size() << " \"uploaded videos\" playlists: X" << std::flush;
         int activeThreads = 0;
+        std::map<std::thread::id, int> exceptionThreads = std::map<std::thread::id, int>();
         for (const auto& playlist : t_playlists) {
-              // Add passed filters and optional parameters.
+            // Add passed filters and optional parameters.
             std::map<std::string,std::string> filter = t_filter;
 //            const std::map<std::string,std::string>& optParams = t_optParams;
 
@@ -146,40 +147,11 @@ namespace sane {
             // Set the current playlist id.
             filter["playlistId"] = playlist;
 
+            bool startedThreadForThisPlaylist = false;
 
-            // Spawn a new thread unless limit is reached
-            if (activeThreads < threadLimit) {
-                // Spawn thread:
-                // - Create a packaged_task using some task and get its future.
-                // - Bind the arguments directly before constructing the task.
-//                std::packaged_task<std::list<std::shared_ptr<YoutubeVideo>>(
-//                        const std::string,
-//                        const std::map<std::string, std::string>,
-//                        const std::map<std::string, std::string>,
-//                        const std::string)> task { std::bind(&doThreadingLogicThingy, t_part, filter, t_optParams, t_playlistItemsPart) };
-                std::packaged_task<std::list<std::shared_ptr<YoutubeVideo>>(
-                        const std::string,
-                        const std::map<std::string, std::string>,
-                        const std::map<std::string, std::string>,
-                        const std::string)> task { &doThreadingLogicThingy };
-
-                // Get the std::future instance.
-                auto future = task.get_future();
-
-                // Run task on new thread.
-//                std::thread thread(std::move(task));
-                std::thread thread { std::move(task), t_part, filter, t_optParams, t_playlistItemsPart };
-
-                std::thread::id threadId = thread.get_id();
-                // thread/future is not copyable, and needs to be moved.
-                threadFutures[threadId] = std::move(future);
-                threads[threadId] = std::move(thread);
-
-                // Increment active threads counter.
-                ++activeThreads;
-            } else {
+            while (!startedThreadForThisPlaylist) {
                 // Wait for active threads to go below limit.
-                while(activeThreads > threadLimit) {
+                while(activeThreads >= threadLimit) {
                     // Iterate over api call job threads until enough are joined.
                     for (auto &threadFuture : threadFutures) { // first = id, second = std::future instance
                         std::list<std::thread::id> threadsToClean = std::list<std::thread::id>();
@@ -192,31 +164,81 @@ namespace sane {
                         // If thread is finished:
                         if (status == std::future_status::ready) {
                             // Join thread
+                            try {
                             threads[id].join();
+                            std::cout << "Joined thread: " << id << std::endl;
 
                             // Append videos //FIXME: videos aren't appended
-//                            std::list<std::shared_ptr<YoutubeVideo>> threadVideos = threadFuture.second.get();
-//                            videos.emplace_back(threadVideos);
+    //                            std::list<std::shared_ptr<YoutubeVideo>> threadVideos = threadFuture.second.get();
+    //                            videos.emplace_back(threadVideos);
 
                             // Update progress info.
-                            updateProgressLine(t_playlists.size(), playlistCounter++);
+//                            updateProgressLine(t_playlists.size(), playlistCounter++);
 
                             // Add id to list of threads to be cleaned.
                             threadsToClean.push_back(id);
 
                             // Decrement active threads counter.
                             --activeThreads;
+                            } catch (std::exception &exc) {
+                                std::cerr << "Exception occurred while joining thread ("
+                                          << (threads.find(id) != threads.end() ? "exists" : "!exists") << ") "
+                                          << id << ": " << std::string(exc.what())  << "\n" << std::endl;
+                                if (exceptionThreads.find(id) != exceptionThreads.end()) {
+                                    exceptionThreads[id]++;
+                                } else {
+                                    exceptionThreads[id] = 0;
+                                }
+                                std::cerr << "Bad threads: " << std::endl;
+                                std::cerr << "\tScore\tID " << std::endl;
+                                for (const auto &baddie : exceptionThreads) {
+                                    std::cerr << "\t" << baddie.second << "\t" << baddie.first << std::endl;
+                                }
+                            }
                         }
 
-                        for (const auto &finishedThread : threadsToClean) {
-                            // Pop thread and future instances from their respective containers.
-                            threadFutures.erase(finishedThread);
-                            threads.erase(finishedThread);
-                        }
+//                        for (const auto &finishedThread : threadsToClean) {
+//                            // Pop thread and future instances from their respective containers.
+//                            std::cout << "Erasing thread: " << id << std::endl;
+//                            threadFutures.erase(finishedThread);
+//                            threads.erase(finishedThread);
+//                            std::cout << "Erased thread: " << id << std::endl;
+//                        }
                     } // for threadFuture in threadFutures
                 } // while activeThreads > threadLimit
-             } // else
+
+                // Spawn a new thread unless limit is reached
+                if (activeThreads < threadLimit) {
+                    // Spawn thread:
+                    // - Create a packaged_task using some task and get its future.
+                    std::packaged_task<std::list<std::shared_ptr<YoutubeVideo>>(
+                            const std::string,
+                            const std::map<std::string, std::string>,
+                            const std::map<std::string, std::string>,
+                            const std::string)> task { &doThreadingLogicThingy };
+
+                    // Get the std::future instance.
+                    auto future = task.get_future();
+
+                    // Run task on new thread.
+                    std::thread thread { std::move(task), t_part, filter, t_optParams, t_playlistItemsPart };
+
+                    std::thread::id threadId = thread.get_id();
+                    std::cout << "Started thread: " << threadId << " [" << playlist << "]" << std::endl;
+                    // thread/future is not copyable, and needs to be moved.
+                    threadFutures[threadId] = std::move(future);
+                    threads[threadId] = std::move(thread);
+
+                    // Increment active threads counter.
+                    ++activeThreads;
+
+                    // Signal that a thread has been added for this particular playlist.
+                    startedThreadForThisPlaylist = true;
+                } // if (activeThreads < threadLimit)
+            } // while (!startedThreadForThisPlaylist)
         } // for playlist in t_playlists
+
+        std::cout << "Out of loop" << std::endl;
 
         // Wait for all remaining threads to finish.
         while(!threads.empty()) {

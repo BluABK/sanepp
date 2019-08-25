@@ -21,15 +21,15 @@ namespace sane {
     };
 
     std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
-                                                                const std::string &t_part,
-                                                                const std::map<std::string, std::string> &t_filter,
-                                                                const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>(),
-                                                                const std::string &t_playlistItemsPart = "contentDetails");
+            const std::string &t_part,
+            const std::map<std::string, std::string> &t_filter,
+            const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>(),
+            const std::string &t_playlistItemsPart = "contentDetails");
 
     // FIXME: list() version, might also need search() if list turns out to be unreliable.
-    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::list<std::string> &t_playlists,const std::string &t_part,
-                                                                     const std::map<std::string, std::string> &t_filter,
-                                                                     const std::map<std::string, std::string> &t_optParams= std::map<std::string, std::string>());
+    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::string &t_part,
+            const std::map<std::string, std::string> &t_filter,
+            const std::map<std::string, std::string> &t_optParams= std::map<std::string, std::string>());
 }
 #endif //SANE_SUBFEED_HPP
 

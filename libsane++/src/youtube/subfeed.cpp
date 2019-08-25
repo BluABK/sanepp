@@ -9,6 +9,7 @@
 #include <api_handler/api_handler.hpp>
 
 #include <youtube/subfeed.hpp>
+#include <db_handler/db_youtube_channels.hpp>
 
 namespace sane {
     std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
@@ -126,16 +127,41 @@ namespace sane {
         return videos;
     }
 
-    // Create subs-feed from a list of channel uploaded videos playlists.
-    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::list<std::string> &t_playlists,
-                                                                     const std::string &t_part,
-                                                                     const std::map<std::string, std::string> &t_filter,
-                                                                     const std::map<std::string, std::string> &t_optParams) {
+    /**
+     * Create subs-feed from a list of channel uploaded videos playlists.
+     *
+     * @param t_playlists
+     * @param t_part
+     * @param t_filter
+     * @param t_optParams
+     * @return
+     */
+    std::list<std::shared_ptr<YoutubeVideo>> createSubscriptionsFeed(const std::string &t_part,
+            const std::map<std::string, std::string> &t_filter,
+            const std::map<std::string, std::string> &t_optParams) {
+        // Get subscriptions from DB.
+        std::list<std::string> errors;
+//        std::cout << "Retrieving subscriptions from DB..." << std::endl;
+        std::list<std::shared_ptr<YoutubeChannel>> channels = getChannelsFromDB(&errors);
+
+        // FIXME: Debug speedup, limit subs count:
+//        auto end = std::next(channels.begin(), std::min((size_t)10, channels.size()));
+//        std::list <std::shared_ptr<YoutubeChannel>> limitedChannels( channels.begin(), end);
+//        channels = limitedChannels;
+
+        // Retrieve uploaded videos playlist IDs.
+//        std::cout << "Retrieving \"uploaded videos\" playlists..." << std::endl;
+        std::list<std::string> playlists;
+        for (const auto &channel : channels) {
+            // Get the uploads playlist.
+            playlists.push_back(channel->getUploadsPlaylist());
+        }
+
         // Video uploads
         std::list<std::shared_ptr<YoutubeVideo>> videos;
 
         // Get list of uploaded videos for every given channel/playlist.
-        videos = listUploadedVideos(t_playlists, t_part, t_filter, t_optParams);
+        videos = listUploadedVideos(playlists, t_part, t_filter, t_optParams);
 
         // Sort by publishedAt date.
 //        std::cout << "Sorting subs-feed videos by publishedAt datetime..." << std::endl;
@@ -143,5 +169,4 @@ namespace sane {
 
         return videos;
     }
-
 }

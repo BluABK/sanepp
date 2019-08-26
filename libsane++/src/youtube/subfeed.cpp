@@ -43,9 +43,12 @@ namespace sane {
         using std::chrono_literals::operator""s;
         using std::chrono_literals::operator""ms;
 
+        int playlistCounter = 0;
+        int activeThreads = 0;
         int threadLimit = 1;
         std::list<std::map<std::string, std::string>> filters;
         std::list<std::thread> threads;
+        std::map<std::thread::id, int> exceptionThreads = std::map<std::thread::id, int>();
         std::list<std::shared_ptr<ListVideosThread>> videoThreadObjects;
         std::map<std::thread::id, std::shared_ptr<ListVideosThread>> idMap;
         std::list<std::shared_ptr<YoutubeVideo>> videos;
@@ -57,12 +60,12 @@ namespace sane {
             threadLimit = cfg->getInt("threading/subsfeed_refresh");
         }
 
-        // For playlist in t_playlists
-        int playlistCounter = 1;
         // This print can be anything as long as it's shorter than the progress line print below.
-        std::cout << "Retrieving " << t_playlists.size() << " \"uploaded videos\" playlists: X" << std::flush;
-        int activeThreads = 0;
-        std::map<std::thread::id, int> exceptionThreads = std::map<std::thread::id, int>();
+        updateProgressLine(t_playlists.size(), playlistCounter);
+        // Start humanized count at 1.
+        playlistCounter++;
+
+        // For playlist in t_playlists
         for (const auto& playlist : t_playlists) {
             // Add passed filters and optional parameters.
             std::map<std::string,std::string> filter = t_filter;

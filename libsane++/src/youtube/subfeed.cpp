@@ -121,9 +121,6 @@ namespace sane {
 
                             // Increment active threads counter.
                             ++activeThreads;
-
-                            // Break out of for loop once thread is started to avoid waiting the full for loop before sync.
-//                        break;
                         }
                     }
                 }

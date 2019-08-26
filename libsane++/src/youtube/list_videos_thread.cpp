@@ -68,14 +68,8 @@ namespace sane {
 
                     // Make sure the videoListJson response was valid.
                     if (!videoListJson.empty()) {
-                        // For video item in response // FIXME: No pagination support, will cutoff at 50 max.
-                        for (auto videoJson : videoListJson["items"]) {
-                            // Create the YoutubeVideo entity.
-                            std::shared_ptr<YoutubeVideo> video = std::make_shared<YoutubeVideo>(videoJson);
-
-                            // Finally append the video to the list.
-                            videos.push_back(video);
-                        } // for video in videoListJson
+                        // FIXME: No pagination support, will cutoff at 50 max.
+                        videosJson = videoListJson["items"];
                     } // if videoListJson not empty
                 } catch (std::exception &exc) {
                 std::cerr << "Exception occurred while videoListJson thread "
@@ -96,13 +90,12 @@ namespace sane {
             std::cerr << "ERROR: ListVideosThread is ALREADY RUNNING for playlist: "
                       << m_filter["playlistId"] << std::endl;
         } else {
-            //std::thread (listVideos());
             listVideos();
         }
     }
 
-    std::list<std::shared_ptr<YoutubeVideo>> ListVideosThread::get() {
-        return videos;
+    nlohmann::json ListVideosThread::get() {
+        return videosJson;
     }
 
     std::string ListVideosThread::getPlaylist() {

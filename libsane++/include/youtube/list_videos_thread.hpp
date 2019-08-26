@@ -19,7 +19,7 @@ namespace sane {
 
         void run();
 
-        std::list<std::shared_ptr<YoutubeVideo>> get();
+        nlohmann::json get();
 
         std::string getPlaylist();
 
@@ -29,9 +29,8 @@ namespace sane {
 
         bool finished = false;
         bool started = false;
-        std::list<std::shared_ptr<YoutubeVideo>> videos;
-        std::thread thread;
     private:
+        nlohmann::json videosJson;
         std::thread::id m_threadId;
         std::string m_part;
         std::map<std::string, std::string> m_filter;

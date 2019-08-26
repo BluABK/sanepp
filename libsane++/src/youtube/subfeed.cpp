@@ -77,18 +77,16 @@ namespace sane {
             // Set the current playlist id.
             filter["playlistId"] = playlist;
 
-//            // Initialize a ListVideosThread object
-//            videoThreadObjects.emplace_back(
-//                    std::make_shared<ListVideosThread>(t_part, filter, t_optParams, t_playlistItemsPart));
-//            std::shared_ptr<ListVideosThread> p(
-//                    new ListVideosThread(t_part, filter, t_optParams, t_playlistItemsPart));
-            std::shared_ptr<ListVideosThread> p = std::make_shared<ListVideosThread>(t_part, filter, t_optParams, t_playlistItemsPart);
+            // Initialize a ListVideosThread object
+            std::shared_ptr<ListVideosThread> p =
+                    std::make_shared<ListVideosThread>(t_part, filter, t_optParams, t_playlistItemsPart);
+
+            // Add it to the list.
             videoThreadObjects.emplace_back(p);
         } // for playlist in t_playlists
 
         // Do threading
         bool threadingDone = false;
-//        int threadCountTarget = videoThreadObjects.size();
         while (!threadingDone) {
             // Iterate ListVideoThread objects until an un-started one is found.
             for (auto& videoThreadObject : videoThreadObjects) {
@@ -116,18 +114,7 @@ namespace sane {
                 }
             }
 
-//            std::string threadString;
-//            for (auto& thread : threads) {
-//                auto id = thread.get_id();
-//                std::stringstream ss;
-//                ss << id;
-//                threadString += " " + ss.str();;
-//            }
-//
-//            std::cout << "Current threads: " << threadString << std::endl;
-
             // Join threads (if any).
-//            for (auto& thread : threads) {
             // Use iterator and while loop in order to delete joined items as we traverse.
             auto threadIter = threads.begin();
             while (threadIter != threads.end()) {
@@ -140,11 +127,16 @@ namespace sane {
 //                        std::cout << "Joined thread: " << id << std::endl;
 
                         // Append videos //FIXME: videos aren't appended
-                         std::list<std::shared_ptr<YoutubeVideo>> threadVideos = idMap[id]->get();
-                         for (const auto& vid: threadVideos) {
-                             vid->print(4);
-                         }
-//                         videos.emplace_back(threadVideos);
+                        nlohmann::json videosJson = idMap[id]->get();
+
+                        // For video item in response // FIXME: No pagination support, will cutoff at 50 max.
+                        for (auto videoJson : videosJson) {
+                            // Create the YoutubeVideo entity.
+                            std::shared_ptr<YoutubeVideo> video = std::make_shared<YoutubeVideo>(videoJson);
+
+                            // Finally append the video to the list.
+                            videos.push_back(video);
+                        } // for video in videoListJson
 
                         // Update progress info.
                         updateProgressLine(t_playlists.size(), playlistCounter++);
@@ -190,9 +182,6 @@ namespace sane {
             if (videoThreadObjects.empty()) {
                 threadingDone = true;
             }
-//            else {
-//                std::cout << "videoThreadObjects: " << videoThreadObjects.size() << std::endl;
-//            }
         } // while !threadingDone
 
         std::cout << std::endl;  // Newline after playlist counter is done.

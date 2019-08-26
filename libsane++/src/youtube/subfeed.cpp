@@ -80,8 +80,9 @@ namespace sane {
 //            // Initialize a ListVideosThread object
 //            videoThreadObjects.emplace_back(
 //                    std::make_shared<ListVideosThread>(t_part, filter, t_optParams, t_playlistItemsPart));
-            std::shared_ptr<ListVideosThread> p(
-                    new ListVideosThread(t_part, filter, t_optParams, t_playlistItemsPart));
+//            std::shared_ptr<ListVideosThread> p(
+//                    new ListVideosThread(t_part, filter, t_optParams, t_playlistItemsPart));
+            std::shared_ptr<ListVideosThread> p = std::make_shared<ListVideosThread>(t_part, filter, t_optParams, t_playlistItemsPart);
             videoThreadObjects.emplace_back(p);
         } // for playlist in t_playlists
 
@@ -139,7 +140,10 @@ namespace sane {
 //                        std::cout << "Joined thread: " << id << std::endl;
 
                         // Append videos //FIXME: videos aren't appended
-//                         std::list<std::shared_ptr<YoutubeVideo>> threadVideos = idMap[id]->get();
+                         std::list<std::shared_ptr<YoutubeVideo>> threadVideos = idMap[id]->get();
+                         for (const auto& vid: threadVideos) {
+                             vid->print(4);
+                         }
 //                         videos.emplace_back(threadVideos);
 
                         // Update progress info.

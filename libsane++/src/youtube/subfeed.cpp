@@ -14,6 +14,7 @@
 #include <youtube/subfeed.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 #include <youtube/list_videos_thread.hpp>
+#include <config_handler/config_handler.hpp>
 
 namespace sane {
     void updateProgressLine(size_t total, int current) {
@@ -33,8 +34,8 @@ namespace sane {
         std::cout << "\r" << "Retrieving " << "\"Uploaded Videos\" playlists... "
                   << progressPercentString << "% " << "(" << progressLine << ")" << std::flush;
     }
-
     std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
+
                                                                 const std::string &t_part,
                                                                 const std::map<std::string, std::string> &t_filter,
                                                                 const std::map<std::string, std::string> &t_optParams,
@@ -42,7 +43,7 @@ namespace sane {
         using std::chrono_literals::operator""s;
         using std::chrono_literals::operator""ms;
 
-        int threadLimit = 30;
+        int threadLimit = 1;
         std::list<std::map<std::string, std::string>> filters;
         std::list<std::thread> threads;
         std::list<std::shared_ptr<ListVideosThread>> videoThreadObjects;
@@ -50,6 +51,11 @@ namespace sane {
         std::list<std::shared_ptr<YoutubeVideo>> videos;
         nlohmann::json playlistItemsJson;
         nlohmann::json videoListJson;
+
+        std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+        if (cfg->isNumber("threading/subsfeed_refresh")) {
+            threadLimit = cfg->getInt("threading/subsfeed_refresh");
+        }
 
         // For playlist in t_playlists
         int playlistCounter = 1;

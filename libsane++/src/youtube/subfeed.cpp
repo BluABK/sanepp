@@ -94,28 +94,34 @@ namespace sane {
         // Do threading
         bool threadingDone = false;
         while (!threadingDone) {
-            // Iterate ListVideoThread objects until an un-started one is found.
-            for (auto& videoThreadObject : videoThreadObjects) {
-                // Spawn a new thread unless limit is reached
-                if (activeThreads < threadLimit) {
-                    if (!videoThreadObject->started) {
-                        // Spawn thread and run task on the new thread:
-                        // - Use a heap-allocated object and a reference-counted pointer
-                        //   to ensure that the object stays around as long as the thread does.
-                        std::thread thread ( &ListVideosThread::run, videoThreadObject );
-                        std::thread::id threadId = thread.get_id();
+            // Only iterate through ListVideoThread objects if there's open thread slots (slight speedup).
+            if (activeThreads < threadLimit) {
+                // Iterate ListVideoThread objects until an un-started one is found.
+                for (auto &videoThreadObject : videoThreadObjects) {
+                    // Spawn a new thread unless limit is reached
+                    if (activeThreads < threadLimit) {
+                        if (!videoThreadObject->started) {
+                            // Spawn thread and run task on the new thread:
+                            // - Use a heap-allocated object and a reference-counted pointer
+                            //   to ensure that the object stays around as long as the thread does.
+                            std::thread thread(&ListVideosThread::run, videoThreadObject);
+                            std::thread::id threadId = thread.get_id();
 
-                        // Associate the thread ID with videoThreadObject.
-                        idMap[threadId] = videoThreadObject;
+                            // Associate the thread ID with videoThreadObject.
+                            idMap[threadId] = videoThreadObject;
 
-//                        std::cout << "Started thread: " << threadId
-//                                  << " [" << videoThreadObject->getPlaylist() << "]" << std::endl;
+//                            std::cout << "Started thread: " << threadId
+//                                      << " [" << videoThreadObject->getPlaylist() << "]" << std::endl;
 
-                        // Append thread to list of threads.
-                        threads.push_back(std::move(thread));
+                            // Append thread to list of threads.
+                            threads.push_back(std::move(thread));
 
-                        // Increment active threads counter.
-                        ++activeThreads;
+                            // Increment active threads counter.
+                            ++activeThreads;
+
+                            // Break out of for loop once thread is started to avoid waiting the full for loop before sync.
+//                        break;
+                        }
                     }
                 }
             }

@@ -138,7 +138,7 @@ namespace sane {
                         threadIter->join();
 //                        std::cout << "Joined thread: " << id << std::endl;
 
-                        // Append videos //FIXME: videos aren't appended
+                        // Append videos
                         nlohmann::json videosJson = idMap[id]->get();
 
                         // For video item in response // FIXME: No pagination support, will cutoff at 50 max.

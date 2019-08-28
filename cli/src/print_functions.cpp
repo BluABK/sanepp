@@ -71,46 +71,47 @@ namespace sane {
         << " Next page: " << nextPage << std::endl;
     }
 
-    void CLI::printSubscriptionsFeed(int t_videoLimit,
-                                     const std::string &t_part,
-                                     const std::map<std::string, std::string> &t_filter,
-                                     const std::map<std::string, std::string> &t_optParams) {
+    /**
+     * Gets the string length of the longest channel title in DB.
+     * @return
+     */
+    size_t CLI::getLongestChannelTitleLength() {
         // Get subscriptions.
         std::list<std::string> errors;
 //        std::cout << "Retrieving subscriptions from DB..." << std::endl;
         std::list <std::shared_ptr<YoutubeChannel>> channels = getChannelsFromDB(&errors);
-
-        // FIXME: Debug speedup, limit subs count:
-//        auto end = std::next(channels.begin(), std::min((size_t)10, channels.size()));
-//        std::list <std::shared_ptr<YoutubeChannel>> limitedChannels( channels.begin(), end);
-//        channels = limitedChannels;
-        // FIXME: Debug, pick specific subset
-//        std::list<std::shared_ptr<YoutubeChannel>> channelsDebugSubset;
-//        for (const auto& channel : channels) {
-//            if (channel->getId() == "Lk8QEI2dnGzAXVRWbxkXZw") channelsDebugSubset.push_back(channel);
-//            if (channel->getId() == "KWMWDeHqmh9Ss_7qBHEDwA") channelsDebugSubset.push_back(channel);
-//            if (channel->getId() == "OHBVUV8aDg4tQiHnUqi_QA") channelsDebugSubset.push_back(channel);
-//        }
-//        channels = channelsDebugSubset;
 
         // Retrieve uploaded videos playlist IDs.
 //        std::cout << "Retrieving \"uploaded videos\" playlists..." << std::endl;
         std::list<std::string> playlists;
         size_t longestChannelTitleLength = 0;
         for (const auto& channel : channels) {
-            // Get the uploads playlist.
-            playlists.push_back(channel->getUploadsPlaylist());
-
             // Get the longest channel title (used in indent calculation).
             if (channel->getTitle().length() > longestChannelTitleLength) {
                 longestChannelTitleLength = channel->getTitle().length();
             }
         }
 
-        // Get list of videos.
+        return longestChannelTitleLength;
+    }
+
+    /**
+     * Prints the subscriptions feed videos as a nicely indented table.
+     *
+     * @param t_videoLimit
+     * @param t_part
+     * @param t_filter
+     * @param t_optParams
+     */
+    void CLI::printSubscriptionsFeed(int t_videoLimit,
+                                     const std::string &t_part,
+                                     const std::map<std::string, std::string> &t_filter,
+                                     const std::map<std::string, std::string> &t_optParams) {
+        size_t longestChannelTitleLength = getLongestChannelTitleLength();
+
+        // Get list of subscriptions feed videos.
 //        std::cout << "Retrieving videos from \"uploaded videos\" playlists..." << std::endl;
-        std::list<std::shared_ptr<YoutubeVideo>> videos = createSubscriptionsFeed(playlists, t_part,
-                                                                                  t_filter, t_optParams);
+        std::list<std::shared_ptr<YoutubeVideo>> videos = createSubscriptionsFeed(t_part, t_filter, t_optParams);
 
         // Handle any limits (0 == disable limit)
         if (t_videoLimit > 0) {
@@ -124,6 +125,8 @@ namespace sane {
             videos = limited;
         }
 
+        // Printing section
+
         // Table headings.
         const std::string publishDateHeading    = "Published on";
         const std::string definitionHeading     = "Definition";
@@ -134,7 +137,6 @@ namespace sane {
 
         // Table contents helpers.
         const std::string youtubeVideoURLBase   = "https://www.youtube.com/watch?v=";
-
 
         // Indent stuff.
         int indentLength = 4;

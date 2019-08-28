@@ -4,6 +4,8 @@
 
 # Qt Creator
 gui/build-sane_gui-Desktop-Debug
+gui/src/*.pro
+gui/src/*.pro.user
 
 # Editors
 *.kate-swp

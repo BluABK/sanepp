@@ -65,6 +65,8 @@ namespace sane {
         void printPlaylistVideos(const std::string &t_playlistId,
                 const std::map<std::string,std::string> &t_optParams = std::map<std::string, std::string>());
 
+        size_t getLongestChannelTitleLength();
+
         void printSubscriptionsFeed(int t_videoLimit,
                 const std::string &t_part,
                 const std::map<std::string, std::string> &t_filter,

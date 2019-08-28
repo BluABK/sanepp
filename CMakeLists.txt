@@ -54,6 +54,8 @@ set (LIB_DIR_LOCATION ${NAME}/lib)
 find_library(sqlite3 NAMES sqlite3 PATHS ${LIB_DIR_LOCATION})
 set(INCLUDE_DIRS ${NAME}/include)
 
+find_package(spdlog REQUIRED)
+
 # CLI
 add_executable(sane++_cli config/config.hpp cli/src/main.cpp
         cli/src/cli.cpp
@@ -79,7 +81,17 @@ add_executable(sane++_cli config/config.hpp cli/src/main.cpp
         libsane++/include/entities/common.hpp
         libsane++/include/types.hpp
         libsane++/src/entities/common.cpp
-        libsane++/src/types.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp libsane++/src/youtube/toolkit.cpp libsane++/include/youtube/toolkit.hpp libsane++/src/config_handler/config_handler.cpp libsane++/include/config_handler/config_handler.hpp third_party/yhirose/httplib.h libsane++/src/youtube/list_videos_thread.cpp libsane++/include/youtube/list_videos_thread.hpp)
+        libsane++/src/types.cpp
+        libsane++/src/lexical_analysis.cpp
+        libsane++/include/lexical_analysis.hpp
+        libsane++/src/youtube/toolkit.cpp
+        libsane++/include/youtube/toolkit.hpp
+        libsane++/src/config_handler/config_handler.cpp
+        libsane++/include/config_handler/config_handler.hpp
+        third_party/yhirose/httplib.h
+        libsane++/src/youtube/list_videos_thread.cpp
+        libsane++/include/youtube/list_videos_thread.hpp
+        )
 
 # API Handler
 target_link_libraries (sane++_cli -lcurl)
@@ -88,6 +100,7 @@ target_link_libraries(sane++_cli -lpthread)
 target_link_libraries(sane++_cli -ldl)
 target_link_libraries(sane++_cli sqlite3)
 #target_link_libraries(sane++_cli ICU::uc)
+target_link_libraries(sane++_cli spdlog::spdlog)
 target_include_directories(sane++_cli PRIVATE ${INCLUDE_DIRS})
 
 # GUI
@@ -119,6 +132,7 @@ target_link_libraries(sane++_gui -ldl)
 #target_link_libraries (SaneGUI ${SQLITE3_LIBRARIES})
 target_link_libraries(sane++_gui sqlite3)
 #target_link_libraries(sane++_gui ICU::uc)
+target_link_libraries(sane++_gui spdlog::spdlog)
 target_include_directories(sane++_gui PRIVATE ${INCLUDE_DIRS})
 
 ##
@@ -183,6 +197,7 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
     target_link_libraries(travis_test_all -ldl)
     target_link_libraries(travis_test_all sqlite3)
 #    target_link_libraries(travis_test_all ICU::uc)
+    target_link_libraries(travis_test_all spdlog::spdlog)
     target_include_directories(travis_test_all PRIVATE ${INCLUDE_DIRS})
 
     include(CTest)
@@ -233,6 +248,7 @@ else()
     target_link_libraries(test_all -ldl)
     target_link_libraries(test_all sqlite3)
 #    target_link_libraries(test_all ICU::uc)
+    target_link_libraries(test_all spdlog::spdlog)
     target_include_directories(test_all PRIVATE ${INCLUDE_DIRS})
 
     include(CTest)
@@ -240,3 +256,6 @@ else()
 
     catch_discover_tests(test_all)
 endif()
+
+# Create required files and directories.
+include(config/setup_defaults.cmake)

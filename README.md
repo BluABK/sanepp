@@ -15,6 +15,9 @@ Simply put the core function is to create a more reliable subscriptions feed tha
 Sane++ grabs the "uploaded videos" playlist for all channels you're subscribed to and generates a feed based on that, bypasing the infamous algorithm. 
 
 ## How to compile
+### Dependencies
+  * spdlog
+### Building it
   1. `mkdir build && cd build`
   2. `cmake ../src/ && cmake --build .`
   3. `cd ..` (avoids relative paths in later instructions)
@@ -36,7 +39,9 @@ Sane++ grabs the "uploaded videos" playlist for all channels you're subscribed t
 ### Command line interface
 `build/bin/sane++_cli`
 
-Supports commands as params from the command line (e.g. `build/bin/sane++_cli auth-oauth2`)
+Supports commands as params from the command line (e.g. `build/bin/sane++_cli auth-oauth2`).
+
+If no parameter is given, it will run in interactive mode.
 
 ### GUI
 Not yet implemented.

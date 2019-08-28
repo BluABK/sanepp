@@ -25,6 +25,9 @@
 #define JSON_CATEGORY    2
 #define DB_CATEGORY      3
 
+// Logging
+#define CLI_LOG_FILE     "logs/cli.txt"
+
 namespace sane {
     struct command_t {
         std::string name;

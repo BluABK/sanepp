@@ -91,7 +91,7 @@ add_executable(sane++_cli config/config.hpp cli/src/main.cpp
         third_party/yhirose/httplib.h
         libsane++/src/youtube/list_videos_thread.cpp
         libsane++/include/youtube/list_videos_thread.hpp
-        )
+        libsane++/src/log_handler/log_handler.cpp libsane++/include/log_handler/log_handler.hpp)
 
 # API Handler
 target_link_libraries (sane++_cli -lcurl)
@@ -122,7 +122,7 @@ add_executable(sane++_gui config/config.hpp gui/src/main.cpp
         libsane++/include/entities/common.hpp
         libsane++/include/types.hpp
         libsane++/src/entities/common.cpp
-        libsane++/src/types.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp libsane++/src/youtube/toolkit.cpp libsane++/include/youtube/toolkit.hpp libsane++/src/config_handler/config_handler.cpp libsane++/include/config_handler/config_handler.hpp third_party/yhirose/httplib.h libsane++/src/youtube/list_videos_thread.cpp libsane++/include/youtube/list_videos_thread.hpp)
+        libsane++/src/types.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp libsane++/src/youtube/toolkit.cpp libsane++/include/youtube/toolkit.hpp libsane++/src/config_handler/config_handler.cpp libsane++/include/config_handler/config_handler.hpp third_party/yhirose/httplib.h libsane++/src/youtube/list_videos_thread.cpp libsane++/include/youtube/list_videos_thread.hpp libsane++/src/log_handler/log_handler.cpp libsane++/include/log_handler/log_handler.hpp)
 
 # API Handler
 target_link_libraries (sane++_gui -lcurl)
@@ -186,7 +186,7 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
             libsane++/include/entities/common.hpp
             libsane++/include/types.hpp
             libsane++/src/entities/common.cpp
-            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp libsane++/src/youtube/toolkit.cpp libsane++/include/youtube/toolkit.hpp libsane++/src/config_handler/config_handler.cpp libsane++/include/config_handler/config_handler.hpp third_party/yhirose/httplib.h libsane++/src/youtube/list_videos_thread.cpp libsane++/include/youtube/list_videos_thread.hpp)
+            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp libsane++/src/youtube/toolkit.cpp libsane++/include/youtube/toolkit.hpp libsane++/src/config_handler/config_handler.cpp libsane++/include/config_handler/config_handler.hpp third_party/yhirose/httplib.h libsane++/src/youtube/list_videos_thread.cpp libsane++/include/youtube/list_videos_thread.hpp libsane++/src/log_handler/log_handler.cpp libsane++/include/log_handler/log_handler.hpp)
 
     # API Handler
     target_link_libraries(travis_test_all -lcurl)
@@ -237,7 +237,7 @@ else()
             libsane++/include/entities/common.hpp
             libsane++/include/types.hpp
             libsane++/src/entities/common.cpp
-            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp libsane++/src/youtube/toolkit.cpp libsane++/include/youtube/toolkit.hpp libsane++/src/config_handler/config_handler.cpp libsane++/include/config_handler/config_handler.hpp third_party/yhirose/httplib.h libsane++/src/youtube/list_videos_thread.cpp libsane++/include/youtube/list_videos_thread.hpp)
+            libsane++/src/types.cpp libsane++/test/unit-test_001_datetime_t.cpp libsane++/src/lexical_analysis.cpp libsane++/include/lexical_analysis.hpp libsane++/src/youtube/toolkit.cpp libsane++/include/youtube/toolkit.hpp libsane++/src/config_handler/config_handler.cpp libsane++/include/config_handler/config_handler.hpp third_party/yhirose/httplib.h libsane++/src/youtube/list_videos_thread.cpp libsane++/include/youtube/list_videos_thread.hpp libsane++/src/log_handler/log_handler.cpp libsane++/include/log_handler/log_handler.hpp)
 
     # API Handler
     target_link_libraries(test_all -lcurl)

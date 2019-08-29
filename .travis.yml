@@ -25,6 +25,8 @@ notifications:
 before_install: 
   - sudo apt-get update -qq
   - sudo apt-get install -y libspdlog-dev
+  - ls /usr/include
+  - ls /usr/include/spdlog
 
 ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
 ## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)

@@ -24,7 +24,7 @@ notifications:
 # Update the system.
 before_install: 
   - sudo apt-get update -qq
-  # - sudo apt-get install -y catch2 # Oh you wish... manually built from source further down..
+  - sudo apt-get install -y spdlog
 
 ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
 ## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)

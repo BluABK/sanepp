@@ -15,7 +15,7 @@
 
 int main(int argc, char *argv[]) {
     std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
-    const std::string LOG_FACILITY = "core";
+    const std::string LOG_FACILITY = "main";
     std::shared_ptr<spdlog::logger> log = logHandler->createLogger(LOG_FACILITY, CLI_LOG_FILE);
 
     logHandler->logSeparator(CLI_LOG_FILE);

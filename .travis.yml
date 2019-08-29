@@ -8,7 +8,7 @@ compiler:
 
 # Install a more recent version of g++.
 install: export CXX="g++-8"
-addons:
+addons: &gcc8
   apt:
     sources:
     - ubuntu-toolchain-r-test
@@ -24,9 +24,6 @@ notifications:
 # Update the system.
 before_install: 
   - sudo apt-get update -qq
-  - sudo apt-get install -y libspdlog-dev
-  - sudo apt-cache search spdlog
-  - find /usr/include/spdlog
 
 ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version
 ## (Modded version of https://riptutorial.com/cmake/example/4723/configure-travis-ci-with-newest-cmake)
@@ -70,6 +67,12 @@ install:
 #  - sudo make install
 #  # don't forget to switch back to the main build directory once you are done
 #  - cd ${TRAVIS_BUILD_DIR}
+
+  # Build spdlog (not in repos)
+  - git clone https://github.com/gabime/spdlog.git
+  - cd spdlog && mkdir build && cd build
+  - cmake --build .. --target install
+
 
 before_script:
   # Check sqlite version

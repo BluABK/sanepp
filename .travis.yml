@@ -24,6 +24,8 @@ notifications:
 # Update the system.
 before_install: 
   - sudo apt-get update -qq
+  - sudo apt-cache search spdlog
+  - sudo apt-cache search spd
   - sudo apt-get install -y spdlog
 
 ## The CMake version preinstalled on Travis is very old. Use the official Linux binaries to build with a newer version

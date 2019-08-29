@@ -72,6 +72,8 @@ install:
   - git clone https://github.com/gabime/spdlog.git
   - cd spdlog && mkdir build && cd build
   - cmake --build .. --target install
+  # don't forget to switch back to the main build directory once you are done
+  - cd ${TRAVIS_BUILD_DIR}
 
 
 before_script:

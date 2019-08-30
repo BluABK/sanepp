@@ -13,9 +13,12 @@ namespace sane {
     public:
         LogHandler();
 
-        std::shared_ptr<spdlog::logger> createLogger(const std::string &t_facility, const std::string &t_logFile);
+        explicit LogHandler(const std::string &t_defaultLogFile);
 
-        void logSeparator(const std::string &t_logFile);
+        std::shared_ptr<spdlog::logger> createLogger(const std::string &t_facility,
+                const std::string &t_logFile = m_defaultLogfile);
+
+        void logSeparator(const std::string &t_logFile = m_defaultLogfile);
 
         void resetPattern(std::shared_ptr<spdlog::logger> &t_logger);
 
@@ -27,8 +30,9 @@ namespace sane {
 
         static std::map<std::string, std::shared_ptr<spdlog::sinks::basic_file_sink_mt>> sinks;
     private:
-        std::string defaultLogPattern = "%+";
-        spdlog::level::level_enum logLevel = spdlog::level::trace;
+        static std::string m_defaultLogfile;
+        std::string m_defaultLogPattern = "%+";
+        spdlog::level::level_enum m_logLevel = spdlog::level::trace;
     };
 } // namespace sane
 

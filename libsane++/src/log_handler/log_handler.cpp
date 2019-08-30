@@ -5,17 +5,24 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace sane {
+    std::string LogHandler::m_defaultLogfile = "logs/log.txt";
     std::map<std::string, std::shared_ptr<spdlog::sinks::basic_file_sink_mt>> LogHandler::sinks =
             std::map<std::string, std::shared_ptr<spdlog::sinks::basic_file_sink_mt>>();
 
-    LogHandler::LogHandler() = default;
+    LogHandler::LogHandler() {
+//        m_defaultLogfile = "logs/log.txt";
+    }
+
+    LogHandler::LogHandler(const std::string &t_defaultLogFile) {
+        m_defaultLogfile = t_defaultLogFile;
+    }
 
     void LogHandler::setLevel(spdlog::level::level_enum t_logLevel) {
-        logLevel = t_logLevel;
+        m_logLevel = t_logLevel;
     }
 
     spdlog::level::level_enum LogHandler::getLevel() {
-        return logLevel;
+        return m_logLevel;
     }
 
     std::shared_ptr<spdlog::logger> LogHandler::createLogger(const std::string &t_facility,
@@ -46,7 +53,7 @@ namespace sane {
         std::shared_ptr<spdlog::logger> _ = createLogger("LOG_SEPARATOR", t_logFile);
 
         // Adhere to current log level.
-        _->set_level(logLevel);
+        _->set_level(m_logLevel);
 
         // Set the pattern to be a static dotted line.
         _->set_pattern("\n" + std::string(80, '-'));
@@ -65,10 +72,10 @@ namespace sane {
     }
 
     void LogHandler::resetPattern(std::shared_ptr<spdlog::logger> &t_logger) {
-        t_logger->set_pattern(defaultLogPattern);
+        t_logger->set_pattern(m_defaultLogPattern);
     }
 
     void LogHandler::resetPattern(std::shared_ptr<spdlog::sinks::basic_file_sink_mt> &t_sink) {
-        t_sink->set_pattern(defaultLogPattern);
+        t_sink->set_pattern(m_defaultLogPattern);
     }
 } // namespace sane

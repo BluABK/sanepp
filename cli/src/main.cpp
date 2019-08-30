@@ -14,12 +14,17 @@
 #include <config_handler/config_handler.hpp>
 #include "cli.hpp"
 
+// Logging
+#define LOG_FILE     "logs/sane++.log"
+
 int main(int argc, char *argv[]) {
+    // Instantiate LogHandler before ConfigHandler due to default log file.
+    std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>(LOG_FILE);
+
+    // Instantiate ConfigHandler before SPDLog due to log config settings.
     std::shared_ptr<sane::ConfigHandler> cfg = std::make_shared<sane::ConfigHandler>();
 
-    std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
-    const std::string LOG_FACILITY = "main";
-    std::shared_ptr<spdlog::logger> log = logHandler->createLogger(LOG_FACILITY, CLI_LOG_FILE);
+    std::shared_ptr<spdlog::logger> log = logHandler->createLogger("main");
 
     // Logger settings:
     // - Level.
@@ -36,7 +41,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Now that log level has been determined, the separator can be printed.
-    logHandler->logSeparator(CLI_LOG_FILE);
+    logHandler->logSeparator();
 
     // - Severity based flush level override.
     if (cfg->hasSection("logging/flush_level")) {

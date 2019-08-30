@@ -21,18 +21,42 @@ int main(int argc, char *argv[]) {
     const std::string LOG_FACILITY = "main";
     std::shared_ptr<spdlog::logger> log = logHandler->createLogger(LOG_FACILITY, CLI_LOG_FILE);
 
-    // Logger settings.
-    int logLevel = cfg->getInt("logging/level");
-    if (logLevel >= (int)spdlog::level::trace and logLevel <= (int)spdlog::level::off) {
-        logHandler->setLevel(static_cast<spdlog::level::level_enum>(logLevel));
-        log->set_level(static_cast<spdlog::level::level_enum>(logLevel));
-    } else {
-        log->error("Invalid log level in config: " + std::to_string(logLevel));
-        logHandler->setLevel(spdlog::level::trace);
-        log->set_level(spdlog::level::trace);
+    // Logger settings:
+    // - Level.
+    if (cfg->hasSection("logging/level")) {
+        int logLevel = cfg->getInt("logging/level");
+        if (logLevel >= (int)spdlog::level::trace and logLevel <= (int)spdlog::level::off) {
+            logHandler->setLevel(static_cast<spdlog::level::level_enum>(logLevel));
+            log->set_level(static_cast<spdlog::level::level_enum>(logLevel));
+        } else {
+            log->error("Invalid log level in config: " + std::to_string(logLevel));
+            logHandler->setLevel(spdlog::level::trace);
+            log->set_level(spdlog::level::trace);
+        }
     }
 
+    // Now that log level has been determined, the separator can be printed.
     logHandler->logSeparator(CLI_LOG_FILE);
+
+    // - Severity based flush level override.
+    if (cfg->hasSection("logging/flush_level")) {
+        if (cfg->isNumber("logging/flush_level")) {
+            int logFlushLevel = cfg->getInt("logging/flush_level");
+
+            if (logFlushLevel >= (int)spdlog::level::trace and logFlushLevel <= (int)spdlog::level::critical) {
+                // This will trigger flush whenever messages of given severity are logged.
+                log->flush_on(static_cast<spdlog::level::level_enum>(logFlushLevel));
+                log->info("Set severity based flush level: " + std::to_string(logFlushLevel));
+            } else {
+                log->error("Config has section \"logging/flush_level\", but numeric value is invalid: "
+                           + std::to_string(spdlog::level::trace) + std::string(" <= ")
+                           + std::to_string(logFlushLevel) + " <= " + std::to_string(spdlog::level::critical));
+            }
+        } else {
+            log->error("Config has section \"logging/flush_level\", but value is NaN: "
+                     + cfg->getString("logging/flush_level"));
+        }
+    }
 
     log->info("Sane++ CLI Main init!");
 

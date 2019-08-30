@@ -1523,11 +1523,11 @@ private:
             split(&s[0], &s[s.size()], '&', [&](const char *b, const char *e) {
                 std::string key;
                 std::string val;
-                split(b, e, '=', [&](const char *b, const char *e) {
+                split(b, e, '=', [&](const char *b_, const char *e_) {
                     if (key.empty()) {
-                        key.assign(b, e);
+                        key.assign(b_, e_);
                     } else {
-                        val.assign(b, e);
+                        val.assign(b_, e_);
                     }
                 });
                 params.emplace(key, decode_url(val));
@@ -1625,14 +1625,14 @@ private:
                     auto len = m.length(1);
                     detail::split(
                             &s[pos], &s[pos + len], ',', [&](const char *b, const char *e) {
-                                static auto re = std::regex(R"(\s*(\d*)-(\d*))");
-                                std::cmatch m;
-                                if (std::regex_match(b, e, m, re)) {
+                                static auto re_ = std::regex(R"(\s*(\d*)-(\d*))");
+                                std::cmatch m_;
+                                if (std::regex_match(b, e, m_, re_)) {
                                     uint64_t first = -1;
-                                    if (!m.str(1).empty()) { first = std::stoll(m.str(1)); }
+                                    if (!m_.str(1).empty()) { first = std::stoll(m_.str(1)); }
 
                                     uint64_t last = -1;
-                                    if (!m.str(2).empty()) { last = std::stoll(m.str(2)); }
+                                    if (!m_.str(2).empty()) { last = std::stoll(m_.str(2)); }
 
                                     if (int64_t(first) != -1 && int64_t(last) != -1 && first > last) {
                                         throw std::runtime_error("invalid range error");
@@ -1928,8 +1928,8 @@ static WSInit wsinit_;
             std::function<void()> resource_releaser) {
         assert(length > 0);
         content_provider_resource_length = length;
-        content_provider = [provider](uint64_t offset, uint64_t length, Out out,
-                                      Done) { provider(offset, length, out); };
+        content_provider = [provider](uint64_t offset, uint64_t length_, Out out,
+                                      Done) { provider(offset, length_, out); };
         content_provider_resource_releaser = resource_releaser;
     }
 
@@ -2478,8 +2478,8 @@ static WSInit wsinit_;
         // Body
         if (req.method == "POST" || req.method == "PUT" || req.method == "PATCH") {
             if (!detail::read_content(strm, req, payload_max_length_, res.status,
-                                      Progress(), [&](const char *buf, size_t n) {
-                        req.body.append(buf, n);
+                                      Progress(), [&](const char *buf_, size_t n) {
+                        req.body.append(buf_, n);
                         return true;
                     })) {
                 return write_response(strm, last_connection, req, res);

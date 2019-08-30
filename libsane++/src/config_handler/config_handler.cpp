@@ -4,9 +4,13 @@
 #include <lexical_analysis.hpp>
 
 #include <config_handler/config_handler.hpp>
+#include <log_handler/log_handler.hpp>
 
 namespace sane {
-    ConfigHandler::ConfigHandler() = default;
+    ConfigHandler::ConfigHandler() {
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        log = logHandler->createLogger("config");
+    }
 
     /**
      * Reads config file into a nlohmann::json object and returns it.

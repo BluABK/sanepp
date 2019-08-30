@@ -9,6 +9,7 @@
 
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
+#include <spdlog/logger.h>
 
 namespace sane {
     class ConfigHandler {
@@ -37,6 +38,7 @@ namespace sane {
     private:
         const std::string CONFIG_FILE = "config.json";
         const char SECTION_SEPARATOR = '/';
+        std::shared_ptr<spdlog::logger> log;
 
     };
 } // namespace sane

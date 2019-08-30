@@ -18,11 +18,18 @@ namespace sane {
      * @return
      */
     nlohmann::json ConfigHandler::getConfig() {
+        nlohmann::json config;
         // Open config file.
         std::ifstream ifs{CONFIG_FILE};
 
         // Read config ifstream into a JSON object.
-        nlohmann::json config = nlohmann::json::parse(ifs);
+        try {
+            config = nlohmann::json::parse(ifs);
+        } catch (nlohmann::detail::parse_error &parseExc) {
+            log->warn("getConfig() failed to parse JSON input: " + std::string(parseExc.what()));
+            log->flush();
+//            throw parseExc;
+        }
 
         // Close config file.
         ifs.close();
@@ -52,7 +59,7 @@ namespace sane {
         nlohmann::json config = getConfig();
 
         if (config.empty()) {
-            std::cerr << "ConfigHandler Error: Empty config file!" << std::endl;
+            log->error("Empty config file!");
             return false;
         }
 
@@ -62,8 +69,8 @@ namespace sane {
             if (valueJson.find(section) != valueJson.end()) {
                 valueJson = valueJson[section];
             } else {
-                std::cerr << "ConfigHandler Error: No such section: \"" << section << "\" (\"" << t_section << "\")"
-                          << std::endl;
+                log->error(std::string("No such section: \"").append(section).append(
+                           "\" (\"").append(t_section).append("\")"));
                 return false;
             }
         }
@@ -89,7 +96,7 @@ namespace sane {
             for (const auto& key : keys) {
                 valueJson = valueJson[key];
                 if (debug) {
-                    std::cout << "DEBUG: currentDepth: " << valueJson.dump() << std::endl;
+                    log->debug("currentDepth: " + valueJson.dump());
                 }
             }
 
@@ -151,7 +158,7 @@ namespace sane {
         if (section.is_number()) {
             retval = section.get<int>();
         } else {
-            std::cerr << "ConfigHandler::getInt(" << t_section << ") ERROR: NaN: " << section.dump() << std::endl;
+            log->error("getInt(" + t_section + ") ERROR: NaN: " + section.dump());
             retval = 0;
         }
 
@@ -175,7 +182,7 @@ namespace sane {
         if (section.is_number()) {
             retval = section.get<long int>();
         } else {
-            std::cerr << "ConfigHandler::getLongInt(" << t_section << ") ERROR: NaN: " << section.dump() << std::endl;
+            log->error("getLongInt(" + t_section + ") ERROR: NaN: " + section.dump());
             retval = 0;
         }
 
@@ -188,7 +195,5 @@ namespace sane {
 
         // ISO C++03 14.2/4: The member template name must be prefixed by the keyword template.
         return getSection(t_section).template get<std::list<std::string>>();
-
-        return std::list<std::string>();
     }
 } // namespace sane

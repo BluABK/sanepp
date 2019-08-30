@@ -115,10 +115,11 @@ namespace sane {
      * This is basically a re-purposed cpp-httplib logger, to keep things simple.
      *
      * @param req   httplib::Request struct.
-     * @param res   httplib::Response struct.
+     * @param       httplib::Response struct.
      */
-    void APIHandler::oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &res) {
+    void APIHandler::oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &) {
         std::string code;
+
         for (const auto& param : req.params) {
             if (param.first == "code") {
                 code = param.second;

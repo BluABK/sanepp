@@ -10,6 +10,14 @@ namespace sane {
 
     LogHandler::LogHandler() = default;
 
+    void LogHandler::setLevel(spdlog::level::level_enum t_logLevel) {
+        logLevel = t_logLevel;
+    }
+
+    spdlog::level::level_enum LogHandler::getLevel() {
+        return logLevel;
+    }
+
     std::shared_ptr<spdlog::logger> LogHandler::createLogger(const std::string &t_facility,
             const std::string &t_logFile) {
         std::shared_ptr<spdlog::logger> logger;
@@ -37,11 +45,14 @@ namespace sane {
         // Create temporary logger instance.
         std::shared_ptr<spdlog::logger> _ = createLogger("LOG_SEPARATOR", t_logFile);
 
+        // Adhere to current log level.
+        _->set_level(logLevel);
+
         // Set the pattern to be a static dotted line.
         _->set_pattern("\n" + std::string(80, '-'));
 
-        // Print the static pattern.
-        _->info("");
+        // Print the static pattern (at the highest log level available).
+        _->critical("");
 
         // Flush the output to file.
         _->flush();

@@ -11,16 +11,28 @@
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_handler.hpp>
 #include <log_handler/log_handler.hpp>
+#include <config_handler/config_handler.hpp>
 #include "cli.hpp"
 
 int main(int argc, char *argv[]) {
+    std::shared_ptr<sane::ConfigHandler> cfg = std::make_shared<sane::ConfigHandler>();
+
     std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
     const std::string LOG_FACILITY = "main";
     std::shared_ptr<spdlog::logger> log = logHandler->createLogger(LOG_FACILITY, CLI_LOG_FILE);
 
-    logHandler->logSeparator(CLI_LOG_FILE);
+    // Logger settings.
+    int logLevel = cfg->getInt("logging/level");
+    if (logLevel >= (int)spdlog::level::trace and logLevel <= (int)spdlog::level::off) {
+        logHandler->setLevel(static_cast<spdlog::level::level_enum>(logLevel));
+        log->set_level(static_cast<spdlog::level::level_enum>(logLevel));
+    } else {
+        log->error("Invalid log level in config: " + std::to_string(logLevel));
+        logHandler->setLevel(spdlog::level::trace);
+        log->set_level(spdlog::level::trace);
+    }
 
-    log->set_level(spdlog::level::trace);
+    logHandler->logSeparator(CLI_LOG_FILE);
 
     log->info("Sane++ CLI Main init!");
 

@@ -21,9 +21,14 @@ namespace sane {
 
         void resetPattern(std::shared_ptr<spdlog::sinks::basic_file_sink_mt> &t_sink);
 
+        void setLevel(spdlog::level::level_enum t_logLevel);
+
+        spdlog::level::level_enum getLevel();
+
         static std::map<std::string, std::shared_ptr<spdlog::sinks::basic_file_sink_mt>> sinks;
     private:
         std::string defaultLogPattern = "%+";
+        spdlog::level::level_enum logLevel = spdlog::level::trace;
     };
 } // namespace sane
 

@@ -16,7 +16,7 @@ namespace sane {
         explicit LogHandler(const std::string &t_defaultLogFile);
 
         std::shared_ptr<spdlog::logger> createLogger(const std::string &t_facility,
-                const std::string &t_logFile = m_defaultLogfile);
+                const std::string &t_logFile = m_defaultLogfile, bool printSeparator = false);
 
         void logSeparator(const std::string &t_logFile = m_defaultLogfile);
 

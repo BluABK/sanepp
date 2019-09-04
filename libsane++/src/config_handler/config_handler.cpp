@@ -7,9 +7,12 @@
 #include <log_handler/log_handler.hpp>
 
 namespace sane {
-    ConfigHandler::ConfigHandler() {
-        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
-        log = logHandler->createLogger("config");
+    ConfigHandler::ConfigHandler(bool createLog) {
+        // This bool is usually false when invoked by e.g. the LogHandler, to avoid circular recursion.
+        if (createLog) {
+            std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+            log = logHandler->createLogger("config");
+        }
     }
 
     /**

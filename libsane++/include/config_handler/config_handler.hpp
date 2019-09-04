@@ -14,7 +14,7 @@
 namespace sane {
     class ConfigHandler {
     public:
-        ConfigHandler();
+        explicit ConfigHandler(bool createLog = true);
 
         nlohmann::json getConfig();
 

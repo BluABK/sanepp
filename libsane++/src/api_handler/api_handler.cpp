@@ -22,9 +22,15 @@
 #include <api_handler/api_handler.hpp>
 #include <db_handler/db_youtube_channels.hpp>
 #include <config_handler/config_handler.hpp>
+#include <log_handler/log_handler.hpp>
 
 namespace sane {
     static httplib::Server oauth2server;
+
+    APIHandler::APIHandler() {
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        log = logHandler->createLogger("api");
+    }
 
     /**
      * Callback function to be called when receiving the http response from the server.
@@ -44,14 +50,26 @@ namespace sane {
         return t_size * t_nmemb;
     }
 
-    void urlEncode(std::string &t_stringToEncode) {
-        t_stringToEncode = std::regex_replace(t_stringToEncode, std::regex("\\/"), "%2F");
-        t_stringToEncode = std::regex_replace(t_stringToEncode, std::regex(":"), "%3A");
+    std::string redact(const std::string &t_string) {
+        return std::string("[REDACTED] (len: " + std::to_string(t_string.length()) + ").");
     }
 
-    void urlDecode(std::string &t_stringToDecode) {
+    void APIHandler::urlEncode(std::string &t_stringToEncode) {
+        const std::string original = t_stringToEncode;
+
+        t_stringToEncode = std::regex_replace(t_stringToEncode, std::regex("\\/"), "%2F");
+        t_stringToEncode = std::regex_replace(t_stringToEncode, std::regex(":"), "%3A");
+
+        log->debug("Encoded string to URL: '" + original + "' --> '" + t_stringToEncode + "'.");
+    }
+
+    void APIHandler::urlDecode(std::string &t_stringToDecode) {
+        const std::string original = t_stringToDecode;
+
         t_stringToDecode = std::regex_replace(t_stringToDecode, std::regex("%2F"), "/");
         t_stringToDecode = std::regex_replace(t_stringToDecode, std::regex("%3A"), ":");
+
+        log->debug("Decoded URL to string: '" + original + "' --> '" + t_stringToDecode + "'.");
     }
 
     void APIHandler::updateOAuth2TokenConfig(nlohmann::json &t_response) {
@@ -62,6 +80,7 @@ namespace sane {
 
         // 2. Update it with the new values.
         if (t_response.find("access_token") != t_response.end()) {
+            log->debug("(config) access_token = " + redact(t_response["access_token"].get<std::string>()));
             config["youtube_auth"]["oauth2"]["access_token"] = t_response["access_token"].get<std::string>();
         }
         if (t_response.find("expires_in") != t_response.end()) {
@@ -73,13 +92,17 @@ namespace sane {
             // Get timestamp of when TTL is set to expire.
             long int expiresAtTimestamp = (long int)timeSinceEpoch + expiresInSeconds;
 
+            log->debug("(config) expires_at = " + std::to_string(expiresAtTimestamp));
             config["youtube_auth"]["oauth2"]["expires_at"] = expiresAtTimestamp;
         }
         if (t_response.find("refresh_token") != t_response.end()) {
+            log->debug("(config) refresh_token = " + redact(t_response["refresh_token"].get<std::string>()));
             config["youtube_auth"]["oauth2"]["refresh_token"] = t_response["refresh_token"].get<std::string>();
         }
+
         // 3. Overwrite the old config.
         cfg->setConfig(config);
+        log->info("Updated OAuth2 token configuration.");
     }
 
     /**
@@ -88,24 +111,26 @@ namespace sane {
      * @param req
      * @param res
      */
-    void httpLog(const httplib::Request &req, const httplib::Response &res) {
-        std::cout << "\nRequest headers:\n" << std::endl;
+    void APIHandler::httpLog(const httplib::Request &req, const httplib::Response &res) {
+        const std::string logPrefix = "(httpLog) ";
+
+        log->info(logPrefix + " \nRequest headers:\n");
         for (const auto& header : req.headers) {
-            std::cout << "first: " << header.first << std::endl;
-            std::cout << "second: " << header.second << std::endl;
+            log->info(logPrefix + "first: " + header.first);
+            log->info(logPrefix + "second: " + header.second);
         }
-        std::cout << "\nRequest params:\n" << std::endl;
+        log->info(logPrefix + " \nRequest params:\n");
         for (const auto& header : req.params) {
-            std::cout << "first: " << header.first << std::endl;
-            std::cout << "second: " << header.second << std::endl;
+            log->info(logPrefix + "first: " + header.first);
+            log->info(logPrefix + "second: " + header.second);
         }
-        std::cout << "Request body:\n" << req.body << std::endl;
-        std::cout << "------------------------------------------" << std::endl;
-        std::cout << "\nResponse body:\n" << res.body << std::endl;
-        std::cout << "\nResponse headers:\n" << std::endl;
+        log->info(logPrefix + "Request body:\n" + req.body);
+        log->info(logPrefix + "------------------------------------------");
+        log->info(logPrefix + "\nResponse body:\n" + res.body);
+        log->info(logPrefix + "\nResponse headers:\n");
         for (const auto& header : res.headers) {
-            std::cout << "first: " << header.first << std::endl;
-            std::cout << "second: " << header.second << std::endl;
+            log->info(logPrefix + "first: " + header.first);
+            log->info(logPrefix + "second: " + header.second);
         }
     }
 
@@ -120,10 +145,14 @@ namespace sane {
     void APIHandler::oauth2CodeResponseCatcher(const httplib::Request &req, const httplib::Response &) {
         std::string code;
 
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        std::shared_ptr<spdlog::logger> staticLog = logHandler->createLogger("api (static)");
+
         for (const auto& param : req.params) {
             if (param.first == "code") {
                 code = param.second;
             } else if (param.first == "error") {
+                staticLog->error("OAuth2 ERROR: " + param.second);
                 std::cerr << "OAuth2 ERROR: " << param.second << std::endl;
 
                 // Stop the static OAuth2 httplib server.
@@ -139,17 +168,24 @@ namespace sane {
             nlohmann::json config = cfg->getConfig();
 
             // 2. Update it with the new value.
+            staticLog->debug("(config) code = " + redact(code));
             config["youtube_auth"]["oauth2"]["code"] = code;
 
             // 3. Overwrite the old config.
             cfg->setConfig(config);
+            staticLog->info("(config) Updated OAuth2 code entry.");
 
             // Stop the static OAuth2 httplib server.
+            staticLog->info("Stopping OAuth2 httplib server.");
             stopOAuth2Server();
         }
     }
 
     void APIHandler::stopOAuth2Server() {
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        std::shared_ptr<spdlog::logger> staticLog = logHandler->createLogger("api (static)");
+
+        staticLog->info("Stopping OAuth2 httplib server.");
         oauth2server.stop();
     }
 
@@ -188,8 +224,7 @@ namespace sane {
             clientId = cfg->getString("youtube_auth/oauth2/client_id");
 
             if (clientId.empty()) {
-                std::cerr << "generateOAuth2URI ERROR: required value client_id is missing, unable to generate URI!"
-                          << std::endl;
+                log->error("generateOAuth2URI ERROR: required value client_id is missing, unable to generate URI!");
                 return {};
             }
         }
@@ -215,8 +250,7 @@ namespace sane {
 
             // If scope is *still* empty, throw a tantrum.
             if (scope.empty()) {
-                std::cerr << "generateOAuth2URI ERROR: required value scope is empty, unable to generate URI!"
-                          << std::endl;
+                log->error("generateOAuth2URI ERROR: required value scope is empty, unable to generate URI!");
                 return {};
             }
         }
@@ -242,6 +276,9 @@ namespace sane {
      * @param t_redirectUri
      */
     void APIHandler::runOAuth2Server(const std::string &t_redirectUri) {
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        std::shared_ptr<spdlog::logger> staticLog = logHandler->createLogger("api (static)");
+
         // Break down redirect URI into host and port.
         std::string strippedUri = std::regex_replace(t_redirectUri, std::regex("http:\\/\\/"), "");
         std::vector<std::string> tokens = tokenize(strippedUri, ':');
@@ -253,10 +290,10 @@ namespace sane {
         });
 
         try {
-//            std::cout << "Starting OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
+            staticLog->info("Starting OAuth2 httplib server on " + host + ":" + std::to_string(port) + ".");
             oauth2server.listen(host.c_str(), port);
-//            std::cout << "Stopped OAuth2 listener server on: " << host << ":" << port <<  "." << std::endl;
         } catch (std::exception &exc) {
+            staticLog->error("APIHandler::runOAuth2Server ERROR: Unexpected exception: " + std::string(exc.what()));
             std::cerr << "APIHandler::runOAuth2Server ERROR: Unexpected exception: " << exc.what() << std::endl;
         }
     }
@@ -291,8 +328,7 @@ namespace sane {
 
             // If code is *still* empty, throw a tantrum.
             if (code.empty()) {
-                std::cerr << "authorizeOAuth2 ERROR: Required value 'code' is empty, unable to authorize!"
-                          << std::endl;
+                log->error("authorizeOAuth2 ERROR: Required value 'code' is empty, unable to authorize!");
                 return responseTokens;
             }
         }
@@ -341,13 +377,13 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "authorizeOAuth2 API request failed with error "
-                              << responseCode << ": " << readBuffer << "\n" << std::endl;
+                    log->error("authorizeOAuth2 API request failed with error "
+                              + std::to_string(responseCode) + ": " + readBuffer + "\n");
                     return responseTokens;
                 }
             } else {
-                std::cerr << "authorizeOAuth2 cURL easy perform failed with non-zero code: "
-                          << result << "!" << std::endl;
+                log->error("authorizeOAuth2 cURL easy perform failed with non-zero code: " + std::to_string(result)
+                         + "!");
                 return responseTokens;
             }
 
@@ -364,16 +400,17 @@ namespace sane {
                 try {
                     responseTokens = nlohmann::json::parse(readBuffer);
                 } catch (nlohmann::detail::parse_error &exc) {
-                    std::cerr << "Skipping APIHandler::authorizeOAuth2 due to Exception: " << std::string(exc.what())
-                              << responseTokens.dump() << std::endl;
+                    log->error("Skipping APIHandler::authorizeOAuth2 due to Exception: " + std::string(exc.what())
+                              + responseTokens.dump());
                 } catch (const std::exception &exc) {
-                    std::cerr << "Skipping APIHandler::authorizeOAuth2 due to Unexpected Exception: "
-                              << std::string(exc.what()) << responseTokens.dump() << "\n" << std::endl;
+                    log->error("Skipping APIHandler::authorizeOAuth2 due to Unexpected Exception: "
+                              + std::string(exc.what()) + responseTokens.dump() + "\n");
                 }
             }
         }
 
         // Store access token and related to config.
+        log->info("Updating OAuth2 Token config entries (new).");
         updateOAuth2TokenConfig(responseTokens);
 
         return responseTokens;
@@ -398,6 +435,8 @@ namespace sane {
 
             // If refreshToken is *still* empty, throw a tantrum.
             if (refreshToken.empty()) {
+                log->error("refreshOAuth2Token ERROR: Required value 'refreshToken' is empty, unable to authorize!\n"
+                           "Did you forget to authorize OAuth2?)");
                 std::cerr << "refreshOAuth2Token ERROR: Required value 'refreshToken' is empty, unable to authorize!"
                           << std::endl << "(Did you forget to authorize OAuth2?)" << std::endl;
                 return accessTokenJson;
@@ -441,12 +480,12 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "refreshOAuth2Token: API request failed with error " << responseCode << ": "
-                              << readBuffer << "\n" << std::endl;
+                    log->error("refreshOAuth2Token: API request failed with error " + std::to_string(responseCode)
+                             + ": " + readBuffer + "\n");
                 }
             } else {
-                std::cerr << "refreshOAuth2Token: cURL easy perform failed with non-zero code: " << result
-                          << "!" << std::endl;
+                log->error("refreshOAuth2Token: cURL easy perform failed with non-zero code: " + std::to_string(result)
+                          + "!");
                 return accessTokenJson;
             }
 
@@ -463,16 +502,17 @@ namespace sane {
                 try {
                     accessTokenJson = nlohmann::json::parse(readBuffer);
                 } catch (nlohmann::detail::parse_error &exc) {
-                    std::cerr << "Skipping APIHandler::refreshOAuth2Token due to Exception: " << std::string(exc.what())
-                              << accessTokenJson.dump() << std::endl;
+                    log->error("Skipping APIHandler::refreshOAuth2Token due to Exception: " + std::string(exc.what())
+                              + accessTokenJson.dump());
                 } catch (const std::exception &exc) {
-                    std::cerr << "Skipping APIHandler::refreshOAuth2Token due to Unexpected Exception: "
-                              << std::string(exc.what()) << accessTokenJson.dump() << "\n" << std::endl;
+                    log->error("Skipping APIHandler::refreshOAuth2Token due to Unexpected Exception: "
+                              + std::string(exc.what()) + accessTokenJson.dump() + "\n");
                 }
             }
         }
 
         // Store access token and related to config.
+        log->info("Updating OAuth2 Token config entries (refresh).");
         updateOAuth2TokenConfig(accessTokenJson);
 
         return accessTokenJson;
@@ -505,15 +545,14 @@ namespace sane {
 
         // If both tokens are missing it is not possible to proceed, print error and abort.
         if (accessToken.empty() and refreshToken.empty()) {
-            std::cerr << "APIHandler::getOAuth2Response ERROR: Both access and refresh tokens are empty!"
-                      << "\n\nDid you forget to authenticate OAuth2?" << std::endl;
+            log->error("APIHandler::getOAuth2Response ERROR: Both access and refresh tokens are empty!\n\n"
+                       "Did you forget to authenticate OAuth2?");
 
             return jsonData;
         } else if (refreshToken.empty()) {
             // A missing refresh token may not yet be critical, but could prove troublesome.
-            std::cerr << "APIHandler::getOAuth2Response WARNING: refresh token is empty!"
-                      << std::endl << "This means that once the access token expires you won't be able to renew it."
-                      << std::endl;
+            log->error("APIHandler::getOAuth2Response WARNING: refresh token is empty!\n"
+                       "This means that once the access token expires you won't be able to renew it.");
         }
 
         // Get current timestamp in seconds since epoch.
@@ -532,11 +571,11 @@ namespace sane {
                 if (accessTokenJson["access_token"].is_string()) {
                     accessToken = accessTokenJson["access_token"].get<std::string>();
                 } else {
-                    std::cerr << "Invalid access token: not string!\n" << accessTokenJson.dump(4) << std::endl;
+                    log->error("Invalid access token: not string!\n" + accessTokenJson.dump(4));
                     return jsonData;
                 }
             } else {
-                std::cerr << "Invalid access token: not in JSON!\n" << accessTokenJson.dump(4) << std::endl;
+                log->error("Invalid access token: not in JSON!\n" + accessTokenJson.dump(4));
                 return jsonData;
             }
         }
@@ -574,11 +613,12 @@ namespace sane {
                 // All fine. Proceed as usual.
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
-                    std::cerr << "getOAuth2Response: API request failed with error " << responseCode << ": "
-                              << readBuffer << "\n" << "url: " << url << std::endl;
+                    log->error("getOAuth2Response: API request failed with error " + std::to_string(responseCode) + ": "
+                              + readBuffer + "\nurl: " + url);
                 }
             } else {
-                std::cerr << "getOAuth2Response: cURL easy perform failed with non-zero code: " << result << "!" << std::endl;
+                log->error("getOAuth2Response: cURL easy perform failed with non-zero code: " + std::to_string(result)
+                         + "!");
                 return jsonData;
             }
 
@@ -595,11 +635,11 @@ namespace sane {
                 try {
                     jsonData = nlohmann::json::parse(readBuffer);
                 } catch (nlohmann::detail::parse_error &exc) {
-                    std::cerr << "Skipping APIHandler::getOAuth2Response due to Exception: " << std::string(exc.what())
-                              << jsonData.dump() << std::endl;
+                    log->error("Skipping APIHandler::getOAuth2Response due to Exception: " + std::string(exc.what())
+                              + jsonData.dump());
                 } catch (const std::exception &exc) {
-                    std::cerr << "Skipping APIHandler::getOAuth2Response due to Unexpected Exception: "
-                              << std::string(exc.what()) << jsonData.dump() << "\n" << std::endl;
+                    log->error("Skipping APIHandler::getOAuth2Response due to Unexpected Exception: "
+                              + std::string(exc.what()) + jsonData.dump() + "\n");
                 }
             }
         }

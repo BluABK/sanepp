@@ -10,6 +10,7 @@
 #include <yhirose/httplib.h>
 
 #include <entities/youtube_channel.hpp>
+#include <spdlog/logger.h>
 
 #define CLEAR_PROBLEMS true
 #define DONT_CLEAR_PROBLEMS false
@@ -53,6 +54,9 @@
 namespace sane {
     class APIHandler {
     public:
+        /** Self */
+        APIHandler();
+
         /** OAuth2 */
         void updateOAuth2TokenConfig(nlohmann::json &t_response);
 
@@ -81,11 +85,17 @@ namespace sane {
 
         nlohmann::json getOAuth2Response(const std::string &url);
 
+        void httpLog(const httplib::Request &req, const httplib::Response &res);
+
         /** Other */
 
         void printReport(int t_warningsCount, int t_errorsCount);
 
         void printReport(std::shared_ptr<YoutubeChannel> &t_channel);
+
+        void urlEncode(std::string &t_stringToEncode);
+
+        void urlDecode(std::string &t_stringToDecode);
 
         static std::string compileUrlVariables(const std::list<std::map<std::string, std::string>> &t_variableMaps,
                 bool t_isBeginning = false);
@@ -158,6 +168,7 @@ namespace sane {
                                          const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
     private:
+        std::shared_ptr<spdlog::logger> log;
     };
 } // namespace sane.
 #endif // Header guards.

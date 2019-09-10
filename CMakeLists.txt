@@ -160,7 +160,6 @@ if(DEFINED ENV{THIS_IS_TRAVIS})
     add_executable(travis_test_all config/config.hpp tests/test_all.cpp
             cli/src/cli.cpp
             cli/src/cli.hpp
-            cli/test/unit-test_cli.cpp
             libsane++/src/api_handler/api_handler.cpp
             libsane++/include/api_handler/api_handler.hpp
             libsane++/src/entities/youtube_channel.cpp

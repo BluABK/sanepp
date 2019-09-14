@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include <config.hpp>
+#include <log_handler/log_handler.hpp>
 #include "cli.hpp"
 
 namespace sane {
@@ -26,6 +27,9 @@ namespace sane {
 
         // Add the command to the commands map.
         m_commands[t_name] = command;
+
+        // Log the added command
+        log->debug("Added command '" + t_name + "': cat: " + std::to_string(t_category) + ", desc: " + t_description);
     }
 
     void CLI::addCommand(const std::string &t_name, const std::string &t_description, const std::string &t_usageSyntax,
@@ -59,6 +63,10 @@ namespace sane {
 
         // Add the command to the commands map.
         m_commands[t_name] = command;
+
+        // Log the added command
+        log->debug("Added command '" + t_name + "': cat: " + std::to_string(t_category) + ", desc: " + t_description
+        + ", Usage syntax: " + t_usageSyntax);
     }
 
     void CLI::addCommand(const std::string &t_name, const std::string &t_description, const std::string &t_usageSyntax,
@@ -88,9 +96,17 @@ namespace sane {
 
         // Add the command to the commands map.
         m_commands[t_name] = command;
+
+        // Log the added command
+        log->debug("Added command '" + t_name + "': cat: " + std::to_string(t_category) + ", desc: " + t_description
+                   + ", Usage syntax: " + t_usageSyntax + ", Usage: " + t_usage);
     }
 
     CLI::CLI() {
+        // Create a logger instance.
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        log = logHandler->createLogger("cli");
+
         // Add commands to map of commands on the form of: name, description, category, function ptr.
         addCommand(EXIT, "Exit program", CORE_CATEGORY);
         addCommand(HELP, "Print help", CORE_CATEGORY);

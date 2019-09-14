@@ -233,6 +233,7 @@ namespace sane {
         int spacingLength = 4;
 
         std::shared_ptr<sane::APIHandler> api;
+        std::shared_ptr<spdlog::logger> log;
     };
 
 } // namespace sane

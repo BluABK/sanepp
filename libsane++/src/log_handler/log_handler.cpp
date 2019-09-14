@@ -6,13 +6,12 @@
 #include <config_handler/config_handler.hpp>
 
 namespace sane {
+    // Static variables needs to be declared out-of-line (cannot merely be put in constructor due to undef ref issue).
     std::string LogHandler::m_defaultLogfile = "logs/log.txt";
     std::map<std::string, std::shared_ptr<spdlog::sinks::basic_file_sink_mt>> LogHandler::sinks =
             std::map<std::string, std::shared_ptr<spdlog::sinks::basic_file_sink_mt>>();
 
-    LogHandler::LogHandler() {
-//        m_defaultLogfile = "logs/log.txt";
-    }
+    LogHandler::LogHandler() = default;
 
     LogHandler::LogHandler(const std::string &t_defaultLogFile) {
         m_defaultLogfile = t_defaultLogFile;

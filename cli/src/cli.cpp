@@ -398,6 +398,7 @@ namespace sane {
             if ( m_commands.find(tokenizedInput.front()) == m_commands.end() ) {
                 std::cout << "Error: Invalid command! (see 'help' for available commands)" << std::endl;
             } else{
+                log->info("Execute command: " + input);  // Log cmd exec out here, for convenience.
                 executeCommand(tokenizedInput);
             }
             // Check for manual exit here instead of at start due to the boolean being set from the above code,

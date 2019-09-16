@@ -228,7 +228,6 @@ namespace sane {
             }
 
         }
-
         std::cout << std::endl;
     }
 
@@ -339,20 +338,32 @@ namespace sane {
     }
 
     void CLI::authenticateOAuth2() {
+        log->info("Initiating OAuth2 authentication procedure.");
+
         // Step 1: Send a request to Google's OAuth 2.0 server
-        std::cout << "Open this link in a browser: " << api->generateOAuth2URI() << std::endl;
+        log->info("Generating OAuth2 authentication URI...");
+        std::string oauth2Uri = api->generateOAuth2URI();
+
+        std::cout << "Open this link in a browser: " << oauth2Uri << std::endl;
+        log->info("Generated OAuth2 authentication URI.");
+        log->debug("OAuth2 authentication URI: " + oauth2Uri);
 
         // Step 2: Wait for Google user consent prompts, then handle the OAuth 2.0 server response.
+        log->info("Waiting for Google user consent prompt (user action).");
         std::thread t1(sane::APIHandler::runOAuth2Server, OAUTH2_DEFAULT_REDIRECT_URI);
         t1.join();
+        log->info("Got Google user consent prompt reply.");
 
         // Step 3: Exchange authorization code for refresh and access tokens.
+        log->info("Authorizing OAuth2: Exchange authorization code for refresh and access tokens...");
         nlohmann::json response = api->authorizeOAuth2();
 
         if (!response.empty()) {
-            std::cout << "Authenticated." << std::endl;
+            log->info("Authorized OAuth2.");
+            std::cout << "Successfully authorized OAuth2." << std::endl;
         } else {
-            std::cout << "Authentication aborted!" << std::endl;
+            log->info("OAuth2 authentication aborted!");
+            std::cout << "OAuth2 authentication aborted!" << std::endl;
         }
     }
 
@@ -370,6 +381,7 @@ namespace sane {
     }
 
     void CLI::interactive() {
+        log->info("CLI is now in interactive mode.");
         isInteractive = true;
         std::string input;
         std::cout << COMMAND_PROMPT_STYLE;

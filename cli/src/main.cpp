@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     // If arguments were passed, execute them. If not, then run interactively.
     if (argc > 1 and argv != nullptr) {
         // Handle passed arguments.
-        log->info("Arguments were passed, executing them instead of running interactively.");
+        log->info("Arguments were passed, executing them instead of running CLI interactively.");
         std::vector<std::string> commandWithArgs;
         commandWithArgs.assign(argv + 1, argv + argc);
 
@@ -47,10 +47,11 @@ int main(int argc, char *argv[]) {
         }
         log->debug("Arguments: " + argsAsString);
 
+        log->info("Running CLI.");
         cli->executeCommand(commandWithArgs);
     } else {
         // Make the CLI interactive
-        log->info("Running CLI in interactive mode.");
+        log->info("Running CLI.");
         cli->interactive();
     }
 

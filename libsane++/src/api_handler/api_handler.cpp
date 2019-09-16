@@ -202,10 +202,10 @@ namespace sane {
      * @param t_responseType
      * @return
      */
-    nlohmann::json APIHandler::generateOAuth2URI(const std::string &t_clientId, const std::string &t_scope,
-                                                 const std::string &t_redirectUri, const std::string &t_state,
-                                                 const std::string &t_loginHint, const std::string &t_oauth2Uri,
-                                                 const std::string &t_responseType) {
+    std::string APIHandler::generateOAuth2URI(const std::string &t_clientId, const std::string &t_scope,
+                                              const std::string &t_redirectUri, const std::string &t_state,
+                                              const std::string &t_loginHint, const std::string &t_oauth2Uri,
+                                              const std::string &t_responseType) {
         // OAuth2
         std::string uri;
         std::string clientId = t_clientId;
@@ -215,7 +215,6 @@ namespace sane {
         std::string state = t_state; // FIXME: Not yet implemented
         std::string loginHint = t_loginHint; // FIXME: Not yet implemented
         std::string oauth2_uri = t_oauth2Uri;
-        nlohmann::json refreshToken;
 
         // Use config to set parameters that weren't passed a value.
         std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
@@ -521,10 +520,10 @@ namespace sane {
     /**
      * Gets an OAuth2 YouTube API response via cURL.
      *
-     * @param url   A const string of the full API route URL.
+     * @param t_url   A const string of the full API route URL.
      * @return      Response parsed as JSON or - if cURL failed - an explicitly expressed empty object.
      */
-    nlohmann::json APIHandler::getOAuth2Response(const std::string &url) {
+    nlohmann::json APIHandler::getOAuth2Response(const std::string &t_url) {
         std::string accessToken;
         std::string refreshToken;
 
@@ -602,7 +601,7 @@ namespace sane {
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, true);
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_URL, t_url.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
@@ -614,7 +613,7 @@ namespace sane {
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
                 if (responseCode != 200) {
                     log->error("getOAuth2Response: API request failed with error " + std::to_string(responseCode) + ": "
-                              + readBuffer + "\nurl: " + url);
+                              + readBuffer + "\nurl: " + t_url);
                 }
             } else {
                 log->error("getOAuth2Response: cURL easy perform failed with non-zero code: " + std::to_string(result)

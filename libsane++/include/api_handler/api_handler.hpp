@@ -61,11 +61,11 @@ namespace sane {
         void updateOAuth2TokenConfig(nlohmann::json &t_response);
 
         // Obtaining OAuth 2.0 access tokens, Step 1: Send a request to Google's OAuth 2.0 server
-        nlohmann::json generateOAuth2URI(const std::string &t_clientId = {}, const std::string &t_scope = {},
-                                         const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
-                                         const std::string &t_state = {}, const std::string &t_loginHint = {},
-                                         const std::string &t_oauth2Uri = OAUTH2_DEFAULT_AUTH_URI,
-                                         const std::string &t_responseType = OAUTH2_DEFAULT_RESPONSE_TYPE);
+        std::string generateOAuth2URI(const std::string &t_clientId = {}, const std::string &t_scope = {},
+                                      const std::string &t_redirectUri = OAUTH2_DEFAULT_REDIRECT_URI,
+                                      const std::string &t_state = {}, const std::string &t_loginHint = {},
+                                      const std::string &t_oauth2Uri = OAUTH2_DEFAULT_AUTH_URI,
+                                      const std::string &t_responseType = OAUTH2_DEFAULT_RESPONSE_TYPE);
 
         // Obtaining OAuth 2.0 access tokens, Step 2: Wait for Google user consent prompts,
         //                                            then handle the OAuth 2.0 server response.

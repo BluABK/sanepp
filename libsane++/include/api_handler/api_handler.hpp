@@ -52,6 +52,8 @@
 #define OAUTH2_DEFAULT_RESPONSE_TYPE               "code"
 
 namespace sane {
+    static std::mutex refreshTokenMutex;
+
     class APIHandler {
     public:
         /** Self */

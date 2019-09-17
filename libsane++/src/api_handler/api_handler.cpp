@@ -429,6 +429,26 @@ namespace sane {
         // Use config to set parameters that weren't passed a value.
         std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
 
+        // Mutex lock the refresh action so it doesn't get run multiple times.
+//        log->debug("refreshOAuth2Token is at mutex lock");
+        std::lock_guard<std::mutex> lock(refreshTokenMutex);
+//        log->debug("refreshOAuth2Token is past mutex lock");
+
+        // Get current timestamp in seconds since epoch.
+        auto now = std::chrono::system_clock::now();
+        time_t timeSinceEpoch = std::chrono::system_clock::to_time_t(now);
+
+        // Check expiry date of current access token.
+        std::string confPath = "youtube_auth/oauth2/expires_at"; // For shortened line length.
+        long int expiresAt = cfg->isNumber(confPath) ? cfg->getLongInt(confPath) : -1;
+
+        // Check if token has become valid since function was called (due to mutex lock by a previous caller).
+        if (expiresAt > (long int)timeSinceEpoch) {
+            log->debug("OAuth2 access token has become valid (refreshed) since "
+                       "refreshOAuth2Token was called, returning.");
+            return nlohmann::json::object();
+        }
+
         if (refreshToken.empty()) {
             refreshToken = cfg->getString("youtube_auth/oauth2/refresh_token");
 
@@ -542,16 +562,16 @@ namespace sane {
             }
         }
 
-        // If both tokens are missing it is not possible to proceed, print error and abort.
+        // If both tokens are missing it is not possible to proceed, log error and abort.
         if (accessToken.empty() and refreshToken.empty()) {
-            log->error("APIHandler::getOAuth2Response ERROR: Both access and refresh tokens are empty!\n\n"
+            log->error("getOAuth2Response: Both access and refresh tokens are empty!\n\n"
                        "Did you forget to authenticate OAuth2?");
 
             return jsonData;
         } else if (refreshToken.empty()) {
             // A missing refresh token may not yet be critical, but could prove troublesome.
-            log->error("APIHandler::getOAuth2Response WARNING: refresh token is empty!\n"
-                       "This means that once the access token expires you won't be able to renew it.");
+            log->warn("getOAuth2Response: refresh token is empty!\n"
+                      "This means that once the access token expires you won't be able to renew it.");
         }
 
         // Get current timestamp in seconds since epoch.
@@ -562,21 +582,13 @@ namespace sane {
         std::string confPath = "youtube_auth/oauth2/expires_at"; // For shortened line length.
         long int expiresAt = cfg->isNumber(confPath) ? cfg->getLongInt(confPath) : -1;
 
-        // Access token is expired or has invalid config, get a new one.
+        // If access token has expired or has invalid config entry, get a new one.
         if (expiresAt < (long int)timeSinceEpoch) {
             nlohmann::json accessTokenJson = refreshOAuth2Token();
 
-            if (accessTokenJson.find("access_token") != accessTokenJson.end()) {
-                if (accessTokenJson["access_token"].is_string()) {
-                    accessToken = accessTokenJson["access_token"].get<std::string>();
-                } else {
-                    log->error("Invalid access token: not string!\n" + accessTokenJson.dump(4));
-                    return jsonData;
-                }
-            } else {
-                log->error("Invalid access token: not in JSON!\n" + accessTokenJson.dump(4));
-                return jsonData;
-            }
+            // Get the refreshed OAuth2 access token from config
+            // NB: DON'T get it directly from JSON as it could already have been refreshed (due to mutex lock).
+            cfg->getString("youtube_auth/oauth2/access_token");
         }
 
         // Proceed with the original cURL request.

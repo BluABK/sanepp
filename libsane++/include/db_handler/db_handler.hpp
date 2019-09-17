@@ -30,18 +30,18 @@
 #define SQLITE_NEVER_RUN -1
 #define SQLITE_NOT_DONE -2
 
-static std::mutex m_mutex;
-static int m_usageCounter = 0;
+static std::mutex dbHandlerMutex;
+static int usageCounter = 0;
 
 namespace sane {
     class DBHandler {
     public:
         explicit DBHandler(const std::string &t_dbFilename = DATABASE_NAME) {
             m_dbFilename = t_dbFilename;
-            std::lock_guard<std::mutex> lock(m_mutex);
-            if (m_usageCounter == 0) {
+            std::lock_guard<std::mutex> lock(dbHandlerMutex);
+            if (usageCounter == 0) {
                 openDB();
-                m_usageCounter++;
+                usageCounter++;
             }
         }
 
@@ -98,13 +98,13 @@ namespace sane {
         int runSqlStatement(const std::string &t_sql);
 
         ~DBHandler() {
-            std::lock_guard<std::mutex> lock(m_mutex);
-            if (m_usageCounter == 0) {
+            std::lock_guard<std::mutex> lock(dbHandlerMutex);
+            if (usageCounter == 0) {
                 // Close db handle
                 int rc = sqlite3_close(m_db);
                 std::cout << "DB closed with status: " << rc << std::endl;
             } else {
-                m_usageCounter--;
+                usageCounter--;
             }
         }
     private:

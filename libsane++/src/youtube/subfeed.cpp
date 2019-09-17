@@ -35,7 +35,6 @@ namespace sane {
                   << progressPercentString << "% " << "(" << progressLine << ")" << std::flush;
     }
     std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
-
                                                                 const std::string &t_part,
                                                                 const std::map<std::string, std::string> &t_filter,
                                                                 const std::map<std::string, std::string> &t_optParams,

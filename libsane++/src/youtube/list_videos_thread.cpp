@@ -2,6 +2,7 @@
 #include <entities/youtube_video.hpp>
 #include <api_handler/api_handler.hpp>
 #include <youtube/toolkit.hpp>
+#include <config_handler/config_handler.hpp>
 
 namespace sane {
     ListVideosThread::ListVideosThread(const std::string &t_part, const std::map<std::string, std::string> &t_filter,
@@ -21,6 +22,7 @@ namespace sane {
 
         // Instantiate API Handler
         std::shared_ptr<sane::APIHandler> api = std::make_shared<sane::APIHandler>();
+        std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
 
         // Make the SAPI request and retrieve (a rather limited) JSON.
         //
@@ -29,7 +31,41 @@ namespace sane {
         // Due to the limited amount of info in youtube#playlistItems we only request the part that holds videoId,
         // and then we perform a separate videos.list() API request for those IDs further down the line.
         try {
-            playlistItemsJson = api->youtubeListPlaylistItems(m_playlistItemsPart, m_filter, m_optParams);
+            // Check config for instructions to retry failed requests, if any.
+            unsigned int retryAttempts = 0;
+            if (cfg->hasSection("youtube_requests/retries")) {
+                if (cfg->isUnsignedNumber("youtube_requests/retries")) {
+                    retryAttempts = cfg->getUnsignedInt("youtube_requests/retries");
+                }
+            }
+
+            // Amount of attempts (1 initial run + retries).
+            unsigned int attempts = 1 + retryAttempts;
+
+            // Perform the request once and retry the given amount of times upon failure.
+            for (unsigned int i = 0; i <= attempts; i++) {
+                if (i > 0) {
+                    // If i > 0 then the loop is past its first iteration which means it's a retry.
+                    std::cerr << std::flush << "Warning: listVideos: Retrying failed request (attempt: " << std::to_string(i) // FIXME: Logify
+                              << "/"
+                              << std::to_string(attempts) << ") for playlistId: " << m_filter["playlistId"] << "."
+                              << std::endl;
+//                    log->warn("listVideos: Retrying failed request (attempt: "
+//                              + std::to_string(i) + "/" + std::to_string(retryAttempts) + ") for playlistId: " + m_filter["playlistId"] + ".");
+                }
+
+                // Perform the YouTube request.
+                playlistItemsJson = api->youtubeListPlaylistItems(m_playlistItemsPart, m_filter, m_optParams);
+
+                // Check if it was successful.
+                if (hasItems(playlistItemsJson)) {
+                    break;
+                } else {
+                    std::cerr << std::flush << "Warning: No videos exist in playlistId: " // FIXME: Logify
+                              << m_filter["playlistId"] << "!" << std::endl;
+                    continue;
+                }
+            }
 
             // Make sure the playlistItemsJson response was valid and contains items.
             if (hasItems(playlistItemsJson)) {
@@ -76,7 +112,10 @@ namespace sane {
                           << getThreadId() << ": " << std::string(exc.what())  << "\n" << std::endl;
                 } // try/catch: videoListJson
 
-            } // if playlistItemsJson not empty
+            } else {
+                std::cerr << "\nWarning: No videos exist in playlistId: " // FIXME: Logify
+                          << m_filter["playlistId"] << "!" << std::endl;
+            } // if/else (playlistItemsJson not empty)
         } catch (std::exception &exc) {
             std::cerr << "Exception occurred while playlistItemsJson thread "
                       << getThreadId() << ": " << std::string(exc.what())  << "\n" << std::endl;

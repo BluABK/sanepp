@@ -71,6 +71,12 @@ namespace sane {
             if (hasItems(playlistItemsJson)) {
                 // Do some separate videos.list() API request for current playlist items to actually obtain useful info:
 
+                // Store playlistId for error purposes, before removing it from the filters
+                std::string playlistId = "UNSET!";
+                if (m_filter.find("playlistId") != m_filter.end()) {
+                    playlistId = m_filter["playlistId"];
+                }
+
                 // 1. Clear playlistItems-specific filters:
                 m_filter.erase("playlistId");
 
@@ -100,7 +106,23 @@ namespace sane {
                 // 3. Request proper information for the current video IDs using the API's videos.list().
     //                std::cout << "\tRetrieving additional video info... " << std::endl;
                 try {
-                    videoListJson = api->youtubeListVideos(m_part, m_filter, m_optParams);
+                    if (m_filter.find("id") != m_filter.end()) {
+                        videoListJson = api->youtubeListVideos(m_part, m_filter, m_optParams);
+                    } else {
+                        // Error: id not found in filter, report it. // FIXME: Logify
+                        std::cerr << "Error: youtubeListVideos: Missing id field in playlist '" << playlistId << "': ";
+                        std::cerr << "m_part = " << m_part << ", ";
+                        std::cerr << "m_filter { ";
+                        for (auto const& m : m_filter) {
+                            std::cerr << m.first << ": " << m.second << ", ";
+                        }
+                        std::cerr << "}, ";
+                        std::cerr << "m_optParams { ";
+                        for (auto const& m : m_optParams) {
+                            std::cerr << m.first << ": " << m.second << ", ";
+                        }
+                        std::cerr << "}." << std::endl;
+                    }
 
                     // Make sure the videoListJson response was valid.
                     if (!videoListJson.empty()) {
@@ -113,7 +135,7 @@ namespace sane {
                 } // try/catch: videoListJson
 
             } else {
-                std::cerr << "\nWarning: No videos exist in playlistId: " // FIXME: Logify
+                std::cerr << "Warning: No videos exist in playlistId: " // FIXME: Logify
                           << m_filter["playlistId"] << "!" << std::endl;
             } // if/else (playlistItemsJson not empty)
         } catch (std::exception &exc) {

@@ -550,111 +550,140 @@ namespace sane {
         nlohmann::json jsonData = nlohmann::json::object();
         std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
 
-        // Check that access and/or refresh tokens are valid.
-        if (cfg->hasSection("youtube_auth/oauth2/access_token")) {
-            if (cfg->isString("youtube_auth/oauth2/access_token")) {
-                accessToken = cfg->getString("youtube_auth/oauth2/access_token");
-            }
-        }
-        if (cfg->hasSection("youtube_auth/oauth2/refresh_token")) {
-            if (cfg->isString("youtube_auth/oauth2/refresh_token")) {
-                refreshToken = cfg->getString("youtube_auth/oauth2/refresh_token");
+        // Check config for instructions to retry failed requests, if any.
+        unsigned int retryAttempts = 0;
+        if (cfg->hasSection("youtube_auth/oauth2/retries")) {
+            if (cfg->isUnsignedNumber("youtube_auth/oauth2/retries")) {
+                retryAttempts = cfg->getUnsignedInt("youtube_auth/oauth2/retries");
             }
         }
 
-        // If both tokens are missing it is not possible to proceed, log error and abort.
-        if (accessToken.empty() and refreshToken.empty()) {
-            log->error("getOAuth2Response: Both access and refresh tokens are empty!\n\n"
-                       "Did you forget to authenticate OAuth2?");
+        // Amount of attempts (1 initial run + retries).
+        unsigned int attempts = 1 + retryAttempts;
 
-            return jsonData;
-        } else if (refreshToken.empty()) {
-            // A missing refresh token may not yet be critical, but could prove troublesome.
-            log->warn("getOAuth2Response: refresh token is empty!\n"
-                      "This means that once the access token expires you won't be able to renew it.");
-        }
+        // Perform the request once and retry the given amount of times upon failure.
+        for (unsigned int i = 0; i <= attempts; i++) {
+            if (i > 0) {
+                // If i > 0 then the loop is past its first iteration which means it's a retry.
+                log->warn("getOAuth2Response: Retrying failed request (attempt: "
+                        + std::to_string(i) + "/" + std::to_string(attempts) + ") for url: " + t_url + ".");
+            }
 
-        // Get current timestamp in seconds since epoch.
-        auto now = std::chrono::system_clock::now();
-        time_t timeSinceEpoch = std::chrono::system_clock::to_time_t(now);
-
-        // Check expiry date of current access token.
-        std::string confPath = "youtube_auth/oauth2/expires_at"; // For shortened line length.
-        long int expiresAt = cfg->isNumber(confPath) ? cfg->getLongInt(confPath) : -1;
-
-        // If access token has expired or has invalid config entry, get a new one.
-        if (expiresAt < (long int)timeSinceEpoch) {
-            // This will either be the new access token JSON or an empty JSON object (if already valid).
-            nlohmann::json accessTokenJson = refreshOAuth2Token();
-
-            // Get the refreshed OAuth2 access token from config instead of above JSON.
-            // NB: Due to mutex lock, the above JSON could either be the token or an empty object.
-            cfg->getString("youtube_auth/oauth2/access_token");
-        }
-
-        // Proceed with the original cURL request.
-        CURL *curl;
-        std::string readBuffer;
-        long responseCode;
-
-        // Start a libcURL easy session and assign the returned handle.
-        // NB: Implicitly calls curl_global_init, which is *NOT* thread-safe!
-        curl = curl_easy_init();
-        if(curl) {
-            CURLcode result;
-
-            // Custom headers
-            struct curl_slist *chunk = nullptr;
-
-            std::string auth_header = "Authorization: Bearer " + accessToken;
-
-            chunk = curl_slist_append(chunk, auth_header.c_str());
-            chunk = curl_slist_append(chunk, "Content-type: application/json");
-
-            curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, true);
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-            curl_easy_setopt(curl, CURLOPT_URL, t_url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-
-            // Perform a blocking file transfer
-            result = curl_easy_perform(curl);
-
-            if (result == CURLE_OK) {
-                // All fine. Proceed as usual.
-                curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
-                if (responseCode != 200) {
-                    log->error("getOAuth2Response: API request failed with error " + std::to_string(responseCode) + ": "
-                              + readBuffer + "\nurl: " + t_url);
+            // Check that access and/or refresh tokens are valid.
+            if (cfg->hasSection("youtube_auth/oauth2/access_token")) {
+                if (cfg->isString("youtube_auth/oauth2/access_token")) {
+                    accessToken = cfg->getString("youtube_auth/oauth2/access_token");
                 }
-            } else {
-                log->error("getOAuth2Response: cURL easy perform failed with non-zero code: " + std::to_string(result)
-                         + "!");
+            }
+            if (cfg->hasSection("youtube_auth/oauth2/refresh_token")) {
+                if (cfg->isString("youtube_auth/oauth2/refresh_token")) {
+                    refreshToken = cfg->getString("youtube_auth/oauth2/refresh_token");
+                }
+            }
+
+            // If both tokens are missing it is not possible to proceed, log error and abort.
+            if (accessToken.empty() and refreshToken.empty()) {
+                log->error("getOAuth2Response: Both access and refresh tokens are empty!\n\n"
+                           "Did you forget to authenticate OAuth2?");
+
                 return jsonData;
+            } else if (refreshToken.empty()) {
+                // A missing refresh token may not yet be critical, but could prove troublesome.
+                log->warn("getOAuth2Response: refresh token is empty!\n"
+                          "This means that once the access token expires you won't be able to renew it.");
             }
 
-            // Cleanup call REQUIRED by curl_easy_init, which closes the handle.
-            //
-            // This might close all connections this handle has used and possibly has kept open until
-            // now - unless it was attached to a multi handle while doing the transfers.
-            // Don't call this function if you intend to transfer more files,
-            // re-using handles is a key to good performance with libcurl
-            curl_easy_cleanup(curl);
+            // Get current timestamp in seconds since epoch.
+            auto now = std::chrono::system_clock::now();
+            time_t timeSinceEpoch = std::chrono::system_clock::to_time_t(now);
 
-            // Convert readBuffer to JSON
-            if (responseCode == 200) {
-                try {
-                    jsonData = nlohmann::json::parse(readBuffer);
-                } catch (nlohmann::detail::parse_error &exc) {
-                    log->error("Skipping APIHandler::getOAuth2Response due to Exception: " + std::string(exc.what())
-                              + jsonData.dump());
-                } catch (const std::exception &exc) {
-                    log->error("Skipping APIHandler::getOAuth2Response due to Unexpected Exception: "
-                              + std::string(exc.what()) + jsonData.dump() + "\n");
+            // Check expiry date of current access token.
+            std::string confPath = "youtube_auth/oauth2/expires_at"; // For shortened line length.
+            long int expiresAt = cfg->isNumber(confPath) ? cfg->getLongInt(confPath) : -1;
+
+            // If access token has expired or has invalid config entry, get a new one.
+            if (expiresAt < (long int) timeSinceEpoch) {
+                // This will either be the new access token JSON or an empty JSON object (if already valid).
+                nlohmann::json accessTokenJson = refreshOAuth2Token();
+
+                // Get the refreshed OAuth2 access token from config instead of above JSON.
+                // NB: Due to mutex lock, the above JSON could either be the token or an empty object.
+                cfg->getString("youtube_auth/oauth2/access_token");
+            }
+
+            // Proceed with the original cURL request.
+            CURL *curl;
+            std::string readBuffer;
+            long responseCode;
+
+            // Start a libcURL easy session and assign the returned handle.
+            // NB: Implicitly calls curl_global_init, which is *NOT* thread-safe!
+            curl = curl_easy_init();
+            if (curl) {
+                CURLcode result;
+
+                // Custom headers
+                struct curl_slist *chunk = nullptr;
+
+                std::string auth_header = "Authorization: Bearer " + accessToken;
+
+                chunk = curl_slist_append(chunk, auth_header.c_str());
+                chunk = curl_slist_append(chunk, "Content-type: application/json");
+
+                curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+                curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, true);
+                curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+                curl_easy_setopt(curl, CURLOPT_URL, t_url.c_str());
+                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+                curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+                // Perform a blocking file transfer
+                result = curl_easy_perform(curl);
+
+                if (result == CURLE_OK) {
+                    // All fine. Proceed as usual.
+                    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+                    if (responseCode != 200) {
+                        log->error("getOAuth2Response: API request failed with error " + std::to_string(responseCode) +
+                                   ": "
+                                   + readBuffer + "\nurl: " + t_url);
+                        continue;
+                    }
+                } else {
+                    log->error(
+                            "getOAuth2Response: cURL easy perform failed with non-zero code: " + std::to_string(result)
+                            + "!");
+//                    return jsonData;
+                    continue;
+                }
+
+                // Cleanup call REQUIRED by curl_easy_init, which closes the handle.
+                //
+                // This might close all connections this handle has used and possibly has kept open until
+                // now - unless it was attached to a multi handle while doing the transfers.
+                // Don't call this function if you intend to transfer more files,
+                // re-using handles is a key to good performance with libcurl
+                curl_easy_cleanup(curl);
+
+                // Convert readBuffer to JSON
+                if (responseCode == 200) {
+                    try {
+                        jsonData = nlohmann::json::parse(readBuffer);
+                    } catch (nlohmann::detail::parse_error &exc) {
+                        log->error("Skipping APIHandler::getOAuth2Response due to Exception: " + std::string(exc.what())
+                                   + jsonData.dump());
+                        continue;
+                    } catch (const std::exception &exc) {
+                        log->error("Skipping APIHandler::getOAuth2Response due to Unexpected Exception: "
+                                   + std::string(exc.what()) + jsonData.dump() + "\n");
+                        continue;
+                    }
                 }
             }
-        }
+
+            break;
+        } // for retryAttempts
+
         return jsonData;
     }
 } // namespace sane.

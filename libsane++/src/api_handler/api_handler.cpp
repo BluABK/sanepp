@@ -430,9 +430,9 @@ namespace sane {
         std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
 
         // Mutex lock the refresh action so it doesn't get run multiple times.
-//        log->debug("refreshOAuth2Token is at mutex lock");
+        log->debug("refreshOAuth2Token is at mutex lock");
         std::lock_guard<std::mutex> lock(refreshTokenMutex);
-//        log->debug("refreshOAuth2Token is past mutex lock");
+        log->debug("refreshOAuth2Token is past mutex lock");
 
         // Get current timestamp in seconds since epoch.
         auto now = std::chrono::system_clock::now();
@@ -584,10 +584,11 @@ namespace sane {
 
         // If access token has expired or has invalid config entry, get a new one.
         if (expiresAt < (long int)timeSinceEpoch) {
+            // This will either be the new access token JSON or an empty JSON object (if already valid).
             nlohmann::json accessTokenJson = refreshOAuth2Token();
 
-            // Get the refreshed OAuth2 access token from config
-            // NB: DON'T get it directly from JSON as it could already have been refreshed (due to mutex lock).
+            // Get the refreshed OAuth2 access token from config instead of above JSON.
+            // NB: Due to mutex lock, the above JSON could either be the token or an empty object.
             cfg->getString("youtube_auth/oauth2/access_token");
         }
 

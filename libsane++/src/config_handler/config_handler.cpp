@@ -153,6 +153,35 @@ namespace sane {
         return section.is_number_unsigned();
     }
 
+    bool ConfigHandler::isList(const std::string &t_section) {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        auto section = getSection(t_section);
+
+        return section.is_array();
+    }
+
+    bool ConfigHandler::isStringList(const std::string &t_section) {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        auto section = getSection(t_section);
+
+        // Check that it is a list/array
+        if (section.is_array()) {
+            // Check that every item is a string
+            for (nlohmann::json &item : section) {
+                if (!item.is_string()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Read a config section and return its value as an int.
@@ -231,6 +260,14 @@ namespace sane {
     const std::list<std::string> ConfigHandler::getStringList(const std::string &t_section) {
         // Open config file.
         nlohmann::json config = getConfig();
+
+        auto section = getSection(t_section);
+
+        if (!isStringList(t_section)) {
+            log->error("getStringList(" + t_section + ") ERROR: Not a list consisting of (only) strings: "
+                     + section.dump());
+            return {};
+        }
 
         // ISO C++03 14.2/4: The member template name must be prefixed by the keyword template.
         return getSection(t_section).template get<std::list<std::string>>();

@@ -32,6 +32,10 @@ namespace sane {
 
         bool isUnsignedNumber(const std::string &t_section);
 
+        bool isList(const std::string &t_section);
+
+        bool isStringList(const std::string &t_section);
+
         int getInt(const std::string &t_section);
 
         long int getLongInt(const std::string &t_section);

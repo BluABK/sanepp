@@ -15,6 +15,7 @@
 #include <db_handler/db_youtube_channels.hpp>
 #include <youtube/list_videos_thread.hpp>
 #include <config_handler/config_handler.hpp>
+#include <log_handler/log_handler.hpp>
 
 namespace sane {
     void updateProgressLine(size_t total, int current) {
@@ -34,11 +35,12 @@ namespace sane {
         std::cout << "\r" << "Retrieving " << "\"Uploaded Videos\" playlists... "
                   << progressPercentString << "% " << "(" << progressLine << ")" << std::flush;
     }
-    std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(const std::list<std::string> &t_playlists,
+    std::list<std::shared_ptr<YoutubeVideo>> listUploadedVideos(std::list<std::string> &t_playlists,
                                                                 const std::string &t_part,
                                                                 const std::map<std::string, std::string> &t_filter,
                                                                 const std::map<std::string, std::string> &t_optParams,
                                                                 const std::string &t_playlistItemsPart) {
+
         using std::chrono_literals::operator""s;
         using std::chrono_literals::operator""ms;
 
@@ -54,7 +56,25 @@ namespace sane {
         nlohmann::json playlistItemsJson;
         nlohmann::json videoListJson;
 
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        std::shared_ptr<spdlog::logger> staticLog = logHandler->createLogger("subfeed (static)");
+
         std::shared_ptr<ConfigHandler> cfg = std::make_shared<ConfigHandler>();
+
+        // Skip certain playlists if set in config.
+        std::list<std::string> skipPlaylists = std::list<std::string>();
+        if (cfg->hasSection("youtube_skip_requests/playlists")) {
+            if (cfg->isStringList("youtube_skip_requests/playlists")) {
+                skipPlaylists = cfg->getStringList("youtube_skip_requests/playlists");
+                if (!skipPlaylists.empty()) {
+                    for (auto &playlist : skipPlaylists) {
+                        staticLog->info("Skip playlist: " + playlist);
+                        t_playlists.remove(playlist);
+                    }
+                }
+            }
+        }
+
         if (cfg->isNumber("threading/subsfeed_refresh")) {
             threadLimit = cfg->getInt("threading/subsfeed_refresh");
         }

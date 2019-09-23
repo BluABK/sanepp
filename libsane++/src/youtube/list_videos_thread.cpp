@@ -23,7 +23,7 @@ namespace sane {
 
         // Set up logger
         std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
-        log = logHandler->createLogger("ListVideosThread");
+        log = logHandler->createLogger("ListVideosThread:" + getThreadIdString());
 
         // Instantiate API Handler
         std::shared_ptr<sane::APIHandler> api = std::make_shared<sane::APIHandler>();

@@ -128,6 +128,7 @@ namespace sane {
                             //   to ensure that the object stays around as long as the thread does.
                             std::thread thread(&ListVideosThread::run, videoThreadObject);
                             std::thread::id threadId = thread.get_id();
+                            videoThreadObject->setThreadId(threadId);
 
                             // Associate the thread ID with videoThreadObject.
                             idMap[threadId] = videoThreadObject;

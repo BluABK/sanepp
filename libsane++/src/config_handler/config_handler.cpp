@@ -144,6 +144,16 @@ namespace sane {
         return section.is_number();
     }
 
+    bool ConfigHandler::isUnsignedNumber(const std::string &t_section) {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        auto section = getSection(t_section);
+
+        return section.is_number_unsigned();
+    }
+
+
     /**
      * Read a config section and return its value as an int.
      *
@@ -178,7 +188,7 @@ namespace sane {
         // Open config file.
         nlohmann::json config = getConfig();
 
-        long int retval;
+        long int retval = 0;
 
         auto section = getSection(t_section);
 
@@ -186,7 +196,33 @@ namespace sane {
             retval = section.get<long int>();
         } else {
             log->error("getLongInt(" + t_section + ") ERROR: NaN: " + section.dump());
-            retval = 0;
+        }
+
+        return retval;
+    }
+
+    /**
+     * Read a config section and return its value as a unsigned int.
+     *
+     * @param t_section String of path to JSON/config section.
+     * @return          Result or 0.
+     */
+    long int ConfigHandler::getUnsignedInt(const std::string &t_section)  {
+        // Open config file.
+        nlohmann::json config = getConfig();
+
+        unsigned int retval = 0;
+
+        auto section = getSection(t_section);
+
+        if (section.is_number()) {
+            if (section.is_number_unsigned()) {
+                retval = section.get<unsigned int>();
+            } else {
+                log->error("getUnsignedInt(" + t_section + ") ERROR: Not unsigned/positive: " + section.dump());
+            }
+        } else {
+            log->error("getUnsignedInt(" + t_section + ") ERROR: NaN: " + section.dump());
         }
 
         return retval;

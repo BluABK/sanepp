@@ -5,6 +5,7 @@
 #include <thread>
 #include <map>
 #include <entities/youtube_video.hpp>
+#include <spdlog/logger.h>
 
 
 namespace sane {
@@ -27,6 +28,8 @@ namespace sane {
 
         std::thread::id getThreadId();
 
+        std::string getThreadIdString();
+
         bool finished = false;
         bool started = false;
     private:
@@ -36,6 +39,7 @@ namespace sane {
         std::map<std::string, std::string> m_filter;
         std::map<std::string, std::string> m_optParams;
         std::string m_playlistItemsPart;
+        std::shared_ptr<spdlog::logger> log;
 
     };
 } // namespace sane

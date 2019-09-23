@@ -3,6 +3,7 @@
 #include <api_handler/api_handler.hpp>
 #include <youtube/toolkit.hpp>
 #include <config_handler/config_handler.hpp>
+#include <log_handler/log_handler.hpp>
 
 namespace sane {
     ListVideosThread::ListVideosThread(const std::string &t_part, const std::map<std::string, std::string> &t_filter,
@@ -19,6 +20,10 @@ namespace sane {
 
         nlohmann::json playlistItemsJson;
         nlohmann::json videoListJson;
+
+        // Set up logger
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        log = logHandler->createLogger("ListVideosThread");
 
         // Instantiate API Handler
         std::shared_ptr<sane::APIHandler> api = std::make_shared<sane::APIHandler>();
@@ -46,12 +51,9 @@ namespace sane {
             for (unsigned int i = 0; i <= attempts; i++) {
                 if (i > 0) {
                     // If i > 0 then the loop is past its first iteration which means it's a retry.
-                    std::cerr << std::flush << "Warning: listVideos: Retrying failed request (attempt: " << std::to_string(i) // FIXME: Logify
-                              << "/"
-                              << std::to_string(attempts) << ") for playlistId: " << m_filter["playlistId"] << "."
-                              << std::endl;
-//                    log->warn("listVideos: Retrying failed request (attempt: "
-//                              + std::to_string(i) + "/" + std::to_string(retryAttempts) + ") for playlistId: " + m_filter["playlistId"] + ".");
+                    log->warn("listVideos: Retrying failed request (attempt: "
+                            + std::to_string(i) + "/" + std::to_string(attempts) + ") for playlistId: "
+                            + m_filter["playlistId"] + ".");
                 }
 
                 // Perform the YouTube request.
@@ -61,8 +63,7 @@ namespace sane {
                 if (hasItems(playlistItemsJson)) {
                     break;
                 } else {
-                    std::cerr << std::flush << "Warning: No videos exist in playlistId: " // FIXME: Logify
-                              << m_filter["playlistId"] << "!" << std::endl;
+                    log->warn("listVideos: No videos exist in playlistId: " + m_filter["playlistId"] + "!");
                     continue;
                 }
             }
@@ -104,24 +105,25 @@ namespace sane {
                 } // for playlistItemJson in current playlistItemsJson
 
                 // 3. Request proper information for the current video IDs using the API's videos.list().
-    //                std::cout << "\tRetrieving additional video info... " << std::endl;
+                log->debug("Retrieving additional video info for videos: " + m_filter["id"]);
                 try {
                     if (m_filter.find("id") != m_filter.end()) {
                         videoListJson = api->youtubeListVideos(m_part, m_filter, m_optParams);
                     } else {
-                        // Error: id not found in filter, report it. // FIXME: Logify
-                        std::cerr << "Error: youtubeListVideos: Missing id field in playlist '" << playlistId << "': ";
-                        std::cerr << "m_part = " << m_part << ", ";
-                        std::cerr << "m_filter { ";
+                        std::string logString;
+                        // Error: id not found in filter, report it.
+                        logString += "youtubeListVideos: Missing id field in playlist '"
+                                  + playlistId + "': " + "m_part = " + m_part + ", " + "m_filter { ";
                         for (auto const& m : m_filter) {
-                            std::cerr << m.first << ": " << m.second << ", ";
+                            logString += m.first + ": " + m.second + ", ";
                         }
-                        std::cerr << "}, ";
-                        std::cerr << "m_optParams { ";
+                        logString += "}, m_optParams { ";
                         for (auto const& m : m_optParams) {
-                            std::cerr << m.first << ": " << m.second << ", ";
+                            logString += m.first + ": " + m.second + ", ";
                         }
-                        std::cerr << "}." << std::endl;
+                        logString += "}.";
+
+                        log->error(logString);
                     }
 
                     // Make sure the videoListJson response was valid.
@@ -130,17 +132,16 @@ namespace sane {
                         videosJson = videoListJson["items"];
                     } // if videoListJson not empty
                 } catch (std::exception &exc) {
-                std::cerr << "Exception occurred while videoListJson thread "
-                          << getThreadId() << ": " << std::string(exc.what())  << "\n" << std::endl;
+                log->critical("Exception occurred while videoListJson thread " + getThreadIdString() + ": "
+                            + std::string(exc.what()));
                 } // try/catch: videoListJson
 
             } else {
-                std::cerr << "Warning: No videos exist in playlistId: " // FIXME: Logify
-                          << m_filter["playlistId"] << "!" << std::endl;
+                log->warn("No videos exist in playlistId: " + m_filter["playlistId"] + "!");
             } // if/else (playlistItemsJson not empty)
         } catch (std::exception &exc) {
-            std::cerr << "Exception occurred while playlistItemsJson thread "
-                      << getThreadId() << ": " << std::string(exc.what())  << "\n" << std::endl;
+            log->critical("Exception occurred while playlistItemsJson thread " + getThreadIdString() + ": "
+                        + std::string(exc.what()));
         } // try/catch: playlistItemsJson
         // Thread info
         finished = true;
@@ -148,8 +149,7 @@ namespace sane {
 
     void ListVideosThread::run() {
         if (started) {
-            std::cerr << "ERROR: ListVideosThread is ALREADY RUNNING for playlist: "
-                      << m_filter["playlistId"] << std::endl;
+            log->error("ListVideosThread is ALREADY RUNNING for playlist: " + m_filter["playlistId"]);
         } else {
             listVideos();
         }
@@ -169,5 +169,13 @@ namespace sane {
 
     std::thread::id ListVideosThread::getThreadId() {
         return m_threadId;
+    }
+
+    std::string ListVideosThread::getThreadIdString() {
+        std::stringstream ss;
+        ss << getThreadId();
+        std::string idString = ss.str();
+
+        return idString;
     }
 } // namespace sane

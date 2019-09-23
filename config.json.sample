@@ -1,4 +1,11 @@
 {
+  "logging": {
+    "flush_level": 6,
+    "level": 3
+  },
+  "threading": {
+    "subsfeed_refresh": 30
+  },
   "youtube_auth": {
     "api_key": "AIzaSyB7l4tKJXaVou8jO0xvJTyDXUceUYjePqw",
     "oauth2": {
@@ -11,7 +18,11 @@
         "https://www.googleapis.com/auth/youtube.upload",
         "https://www.googleapis.com/auth/youtubepartner",
         "https://www.googleapis.com/auth/youtubepartner-channel-audit"
-      ]
+      ],
+      "retries": 5
     }
+  },
+  "youtube_requests": {
+    "retries": 1
   }
 }

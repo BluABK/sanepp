@@ -86,6 +86,12 @@ namespace sane {
 
         // For playlist in t_playlists
         for (const auto& playlist : t_playlists) {
+            // Check that playlist is not empty.
+            if (playlist.empty()) {
+                staticLog->error("Got an empty playlist, skipping this entry!");
+                continue;
+            }
+
             // Add passed filters and optional parameters.
             std::map<std::string,std::string> filter = t_filter;
 

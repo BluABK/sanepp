@@ -105,7 +105,7 @@ namespace sane {
                 } // for playlistItemJson in current playlistItemsJson
 
                 // 3. Request proper information for the current video IDs using the API's videos.list().
-                log->debug("Retrieving additional video info for videos: " + m_filter["id"]);
+                log->trace("Retrieving additional video info for videos: " + m_filter["id"]);
                 try {
                     if (m_filter.find("id") != m_filter.end()) {
                         videoListJson = api->youtubeListVideos(m_part, m_filter, m_optParams);
@@ -130,7 +130,10 @@ namespace sane {
                     if (!videoListJson.empty()) {
                         // FIXME: No pagination support, will cutoff at 50 max.
                         videosJson = videoListJson["items"];
-                    } // if videoListJson not empty
+                    } else {
+                        log->error("youtubeListVideos returned empty JSON object for playlist: "
+                                   + playlistId + "!");
+                    }
                 } catch (std::exception &exc) {
                 log->critical("Exception occurred while videoListJson thread " + getThreadIdString() + ": "
                             + std::string(exc.what()));

@@ -31,6 +31,9 @@ namespace sane {
                 channel->printWarnings(4);
             }
             if (!errors.empty()) {
+                log->info(std::to_string(errors.size()) + " errors for '" +
+                          channel->getChannelId() + "' (" + channel->getTitle() + "):");
+                channel->logErrors();
                 std::cerr << "Errors:\n" << std::endl;
                 channel->printErrors(4);
             }

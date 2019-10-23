@@ -6,10 +6,12 @@ namespace sane {
      * Retrieves a list of YouTube subscription objects from YouTube API via SaneAPI
      */
     void CLI::getSubscriptionsFromApi() {
+        log->info("Getting subscriptions from API handler.");
         api->getSubscriptionsEntities();
     }
 
     void CLI::printSubscriptionsFull() {
+        log->info("Printing subscriptions (full).");
         // Fetch list of channels
         std::list <std::shared_ptr<YoutubeChannel>> channels;
         channels = sane::getChannelsFromDB(NO_ERROR_LOG);
@@ -22,6 +24,9 @@ namespace sane {
             channel->print(DEFAULT_INDENT);
             // Print any warnings and errors
             if (!warnings.empty()) {
+                log->info(std::to_string(warnings.size()) + " warnings for '" +
+                          channel->getChannelId() + "' (" + channel->getTitle() + "):");
+                channel->logWarnings();
                 std::cout << "Warnings:\n" << std::endl;
                 channel->printWarnings(4);
             }
@@ -34,6 +39,7 @@ namespace sane {
     }
 
     void CLI::printSubscriptionsBasic() {
+        log->info("Printing subscriptions (basic).");
         // Fetch list of channels
         std::list <std::shared_ptr<YoutubeChannel>> channels;
         channels = sane::getChannelsFromDB(NO_ERROR_LOG);

@@ -6,6 +6,7 @@
 
 // 3rd party libraries.
 #include <nlohmann/json.hpp>
+#include <log_handler/log_handler.hpp>
 
 #include <entities/common.hpp>
 
@@ -41,7 +42,6 @@ namespace sane {
                        const char* t_description,
                        const char* t_thumbnailDefault, const char* t_thumbnailHigh,
                        const char* t_thumbnailMedium, bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
-
             addFromValues(t_id, t_uploadsPlaylist, t_favouritesPlaylist, t_likesPlaylist, t_title, t_description,
                           t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
                           t_subscribedLocalOverride);
@@ -52,7 +52,6 @@ namespace sane {
                        const char* t_description, const char* t_thumbnailDefault,
                        const char* t_thumbnailHigh, const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
                        bool t_subscribedLocalOverride) {
-
             addFromValues(t_id, t_hasUploadsPlaylist, t_hasFavouritesPlaylist, t_hasLikesPlaylist, t_title,
                           t_description, t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
                           t_subscribedLocalOverride);
@@ -64,11 +63,12 @@ namespace sane {
                        const std::string &t_thumbnailDefault, const std::string &t_thumbnailHigh,
                        const std::string &t_thumbnailMedium, bool t_subscribedOnYoutube,
                        bool t_subscribedLocalOverride) {
-
             addFromValues(t_id, t_hasUploadsPlaylist, t_hasFavouritesPlaylist, t_hasLikesPlaylist, t_title,
                           t_description, t_thumbnailDefault, t_thumbnailHigh, t_thumbnailMedium, t_subscribedOnYoutube,
                           t_subscribedLocalOverride);
         }
+
+        void setupLogger(const std::string &t_facility = {});
 
         void addFromJson(nlohmann::json t_json);
 
@@ -94,6 +94,8 @@ namespace sane {
 
         void addFromMap(std::map<std::string, std::string>& t_map);
 
+        void logSqliteMap(std::map<std::string, const unsigned char*> &t_map);
+
         void addFromMap(std::map<std::string, const unsigned char*>& t_map);
 
         void print(int indentationSpacing);
@@ -109,9 +111,13 @@ namespace sane {
 
         void printErrors(int indent = 0, bool withJson = false, int jsonIndent = 0);
 
+        void logErrors(int jsonIndent = 0);
+
         std::list<std::map<std::string, nlohmann::json>> getWarnings();
 
         void printWarnings(int indent = 0, bool withJson = false, int jsonIndent = 0);
+
+        void logWarnings(int jsonIndent = 0);
 
         void clearWarnings();
 
@@ -179,6 +185,8 @@ namespace sane {
 
         void setIsSubscribedOnYoutube(bool t_bool);
     private:
+        std::shared_ptr<spdlog::logger> log;
+
         // Relevant JSON response values.
 
         // The value that YouTube uses to uniquely identify the channel that the user subscribed to.
@@ -216,9 +224,7 @@ namespace sane {
 
         // Indicate whether the operation was aborted
         bool m_aborted = false;
-
     };
-
 } // namespace sane
 
 #endif //SANE_YOUTUBE_CHANNEL_HPP

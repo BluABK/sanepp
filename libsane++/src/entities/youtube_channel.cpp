@@ -12,6 +12,9 @@ namespace sane {
     YoutubeChannel::YoutubeChannel() = default;
 
     void YoutubeChannel::addFromJson(nlohmann::json t_json) {
+        // Set up a generic logger to log errors and exceptions (as this is pre-ID stage).
+        setupLogger("YoutubeChannel");
+
         try {
             if (t_json.find("kind") != t_json.end()) {
                 if (t_json["kind"].get<std::string>() == "youtube#channel") {
@@ -19,37 +22,56 @@ namespace sane {
                 } else if (t_json["kind"].get<std::string>() == "youtube#subscription") {
                     setId(t_json["snippet"]["resourceId"]["channelId"]);
                 } else {
-                    std::cerr << "YoutubeChannel::addFromJson Error: given channel resource has invalid kind!\n"
-                              << t_json.dump(4) << std::endl;
+                    log->error("addFromJson: given channel resource has invalid kind!\n"
+                             + t_json.dump(4));
                 }
             } else {
-                std::cerr << "YoutubeChannel::addFromJson Error: given channel resource no kind!\n"
-                          << t_json.dump(4) << std::endl;
+                log->error("YoutubeChannel::addFromJson Error: given channel resource no kind!\n"
+                         + t_json.dump(4));
             }
 
             // If channelId was valid, strip non-unique channel prefix from its head to produce the actual ID.
             if (!getId().empty()) {
                 m_id = getId().substr(2);
+                // Set up a logger suffixed with the channel's ID.
+                setupLogger("YoutubeChannel:" + getId());
+                log->debug("Created from JSON.");
             } else {
-                addError("Missing Channel ID!", t_json);
-                std::cerr << "Missing Channel ID:\n" << t_json.dump(4) << std::endl;
+                // Set up a logger suffixed with MissingID.
+                setupLogger("YoutubeChannel:MissingID");
+                addError("Missing Channel ID!", t_json); // FIXME: is addError and addWarning still needed?
+                log->error("Missing Channel ID:\n" + t_json.dump(4));
             }
 
             // Playlists
             nlohmann::json relatedPlaylists = t_json["contentDetails"]["relatedPlaylists"];
+            log->debug("relatedPlaylists: " + t_json["contentDetails"]["relatedPlaylists"].dump());
             setHasFavouritesPlaylist(relatedPlaylists["favorites"].is_string());
+            log->debug("hasFavouritesPlaylist: " + (hasFavouritesPlaylist() ? std::string("Yes.") : std::string("No.")));
             setHasUploadsPlaylist(relatedPlaylists["uploads"].is_string());
+            log->debug("hasUploadsPlaylist: " + (hasUploadsPlaylist() ? std::string("Yes.") : std::string("No.")));
             setHasLikesPlaylist(relatedPlaylists["likes"].is_string());
+            log->debug("hasLikesPlaylist: " + (hasLikesPlaylist() ? std::string("Yes.") : std::string("No.")));
 
             setDescription(t_json["snippet"]["description"]);
+            log->debug("Description: " + getDescription());
             setPublishedAt(t_json["snippet"]["publishedAt"]);
+            log->debug("Published at: " + getPublishedAt());
             setThumbnails(t_json["snippet"]["thumbnails"]);
+            log->debug("Thumbnails: " + t_json["snippet"]["thumbnails"].dump());
             setTitle(t_json["snippet"]["title"]);
+            log->debug("Title: " + getTitle());
         } catch (nlohmann::detail::type_error &exc) {
             addError("Skipping YoutubeChannel::addFromJson due to Exception: " + std::string(exc.what()), t_json);
+            log->error("Skipping YoutubeChannel::addFromJson due to Exception: "
+                     + std::string(exc.what()) + "\n"
+                     + t_json.dump(4));
         } catch (const std::exception &exc) {
             addError("Skipping YoutubeChannel::addFromJson due to Unexpected Exception: " +
             std::string(exc.what()), t_json);
+            log->error("Skipping YoutubeChannel::addFromJson due to Unexpected Exception: "
+                     + std::string(exc.what()) + "\n"
+                     + t_json.dump(4));
         }
     }
 
@@ -59,6 +81,20 @@ namespace sane {
                                        const char* t_thumbnailDefault, const char* t_thumbnailHigh,
                                        const char* t_thumbnailMedium, bool t_subscribedOnYoutube,
                                        bool t_subscribedLocalOverride) {
+        // Set up a logger suffixed with the channel's ID.
+        setupLogger("YoutubeChannel:" + std::string(t_id));
+        log->debug("Created from values (type 1).");
+        log->debug("uploadsPlaylist: " + std::string(t_uploadsPlaylist));
+        log->debug("favouritesPlaylist: " + std::string(t_favouritesPlaylist));
+        log->debug("likesPlaylist: " + std::string(t_likesPlaylist));
+        log->debug("Title: " + std::string(t_title));
+        log->debug("Description: " + std::string(t_description));
+        log->debug("Thumbnail (Default): " + std::string(t_thumbnailDefault));
+        log->debug("Thumbnail (High): " + std::string(t_thumbnailHigh));
+        log->debug("Thumbnail (Medium): " + std::string(t_thumbnailMedium));
+        log->debug("subscribedOnYoutube: " + (t_subscribedOnYoutube ? std::string("Yes.") : std::string("No.")));
+        log->debug("subscribedLocalOverride: "
+                 + (t_subscribedLocalOverride ? std::string("Yes.") : std::string("No.")));
 
         setId(std::string(t_id));
         setTitle(std::string(t_title));
@@ -92,6 +128,21 @@ namespace sane {
                                        const char* t_description, const char* t_thumbnailDefault,
                                        const char* t_thumbnailHigh, const char* t_thumbnailMedium,
                                        bool t_subscribedOnYoutube, bool t_subscribedLocalOverride) {
+        // Set up a logger suffixed with the channel's ID.
+        setupLogger("YoutubeChannel:" + std::string(t_id));
+        log->debug("Created from values (type 2).");
+        log->debug("hasUploadsPlaylist: " + (t_hasUploadsPlaylist ? std::string("Yes.") : std::string("No.")));
+        log->debug("hasFavouritesPlaylist: " + (t_hasFavouritesPlaylist ? std::string("Yes.") : std::string("No.")));
+        log->debug("hasLikesPlaylist: " + (t_hasLikesPlaylist ? std::string("Yes.") : std::string("No.")));
+        log->debug("Title: " + std::string(t_title));
+        log->debug("Description: " + std::string(t_description));
+        log->debug("Thumbnail (Default): " + std::string(t_thumbnailDefault));
+        log->debug("Thumbnail (High): " + std::string(t_thumbnailHigh));
+        log->debug("Thumbnail (Medium): " + std::string(t_thumbnailMedium));
+        log->debug("subscribedOnYoutube: " + (t_subscribedOnYoutube ? std::string("Yes.") : std::string("No.")));
+        log->debug("subscribedLocalOverride: "
+                   + (t_subscribedLocalOverride ? std::string("Yes.") : std::string("No.")));
+
         setId(std::string(t_id));
         setTitle(std::string(t_title));
         setHasUploadsPlaylist(t_hasUploadsPlaylist);
@@ -125,6 +176,20 @@ namespace sane {
                                        const std::string &t_thumbnailDefault, const std::string &t_thumbnailHigh,
                                        const std::string &t_thumbnailMedium, bool t_subscribedOnYoutube,
                                        bool t_subscribedLocalOverride) {
+        // Set up a logger suffixed with the channel's ID.
+        setupLogger("YoutubeChannel:" + t_id);
+        log->debug("Created from values (type 3).");
+        log->debug("hasUploadsPlaylist: " + (t_hasUploadsPlaylist ? std::string("Yes.") : std::string("No.")));
+        log->debug("hasFavouritesPlaylist: " + (t_hasFavouritesPlaylist ? std::string("Yes.") : std::string("No.")));
+        log->debug("hasLikesPlaylist: " + (t_hasLikesPlaylist ? std::string("Yes.") : std::string("No.")));
+        log->debug("Title: " + t_title);
+        log->debug("Description: " + t_description);
+        log->debug("Thumbnail (Default): " + t_thumbnailDefault);
+        log->debug("Thumbnail (High): " + t_thumbnailHigh);
+        log->debug("Thumbnail (Medium): " + t_thumbnailMedium);
+        log->debug("subscribedOnYoutube: " + (t_subscribedOnYoutube ? std::string("Yes.") : std::string("No.")));
+        log->debug("subscribedLocalOverride: "
+                   + (t_subscribedLocalOverride ? std::string("Yes.") : std::string("No.")));
 
         setId(t_id);
         setTitle(t_title);
@@ -171,6 +236,27 @@ namespace sane {
 
     }
 
+    void YoutubeChannel::logSqliteMap(std::map<std::string, const unsigned char*> &t_map) {
+        // Set up a logger suffixed with the channel's ID.
+        setupLogger("YoutubeChannel:" + std::string(reinterpret_cast<const char *>(t_map["ID"])));
+        log->debug("Created from map (SQLite UTF-8).");
+
+        log->debug("Title: " + std::string((const char *)t_map["Title"]));
+        log->debug("hasUploadsPlaylist: "
+                   + (!std::string(reinterpret_cast<const char *>(t_map["UploadsPlaylist"])).empty()
+                      ? std::string("Yes.") : std::string("No.")));
+        log->debug("hasFavouritesPlaylist: "
+                   + (!std::string(reinterpret_cast<const char *>(t_map["FavouritesPlaylist"])).empty()
+                      ? std::string("Yes.") : std::string("No.")));
+        log->debug("hasLikesPlaylist: "
+                   + (!std::string(reinterpret_cast<const char *>(t_map["LikesPlaylist"])).empty()
+                      ? std::string("Yes.") : std::string("No.")));
+        log->debug("Description: " + std::string((const char *)t_map["Description"]));
+        log->debug("Thumbnail (Default): " + std::string(reinterpret_cast<const char *>(t_map["ThumbnailDefault"])));
+        log->debug("Thumbnail (High): " + std::string(reinterpret_cast<const char *>(t_map["ThumbnailHigh"])));
+        log->debug("Thumbnail (Medium): " + std::string(reinterpret_cast<const char *>(t_map["ThumbnailMedium"])));
+    }
+
     /**
      * Populates properties based on a SQLite UTF-8 map of values.
      *
@@ -180,6 +266,9 @@ namespace sane {
      * @param t_map
      */
     void YoutubeChannel::addFromMap(std::map<std::string, const unsigned char*> &t_map) {
+        // Setup logger and log given map in a separate function (tidyness).
+        logSqliteMap(t_map);
+
         // Add values from given value map.
         setId(std::string(reinterpret_cast<const char *>(t_map["ID"])));
         setTitle(std::string((const char *)t_map["Title"]));
@@ -242,6 +331,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setId(const std::string &t_id) {
+        log->info("Setting ID: " + t_id + ".");
         m_id = t_id;
     }
 
@@ -259,6 +349,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setDescription(const std::string &t_description) {
+        log->info("Setting description: " + t_description + ".");
         m_description = t_description;
     }
 
@@ -276,6 +367,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setPublishedAt(const std::string &t_publishedAt) {
+        log->info("Setting Published At: " + t_publishedAt + ".");
         m_publishedAt = t_publishedAt;
     }
 
@@ -293,6 +385,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setThumbnails(const std::map<std::string, thumbnail_t> &t_thumbnails) {
+        log->info("Setting Thumbnails from map.");
         m_thumbnails = t_thumbnails;
     }
 
@@ -330,8 +423,11 @@ namespace sane {
 
         // Add thumbnail structs to map.
         thumbnails["default"] = defaultThumbnail;
+        log->info("Setting Thumbnail (Default): " + defaultThumbnail.url + ".");
         thumbnails["high"] = highThumbnail;
+        log->info("Setting Thumbnail (High): " + highThumbnail.url + ".");
         thumbnails["medium"] = mediumThumbnail;
+        log->info("Setting Thumbnail (Medium): " + mediumThumbnail.url + ".");
 
         // Finally assign the thumbnails map to the object property.
         setThumbnails(thumbnails);
@@ -342,6 +438,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setTitle(const std::string &t_title) {
+        log->info("Setting title: " + t_title + ".");
         m_title = t_title;
     }
 
@@ -387,7 +484,9 @@ namespace sane {
 
     void YoutubeChannel::reportProblems(std::map<std::string, std::string> &t_problems) {
         if (!t_problems.empty()) {
+            log->warn("Problem: " + t_problems["warning"] + ".");
             addWarning(t_problems["warning"]);
+            log->error("Problem: " + t_problems["error"] + "!");
             addError(t_problems["error"]);
         }
     }
@@ -404,6 +503,19 @@ namespace sane {
                 std::cout << std::string(indent, ' ') << map.first << std::endl;
                 if (withJson and !map.second.empty()) {
                     std::cout << map.second.dump(jsonIndent) << std::endl;
+                }
+            }
+        }
+    }
+
+    void YoutubeChannel::logErrors(int jsonIndent) {
+        // For map in list
+        for (auto const& item : getErrors()) {
+            // For message, JSON in map
+            for (auto const& map : item) {
+                log->error(map.first);
+                if (!map.second.empty()) {
+                    log->debug(map.second.dump(jsonIndent));
                 }
             }
         }
@@ -426,15 +538,30 @@ namespace sane {
         }
     }
 
+    void YoutubeChannel::logWarnings(int jsonIndent) {
+        // For map in list
+        for (auto const& item : getWarnings()) {
+            // For message, JSON in map
+            for (auto const& map : item) {
+                log->warn(map.first);
+                if (!map.second.empty()) {
+                    log->debug(map.second.dump(jsonIndent));
+                }
+            }
+        }
+    }
+
     bool YoutubeChannel::wasAborted() {
         return m_aborted;
     }
 
     void YoutubeChannel::clearWarnings() {
+        log->trace("Clearing stored warnings.");
         m_warnings.clear();
     }
 
     void YoutubeChannel::clearErrors() {
+        log->trace("Clearing stored errors.");
         m_errors.clear();
     }
 
@@ -448,6 +575,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setHasFavouritesPlaylist(bool t_bool) {
+        log->debug("Setting hasFavouritesPlaylist: " + (t_bool ? std::string("Yes.") : std::string("No.")));
         m_hasFavouritesPlaylist = t_bool;
     }
 
@@ -456,6 +584,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setHasUploadsPlaylist(bool t_bool) {
+        log->debug("Setting hasUploadsPlaylist: " + (t_bool ? std::string("Yes.") : std::string("No.")));
         m_hasUploadsPlaylist = t_bool;
     }
 
@@ -464,6 +593,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setHasLikesPlaylist(bool t_bool) {
+        log->debug("Setting hasLikesPlaylist: " + (t_bool ? std::string("Yes.") : std::string("No.")));
         m_hasLikesPlaylist = t_bool;
     }
 
@@ -472,6 +602,7 @@ namespace sane {
     }
 
     void YoutubeChannel::setHasSubscribedLocalOverride(bool t_bool) {
+        log->debug("Setting subscribedLocalOverride: " + (t_bool ? std::string("Yes.") : std::string("No.")));
         m_subscribedLocalOverride = t_bool;
     }
 
@@ -480,6 +611,13 @@ namespace sane {
     }
 
     void YoutubeChannel::setIsSubscribedOnYoutube(bool t_bool) {
+        log->debug("Setting subscribedOnYoutube: " + (t_bool ? std::string("Yes.") : std::string("No.")));
         m_subscribedOnYoutube = t_bool;
+    }
+
+    void YoutubeChannel::setupLogger(const std::string &t_facility) {
+        // Set up logger
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        log = logHandler->createLogger(t_facility);
     }
 } // namespace sane

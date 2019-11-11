@@ -7,7 +7,9 @@
 #include <string>
 #include <list>
 
+// 3rd party libraries
 #include <nlohmann/json.hpp>
+#include <log_handler/log_handler.hpp>
 
 #include <entities/common.hpp>
 
@@ -145,6 +147,8 @@ namespace sane {
             addFromJson(t_data);
         }
 
+        void setupLogger(const std::string &t_facility = {});
+
 //        void assignValue(nlohmann::json &t_json);
 
         void addFromJson(nlohmann::json t_json);
@@ -152,9 +156,9 @@ namespace sane {
         void print(int t_indentationSpacing, bool t_printFullInfo=false);
 
         // Each error/warning map has error message as key and JSON as value.
-        void addError(const std::string &t_errorMsg, nlohmann::json t_json = nlohmann::json::object());
+        void addError(const std::string &t_errorMsg, const nlohmann::json& t_json = nlohmann::json::object());
 
-        void addWarning(const std::string &t_warningMsg, nlohmann::json t_json = nlohmann::json::object());
+        void addWarning(const std::string &t_warningMsg, const nlohmann::json& t_json = nlohmann::json::object());
 
         void reportProblems(std::map<std::string, std::string> &t_problems);
 
@@ -559,6 +563,8 @@ namespace sane {
         // END: Getters & Setters.
 
     private:
+        std::shared_ptr<spdlog::logger> log;
+
         /**
          * Entity Internal.
          */

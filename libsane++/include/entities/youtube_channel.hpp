@@ -193,12 +193,12 @@ namespace sane {
         // NB: Grab the one inside resourceId, the outer one is *yours*.
         std::string m_id;
 
-        // Playlists (only need bool as they are supersets of ID)
+        // Playlists (only need bool as they are supersets of ID).
         bool m_hasFavouritesPlaylist = false;
         bool m_hasUploadsPlaylist = false;
         bool m_hasLikesPlaylist = false;
 
-        // Other bools
+        // Other bools.
         bool m_subscribedOnYoutube = false;
         bool m_subscribedLocalOverride = false;
 

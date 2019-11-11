@@ -7,16 +7,28 @@ namespace sane {
     // An empty constructor if you want to populate it later.
     YoutubeVideo::YoutubeVideo() = default;
 
-    void YoutubeVideo::addError(const std::string &t_errorMsg, nlohmann::json t_json) {
+    void YoutubeVideo::setupLogger(const std::string &t_facility) {
+        // Set up logger
+        std::shared_ptr<sane::LogHandler> logHandler = std::make_shared<sane::LogHandler>();
+        log = logHandler->createLogger(t_facility);
+    }
+
+    void YoutubeVideo::addError(const std::string &t_errorMsg, const nlohmann::json &t_json) {
         std::map<std::string, nlohmann::json> _;
         _[t_errorMsg] = t_json;
+
+        // Log error and JSON dump (if any).
+        log->error(!t_json.empty() ? t_errorMsg + "\n" + t_json.dump(4) : t_errorMsg);
 
         m_errors.push_back(_);
     }
 
-    void YoutubeVideo::addWarning(const std::string &t_warningMsg, nlohmann::json t_json) {
+    void YoutubeVideo::addWarning(const std::string &t_warningMsg, const nlohmann::json &t_json) {
         std::map<std::string, nlohmann::json> _;
         _[t_warningMsg] = t_json;
+
+        // Log warning and JSON dump (if any).
+        log->warn(!t_json.empty() ? t_warningMsg + "\n" + t_json.dump(4) : t_warningMsg);
 
         m_warnings.push_back(_);
     }
@@ -1901,6 +1913,9 @@ namespace sane {
     }
 
     void YoutubeVideo::addFromJson(nlohmann::json t_json) {
+        // Set up a generic logger to log errors and exceptions (as this is pre-ID stage).
+        setupLogger("YoutubeVideo");
+
         try {
             // General.
 
@@ -1921,6 +1936,10 @@ namespace sane {
                         if (t_json["snippet"]["resourceId"]["kind"] == "youtube#video") {
                             setId(t_json["snippet"]["resourceId"]["videoId"]);
                         } else{
+                            log->error("addFromJson: Unable to set video ID: "
+                                       "['snippet']['resourceId']['kind'] == "
+                                       + t_json["snippet"]["resourceId"]["kind"].get<std::string>()
+                                       + ", expected 'youtube#video'!");
                             addError("Unable to set video ID: "
                                      "['snippet']['resourceId']['kind'] == "
                                      + t_json["snippet"]["resourceId"]["kind"].get<std::string>()
@@ -1929,6 +1948,8 @@ namespace sane {
                     }
                 } else {
                     // Kind is playlistItem, but no snippet or contentDetails were provided.
+                    log->error("Unable to set video ID: Kind is youtube#playlistItem, "
+                               "but not snippet or contentDetails parts were available!");
                     addError("Unable to set video ID: Kind is youtube#playlistItem, "
                              "but not snippet or contentDetails parts were available!");
                 }

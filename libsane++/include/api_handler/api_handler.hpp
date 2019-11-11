@@ -160,9 +160,7 @@ namespace sane {
                                                 const std::map<std::string, std::string> &t_filter,
                                                 const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
 
-//        nlohmann::json youtubeInsertSubscription(const std::string &t_part,
-//                                                 const std::map<std::string, std::string> &t_filter,
-//                                                 const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());
+        nlohmann::json youtubeInsertSubscription(const std::string &t_part, nlohmann::json &t_requestBody);
 
         nlohmann::json youtubeListVideoAbuseReportReasons(const std::string &t_part,
                                                           const std::map<std::string, std::string> &t_optParams = std::map<std::string, std::string>());

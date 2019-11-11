@@ -354,6 +354,20 @@ namespace sane {
         return jsonData;
     }
 
+    nlohmann::json APIHandler::youtubeInsertSubscription(const std::string &t_part, nlohmann::json &t_requestBody) {
+        // Setup
+        std::list<std::map<std::string, std::string>> varMaps;
+        std::string compiledVariables;
+
+        // 'part' is a required first part of a YouTube API HTTP string.
+        compiledVariables += "?part=" + t_part;
+
+        // Parse the JSON response from the API.
+        nlohmann::json jsonData = postOAuth2Response(YOUTUBE_API_SUBSCRIPTIONS + compiledVariables, t_requestBody);
+
+        return jsonData;
+    }
+
     nlohmann::json APIHandler::youtubeListVideoAbuseReportReasons(const std::string &t_part,
             const std::map<std::string, std::string> &t_optParams) {
         // Setup

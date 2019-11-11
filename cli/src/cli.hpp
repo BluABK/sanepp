@@ -23,7 +23,8 @@
 #define CORE_CATEGORY    0
 #define ENTITY_CATEGORY  1
 #define JSON_CATEGORY    2
-#define DB_CATEGORY      3
+#define INSERT_CATEGORY  3
+#define DB_CATEGORY      4
 
 namespace sane {
     struct command_t {
@@ -126,6 +127,10 @@ namespace sane {
 
         void listSubscriptionsJsonFromApi(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
 
+        void insertSubscriptionsJsonToApi(const std::string &t_part, nlohmann::json &t_requestBody, int jsonIndent = DEFAULT_INDENT);
+
+        void insertSubscriptionByChannelId(const std::vector<std::string> &t_input, int jsonIndent = DEFAULT_INDENT);
+
         void listVideoAbuseReportReasonsJsonFromApi(const std::vector<std::string> &t_input,
                                                     int jsonIndent = DEFAULT_INDENT);
 
@@ -204,6 +209,8 @@ namespace sane {
         // -- JSON
         const std::string LIST_SUBSCRIPTIONS_JSON = "list-subscriptions-json";
         const std::string PRINT_SUBSCRIPTIONS_JSON_FROM_API = "print-subscriptions-json";
+        // -- INSERT/POST
+        const std::string INSERT_SUBSCRIPTION_BY_CHANNEL_ID = "subscribe-by-id";
         // Video Abuse Report Reasons
         // -- JSON
         const std::string LIST_VIDEO_ABUSE_REPORT_REASONS_JSON = "list-video-abuse-report-reasons-json";

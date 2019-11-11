@@ -588,6 +588,94 @@ namespace sane {
     }
 
     /**
+     * Takes args: part, t_requestBody.
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/subscriptions/insert
+     *
+     * @param t_part
+     * @param t_requestBody
+     * @param jsonIndent
+     */
+    void CLI::insertSubscriptionsJsonToApi(const std::string &t_part, nlohmann::json &t_requestBody, int jsonIndent) {
+        nlohmann::json body;
+        nlohmann::json jsonData;
+
+        log->debug("CLI::insertSubscriptionsJsonToApi(const std::string &t_part="
+                 + t_part + ", nlohmann::json &t_requestBody="
+                 + t_requestBody.dump() + ", int jsonIndent=" + std::to_string(jsonIndent) + ")");
+
+        jsonData = api->youtubeInsertSubscription(t_part, t_requestBody);
+
+        std::string channelTitle = "MISSING_CHANNEL_TITLE";
+        std::string channelId = "MISSING_CHANNEL_ID";
+
+        if (jsonData.find("snippet") != jsonData.end()) {
+            nlohmann::json snippet_ = jsonData["snippet"];
+
+            if (snippet_.find("title") != snippet_.end()) {
+                channelTitle = snippet_["title"].get<std::string>();
+            } else {
+                log->error(R"(insertSubscriptionsJsonToApi: jsonData["snippet"]["title"] object not found!)");
+                log->error(jsonData.dump(jsonIndent));
+            }
+
+            if (snippet_.find("channelId") != snippet_.end()) {
+                channelId = snippet_["channelId"].get<std::string>();
+            } else {
+                log->error(R"(insertSubscriptionsJsonToApi: jsonData["snippet"]["channelId"] object not found!)");
+                log->error(jsonData.dump(jsonIndent));
+            }
+        } else {
+            log->error(R"(insertSubscriptionsJsonToApi: jsonData["snippet"] object not found!)");
+            log->error(jsonData.dump(jsonIndent));
+        }
+
+        // Print the result
+        if (jsonData.find("kind") != jsonData.end()) {
+            if (jsonData["kind"].get<std::string>() == "youtube#subscription") {
+                std::cout << "Successfully subscribed to: " << channelTitle << " (" << channelId << ")." << std::endl;
+            } else {
+                log->error(R"(insertSubscriptionsJsonToApi: jsonData["kind"] is not a subscription resource!)");
+                log->error(jsonData.dump(jsonIndent));
+                std::cerr << "Subscription to channel failed! (see log)" << std::endl;
+            }
+        } else {
+            log->error(R"(insertSubscriptionsJsonToApi: jsonData["kind"] object not found!)");
+            log->error(jsonData.dump(jsonIndent));
+            std::cerr << "Subscription to channel failed! (see log)" << std::endl;
+        }
+    }
+
+    /**
+     * Takes tokenized arg: channelId.
+     *
+     * Example: args = ["snippet,id", "id=commentThread1:commentThread2", "maxResults=15"]
+     *
+     * For more info see: https://developers.google.com/youtube/v3/docs/subscriptions/insert
+     *
+     * @param t_input
+     * @param jsonIndent
+     */
+    void CLI::insertSubscriptionByChannelId(const std::vector<std::string> &t_input, int jsonIndent) {
+        const std::string part = "id,snippet";
+        const std::string channelId = t_input.at(0);
+        nlohmann::json requestBody;
+        nlohmann::json jsonData;
+
+        if (t_input.empty() or t_input.size() < 1) {
+            std::cout << "Error: wrong amount of arguments given, required: >= 1." << std::endl;
+            return;
+        }
+
+        // Generate bare minimum request body for subscription insert (id and type):
+        requestBody["snippet"] = { { "resourceId", { {"channelId", channelId}, {"kind", "youtube#channel"} } } };
+
+        if (t_input.size() == 1) {
+            insertSubscriptionsJsonToApi(part, requestBody, jsonIndent);
+        }
+    }
+
+    /**
      * Takes tokenized args: part <optional params>.
      *
      * Example: args = ["snippet", "maxResults=15"]

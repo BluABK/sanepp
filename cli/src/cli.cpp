@@ -158,6 +158,7 @@ namespace sane {
                    JSON_CATEGORY);
         addCommand(LIST_SUBSCRIPTIONS_JSON, "Returns subscription resources.", "PART... FILTER [PARAM...]",
                    JSON_CATEGORY);
+        addCommand(INSERT_SUBSCRIPTION_BY_CHANNEL_ID, "Subscribe to the given channel ID ", "ID", INSERT_CATEGORY);
         addCommand(LIST_VIDEO_ABUSE_REPORT_REASONS_JSON, "Retrieve a list of reasons that can be used to report "
                                                          "abusive videos.", "PART [PARAM...]", JSON_CATEGORY);
         addCommand(LIST_VIDEO_CATEGORIES_JSON, "Returns a list of categories that can be associated with "
@@ -333,6 +334,8 @@ namespace sane {
             } else {
                 std::cerr << "Error in PRINT_PLAYLIST_ITEMS: invalid argument count: " << args.size() << std::endl;
             }
+        } else if (command == INSERT_SUBSCRIPTION_BY_CHANNEL_ID) {
+            insertSubscriptionByChannelId(args);
         }
 
     }

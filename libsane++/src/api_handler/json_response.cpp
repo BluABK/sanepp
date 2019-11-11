@@ -359,6 +359,10 @@ namespace sane {
         std::list<std::map<std::string, std::string>> varMaps;
         std::string compiledVariables;
 
+        log->debug("APIHandler::youtubeInsertSubscription(const std::string &t_part="
+                   + t_part + ", nlohmann::json &t_requestBody="
+                   + t_requestBody.dump() + ")");
+
         // 'part' is a required first part of a YouTube API HTTP string.
         compiledVariables += "?part=" + t_part;
 
